@@ -1,0 +1,6 @@
+test*
+test/beautify
+test/stringify
+
+node_modules
+htmldom.front.js

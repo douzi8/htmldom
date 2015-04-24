@@ -1,0 +1,30 @@
+{
+  "name": "htmldom",
+  "version": "0.0.1",
+  "description": "Make html string as dom structure for html operation simple, then the dom structure can be stringify or beautify",
+  "main": "htmldom.js",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/douzi8/htmldom.git"
+  },
+  "keywords": [
+    "html",
+    "dom",
+    "minifier",
+    "beautify",
+    "online"
+  ],
+  "author": "douzi <liaowei08@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/douzi8/htmldom/issues"
+  },
+  "homepage": "https://github.com/douzi8/htmldom",
+  "dependencies": {
+    "cssdom": "^1.0.15",
+    "utils-extend": "^1.0.8"
+  }
+}
