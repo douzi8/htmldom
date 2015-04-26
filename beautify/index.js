@@ -1,7 +1,6 @@
-var VOID_ELEMENTS = require('./elements').VOID_ELEMENTS;
+var VOID_ELEMENTS = require('../lib/elements').VOID_ELEMENTS;
 var util = require('utils-extend');
 var CssDom = require('cssdom');
-var UglifyJS = require("uglify-js");
 var jsBeautify = require('js-beautify');
 
 // for front
@@ -23,69 +22,7 @@ function isJs(name, type) {
   return name === 'script' && (!type || type === 'text/javascript');
 }
 
-/**
- * uglify html code.
- * use cssdom uglify css code
- * use 
- */
-exports.stringify = function(doms, options) {
-  var html = '';
-  options = util.extend({
-    indent: '  ',
-    uglifyJS: {
-      fromString: true
-    }
-  }, options);
-
-  function recurse(dom) {
-    var html = [];
-    var name = dom.name;
-
-    switch (dom.type) {
-      case 'documentType':
-        html.push(dom.value);
-        break;
-      case 'text':
-        html.push(dom.value.trim());
-        break;
-      case 'tag':
-        html.push('<' + name);
-        for (var i in dom.attributes) {
-          html.push(' ' + i + '="' + dom.attributes[i] + '"');
-        }
-        html.push('>');
-
-        if (VOID_ELEMENTS.indexOf(name) == -1) {
-          if (name === 'style') {
-            var css = new CssDom(dom.children[0].value);
-            html.push(css.stringify());
-          } else if (isJs(name, dom.attributes.type)) {
-            try {
-              var result = UglifyJS.minify(dom.children[0].value, options.uglifyJS);
-              html.push(result.code);
-            } catch (e) {
-              html.push(dom.children[0].value);
-            }
-          } else {
-            dom.children.forEach(function(item) {
-              html.push(recurse(item));
-            });
-          }
-          html.push('</' + name + '>');
-        }
-        break;
-    }
-    return html.join('');
-  }
-
-  for (var i = 0, l = doms.length; i < l; i++) {
-    html += recurse(doms[i]);
-  }
-
-  return html.trim();
-};
-
-exports.beautify = function(doms, options) {
+module.exports = function(doms, options) {
   var html = [];
   options = util.extend({
     indent: '  ',

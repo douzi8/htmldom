@@ -5,3 +5,4 @@ test/stringify
 
 node_modules
 htmldom.front.dest.js
+htmldom.front.js

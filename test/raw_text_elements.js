@@ -1,7 +1,7 @@
 var assert = require('assert');
 var HtmlDom = require('../../htmldom');
 
-describe('optional', function() {
+describe('raw text element', function() {
   it('textarea', function() {
     var html = new HtmlDom('<textarea><div><h3></textarea>');
 

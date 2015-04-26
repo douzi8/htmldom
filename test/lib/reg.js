@@ -75,4 +75,44 @@ describe('Reg', function() {
     assert('</div>'.match(REG.CLOSE_TAG));
     assert('</A >'.match(REG.CLOSE_TAG));
   });
+
+  it('css selector', function() {
+    assert.deepEqual(REG.cssSelector('div'), {
+      name: 'div',
+      attrs: {}
+    });
+    assert.deepEqual(REG.cssSelector('.class'), {
+      name: '',
+      attrs: {
+        class: 'class'
+      }
+    });
+    assert.deepEqual(REG.cssSelector('#id'), {
+      name: '',
+      attrs: {
+        id: 'id'
+      }
+    });
+    assert.deepEqual(REG.cssSelector('[key]'), {
+      name: '',
+      attrs: {
+        key: ''
+      }
+    });
+    assert.deepEqual(REG.cssSelector('[key="value"]'), {
+      name: '',
+      attrs: {
+        key: 'value'
+      }
+    });
+
+    assert.deepEqual(REG.cssSelector('div#id.cls1.cls2[key="value value"]'), {
+      name: 'div',
+      attrs: {
+        id: 'id',
+        class: 'cls1 cls2',
+        key: 'value value'
+      }
+    });
+  });
 });

@@ -1,7 +1,7 @@
 var REG = require('./lib/reg');
 var Parser = require('./lib/parser');
 var VOID_ELEMENTS = require('./lib/elements').VOID_ELEMENTS;
-var stringify = require('./lib/stringify');
+var Selector = require('./selector/index');
 
 function HtmlDom(str) {
   this._str = str.trimRight();
@@ -107,12 +107,12 @@ HtmlDom.prototype._attrs = function(name) {
     match[0].replace(REG.ATTR, function(match, key, value) {
       // <div id="1" id="2"></div>, use the first key as attribute
       if (!attrs.hasOwnProperty(key)) {
-        value = value ? value.replace(REG.TRIM_QUOTES, '').replace(REG.DOUBLE_QUOTES, "'") : '';
+        value = value ? value.replace(REG.TRIM_QUOTES, '') : '';
         attrs[key] = value;
       }
     });
     var dom = {
-      name: name,
+      name: name.toLowerCase(),
       attributes: attrs
     };
 
@@ -199,12 +199,25 @@ HtmlDom.prototype._text = function() {
   }
 };
 
-HtmlDom.prototype.stringify = function() {
-  return stringify.stringify(this.dom);
+/**
+ * @example
+ * var $ = html.$.bind(html);
+ * $('div').addClass()
+ * $('#id').attr('key')
+ */
+HtmlDom.prototype.$ = function(str) {
+  var el = new Selector(str, this.dom);
+  return el;
+};
+
+HtmlDom.prototype.stringify = function(opt) {
+  var uglify = require('./uglify/index');
+  return uglify(this.dom, opt || {});
 };
 
 HtmlDom.prototype.beautify = function(opt) {
-  return stringify.beautify(this.dom, opt || {});
+  var beautify = require('./beautify/index');
+  return beautify(this.dom, opt || {});
 };
 
 module.exports = HtmlDom;

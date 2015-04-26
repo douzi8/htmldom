@@ -32,12 +32,6 @@ describe('optional', function() {
     assert.equal(html.stringify(), '<div><h3><div><div><ul><li></li></ul></div></div></h3></div>');
   });
 
-  it('h', function() {
-    var html = new HtmlDom('<h1><h2><h3><h4><h5><h6><div>');
-
-    assert.equal(html.stringify(), '<h1></h1><h2></h2><h3></h3><h4></h4><h5></h5><h6><div></div></h6>');
-  });
-
   it('option', function() {
     var html = new HtmlDom('<select><option><option>');
 
