@@ -13,6 +13,9 @@ npm install htmldom --save
 npm test
 ```
 
+## online demo
+[http://douzi8.github.io/htmldom/](http://douzi8.github.io/htmldom/)
+
 ## browserify
 Exports HtmlDom to front, then uglify it
 ```
