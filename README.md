@@ -46,7 +46,11 @@ html.dom
   attributes: {
     id: 'test'
   },
-  children: []
+  children: [],
+  // Parent is null or a tag
+  parent: {
+
+  }
 }
 ```
 * ``text``
@@ -65,18 +69,27 @@ html.dom
 ```
 
 ### stringify()
-Minify html code
+* {object} ``options``
+* {object} ``options.cssdom``  
+Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
+* {object} ``options.uglifyJs``  
+Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code
 ```js
-html.stringify();
+html.stringify({
+  uglifyJs: {}
+});
 ```
 
 ### beautify();
 * {object} ``options``
 * {string} ``[options.indent='  ']`` code indent
-* {object} ``[options.jsBeautify]``  https://www.npmjs.com/package/js-beautify
-Use js-beautify beautify js code
+* {object} ``[options.cssdom]``  
+Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
+* {object} ``[options.jsBeautify]``  
+Use [js-beautify](https://www.npmjs.com/package/js-beautify) beautify js code
 ```js
 html.beautify({
-  indent: '  '
+  indent: '  ',
+  jsBeautify: {}
 });
 ```

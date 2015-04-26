@@ -67,7 +67,7 @@ HtmlDom.prototype._comment = function() {
   } else {
     return false;
   }
-}
+};
 
 // DOCTYPE Declaration
 HtmlDom.prototype._documentType = function() {
@@ -88,7 +88,7 @@ HtmlDom.prototype._documentType = function() {
     }
     return;
   }
-}
+};
 
 HtmlDom.prototype._attrs = function(name) {
   var match = this._match(REG.TAG_CONTENT);
@@ -124,7 +124,7 @@ HtmlDom.prototype._attrs = function(name) {
 
     this.dom.push(dom);
   }
-}
+};
 
 // Match open tag
 HtmlDom.prototype._opentag = function() {
