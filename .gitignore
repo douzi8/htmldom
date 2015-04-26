@@ -4,4 +4,4 @@ test/beautify
 test/stringify
 
 node_modules
-htmldom.front.js
+htmldom.front.dest.js

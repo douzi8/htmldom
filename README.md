@@ -74,9 +74,9 @@ html.dom
 
 ### stringify()
 * {object} ``options``
-* {object} ``options.cssdom``  
-Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
-* {object} ``options.uglifyJs``  
+  * {object} ``options.cssdom``  
+Use [cssdom](https://github.com/douzi8/cssdom) uglify css code
+  * {object} ``options.uglifyJs``  
 Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code
 ```js
 html.stringify({
@@ -86,10 +86,10 @@ html.stringify({
 
 ### beautify()
 * {object} ``options``
-* {string} ``[options.indent='  ']`` code indent
-* {object} ``[options.cssdom]``  
+  * {string} ``[options.indent='  ']`` code indent
+  * {object} ``[options.cssdom]``  
 Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
-* {object} ``[options.jsBeautify]``  
+  * {object} ``[options.jsBeautify]``  
 Use [js-beautify](https://www.npmjs.com/package/js-beautify) beautify js code
 ```js
 html.beautify({
