@@ -14,9 +14,10 @@ npm test
 ```
 
 ## browserify
-Exports HtmlDom to front
+Exports HtmlDom to front, then uglify it
 ```
-browserify htmldom.js -s HtmlDom > htmldom.front.js
+browserify htmldom.js -s HtmlDom > htmldom.front.js 
+uglifyjs htmldom.front.js -o htmldom.front.js
 ```
 
 ## API
@@ -80,7 +81,7 @@ html.stringify({
 });
 ```
 
-### beautify();
+### beautify()
 * {object} ``options``
 * {string} ``[options.indent='  ']`` code indent
 * {object} ``[options.cssdom]``  
