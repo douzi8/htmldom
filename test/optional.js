@@ -1,0 +1,52 @@
+var assert = require('assert');
+var HtmlDom = require('../../htmldom');
+
+describe('optional', function() {
+  it('html head body', function() {
+    var html = new HtmlDom('<html><head><body><div>');
+
+    assert.equal(html.stringify(), '<html><head></head><body><div></div></body></html>');
+  });
+
+  it('ul li', function() {
+    var html = new HtmlDom('<ul><li><div></div><div><li><div>');
+
+    assert.equal(html.stringify(),'<ul><li><div></div><div></div></li><li><div></div></li></ul>');
+  });
+
+  it('dl dt dd', function() {
+    var html = new HtmlDom('<dl><dt><dd><div><div><dt><dd><div></div><div></dl>');
+
+    assert.equal(html.stringify(), '<dl><dt></dt><dd><div><div></div></div></dd><dt></dt><dd><div></div><div></div></dd></dl>');
+  });
+
+  it('p', function() {
+    var html = new HtmlDom('<p><div><p><a><p></h3>');
+
+    assert.equal(html.stringify(), '<p></p><div><p><a></a></p><p></p></div>');
+  });
+
+  it('div', function() {
+    var html = new HtmlDom('<div><h3><div><div><ul><li></li>');
+
+    assert.equal(html.stringify(), '<div><h3><div><div><ul><li></li></ul></div></div></h3></div>');
+  });
+
+  it('h', function() {
+    var html = new HtmlDom('<h1><h2><h3><h4><h5><h6><div>');
+
+    assert.equal(html.stringify(), '<h1></h1><h2></h2><h3></h3><h4></h4><h5></h5><h6><div></div></h6>');
+  });
+
+  it('option', function() {
+    var html = new HtmlDom('<select><option><option>');
+
+    assert.equal(html.stringify(), '<select><option></option><option></option></select>');
+  });
+
+  it('table', function() {
+    var html = new HtmlDom('<table><thead><tr><tr><tbody><tr><th><th><tr>');
+
+    assert.equal(html.stringify(), '<table><thead><tr></tr><tr></tr></thead><tbody><tr><th></th><th></th></tr><tr></tr></tbody></table>');
+  });
+});
