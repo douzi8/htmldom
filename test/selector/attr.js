@@ -43,4 +43,17 @@ describe('attr', function() {
       parent: null
     });
   });
+
+  it('set number or boolean', function() {
+    $('div').attr('id', 1);
+    $('div').attr('value', true);
+    assert.equal($('div').attr('id'), '1');
+    assert.equal($('div').attr('value'), 'true');
+
+    $('div').attr({
+      value: false
+    });
+
+    assert.equal($('div').attr('value'), 'false');
+  });
 });

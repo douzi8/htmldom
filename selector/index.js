@@ -100,7 +100,8 @@ Selector.prototype.attr = function(key, value) {
           if (key[i] === null) {
             delete item.attributes[i];
           } else {
-            item.attributes[i] = key[i];
+            var value = key[i] + '';
+            item.attributes[i] = value;
           }
         }
       });
@@ -116,6 +117,7 @@ Selector.prototype.attr = function(key, value) {
       if (value === null) {
         delete item.attributes[key];
       } else {
+        value += '';
         item.attributes[key] = value;
       }
     });
