@@ -1,6 +1,7 @@
 var cssSelector = require('./css-selector');
 var util = require('utils-extend');
 var cssMatch = require('./css-match');
+var CLS_REG = /\s+/;
 
 function filterSelector(selector) {
   selector = selector.replace(/('[^]*'|"[^]*")/g, function(match) {
@@ -10,19 +11,29 @@ function filterSelector(selector) {
   return /\s+/.test(selector);
 }
 
-function Selector(selector, document) {
-  this.document = document;
-  if (filterSelector(selector)) {
-    throw new Error('Not support child selector now');
+function Selector(selector, root) {
+  if (util.isString(selector)) {
+    if (filterSelector(selector)) {
+      throw new Error('Not support child selector now');
+    }
+    this.length = 0;
+    this._search(selector, root);
+  } else {
+    if (!util.isArray(selector)) {
+      selector = [selector];
+    }
+
+    for (var i = 0; i < selector.length; i++) {
+      this[i] = selector[i];
+    }
+    
+    this.length = selector.length;
   }
-  this.selector = cssSelector(selector);
-  this.length = 0;
-  this._search();
 }
 
-Selector.prototype._search = function() {
+Selector.prototype._search = function(selector, root) {
   var self = this;
-  var selector = this.selector;
+  var selector = cssSelector(selector);
 
   function recurse(item) {
     if (item.type !== 'tag') return false;
@@ -35,14 +46,39 @@ Selector.prototype._search = function() {
     }
   }
 
-  for (var i = 0, l = this.document.length; i < l; i++) {
-    recurse(this.document[i]);
+  for (var i = 0, l = root.length; i < l; i++) {
+    recurse(root[i]);
   }
+};
+
+/**
+ * @example
+ * $('').eq(0)
+ * $('').eq(-1)
+ */
+Selector.prototype.eq = function(index) {
+  if (index < 0) {
+    index += this.length;
+  }
+  return new Selector(this[index]);
+}
+
+/**
+ * @example
+ * $('').find('a');
+ */
+Selector.prototype.find = function(selector) {
+  var root = [];
+
+  this.each(function(index, item) {
+    root.push(item);
+  });
+  return new Selector(selector, root);
 };
 
 Selector.prototype.each = function(callback) {
   for (var i = 0; i < this.length; i++) {
-    callback(i, this[i]);
+    callback.call(this, i, this[i]);
   }
 }
 
@@ -87,17 +123,116 @@ Selector.prototype.attr = function(key, value) {
   return this;
 };
 
+/**
+ * @example
+ * $('').html()                // get
+ * $('').html('<div></div>')   // set
+ */
+Selector.prototype.html = function(html) {
+  var HtmlDom = require('../htmldom');
+  if (util.isUndefined(html)) {
+    if (this.length) {
+      var htmldom = new HtmlDom();
+      return htmldom.html(this[0].children);
+    } else {
+      return null;
+    }
+  } else {
+    var htmldom = new HtmlDom(html);
+    this.each(function(index, item) {
+      var clonedom = util.extend([], htmldom.dom);
+      clonedom.forEach(function(child) {
+        child.parent = item;
+      });
+      item.children = clonedom;
+    });
+  }
 
-Selector.prototype.html = function() {
-
+  return this;
 };
 
-Selector.prototype.addClass = function() {
+/**
+ * @example
+ * $('').hasClass('cls');
+ * $('').hasClass('cls1 cls2');
+ */
+Selector.prototype.hasClass = function(name) {
+  if (!name) return false;
+  var has = false;
+  name = name.split(CLS_REG);
 
+  for (var i = 0; i < this.length; i++) {
+    var cls = this[i].attributes.class;
+
+    if (cls) {
+      cls = cls.split(CLS_REG);
+      var length = name.length;
+
+      while (length--) {
+        if (cls.indexOf(name[length]) === -1) {
+          has = false;
+          break;
+        }
+        has = true;
+      }
+
+      if (has) {
+        break;
+      }
+    }
+  }
+
+  return has;
+}
+
+Selector.prototype.addClass = function(name) {
+  name = name.split(CLS_REG);
+  this.each(function(index, item) {
+    for (var i = 0; i < name.length; i ++) {
+      var cls = item.attributes.class;
+
+      if (cls) {
+        cls = cls.split(CLS_REG);
+        if (cls.indexOf(name[i]) === -1) {
+          cls.push(name[i]);
+        }
+        item.attributes.class = cls.join(' ');
+      } else {
+        item.attributes.class = name[i];
+      }
+    }
+  });
+  return this;
 };
 
-Selector.prototype.removeClass = function() {
+Selector.prototype.removeClass = function(name) {
+  var removeAll = util.isUndefined(name) ? true : false;
+  if (!removeAll) {
+    name = name.split(CLS_REG);
+  }
+  
+  this.each(function(index, item) {
+    if (removeAll) {
+      delete item.attributes.class;
+    } else {
+      for (var i = 0; i < name.length; i ++) {
+        var cls = item.attributes.class;
 
+        if (cls) {
+          cls = cls.split(CLS_REG);
+          cls = cls.filter(function(item) {
+             return item !== name[i];
+          });
+          if (cls.length) {
+            item.attributes.class = cls.join(' ');
+          } else {
+            delete item.attributes.class;
+          }
+        }
+      }
+    }
+  });
+  return this;
 }
 
 module.exports = Selector;

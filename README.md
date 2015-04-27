@@ -73,11 +73,10 @@ html.dom
 ```
 
 ### $(selector)
-* {string} ``selector``, only support attribute, id, class
-it will return html dom object
+* {string} ``selector`` [w3c selector](http://www.w3schools.com/cssref/css_selectors.asp), support list
+  * element
   * #id
   * .class
-  * element
   * [attribute]
   * [attribute=value]
   * [attribute^=value]
@@ -117,15 +116,39 @@ $('').attr({});              // multiple assign
 $('').attr('key', null)      // remove attr
 ```
 * html(html)
-```
+```js
 $('').html()                 // get html
 $('').html('12')             // set html
+```
+* css(property, value)
+```js
+$('').css('height');               // get
+$('').css('height', '200px');      // set
+$('').css('height', null);         // remove
+$('').css({
+  
+});
+```
+* find(selector)
+```
+$('').find('a').attr('title', 'title');
+```
+* eq(index)
+```
+$('').eq(0)     // first element
+$('').eq(-1)    // last element
 ```
 * each(function(index, item) {})
 ```
 $('').each(function(index, item) {
   
 });
+```
+
+### html()
+If you want get html string fast, choose this api, it's only output origin html code
+```js
+html.html()
 ```
 
 ### stringify()

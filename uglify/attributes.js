@@ -38,4 +38,4 @@ module.exports = function(dom, options) {
   }
 
   return html;
-}
+};

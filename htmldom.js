@@ -4,6 +4,7 @@ var VOID_ELEMENTS = require('./lib/elements').VOID_ELEMENTS;
 var Selector = require('./selector/index');
 
 function HtmlDom(str) {
+  str = (str || '') + '';
   this._str = str.trimRight();
   this.dom = [];
   this._scanner();
@@ -207,6 +208,46 @@ HtmlDom.prototype._text = function() {
       value: value
     }];
   }
+};
+
+// Get html code fast.
+HtmlDom.prototype.html = function(dom) {
+  var html = [];
+  dom = dom || this.dom;
+
+  function recurse(dom) {
+    var html = [];
+    var name = dom.name;
+
+    switch (dom.type) {
+      case 'text':
+        html.push(dom.value);
+        break;
+      case 'comment':
+        html.push('<!--' + dom.value + '-->');
+        break;
+      case 'tag':
+        html.push('<' + name);
+        for (var i in dom.attributes) {
+          html.push(' ' + i + '="' + dom.attributes[i] + '"');
+        }
+        html.push('>');
+
+        if (VOID_ELEMENTS.indexOf(name) == -1) {
+          dom.children.forEach(function(item) {
+            html.push(recurse(item));
+          });
+          html.push('</' + name + '>');
+        }
+    }
+    return html.join('');
+  }
+
+  for (var i = 0, l = dom.length; i < l; i++) {
+    html.push(recurse(dom[i]));
+  }
+
+  return html.join('');
 };
 
 HtmlDom.prototype.stringify = function(opt) {
