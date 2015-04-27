@@ -34,4 +34,13 @@ describe('html', function() {
     assert.equal(html.dom[0].children[0].parent, $('div')[0]);
     assert.equal(html.html(), '<div>1</div>');
   });
+
+  it('recurse', function() {
+    var html = new HtmlDom('<div><div>');
+    var $ = html.$;
+
+    $('div').html('<ul><li>1<li>2');
+
+    assert.equal(html.html(), '<div><ul><li>1</li><li>2</li></ul></div>');
+  });
 });
