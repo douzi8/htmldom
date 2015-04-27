@@ -20,6 +20,7 @@
 
     <section class="main-content">
 <script src="./htmldom.front.js"></script>
+<script src="./lib/zepto.min.js"></script>
 <style>
 textarea {
   display: block;
@@ -46,10 +47,9 @@ textarea {
 <div class="clearfix">
   <div class="dom-left">
     <h3>Input html code here</h3>
-    <textarea id="txt" oninput="change()"></textarea>
-    <h3>html dom</h3>
-    <textarea id="txt4" readonly="">
-    </textarea>
+    <textarea id="txt" oninput="change()"><div></div></textarea>
+    <h3>jQuery code here <button id="run" style="padding: 0 10px;">run code</button></h3>
+  <textarea id="txt5">$('div').attr('data-id', 1);</textarea>
   </div>
   <div class="dom-right">
     <h3>uglify html code</h3>
@@ -60,37 +60,77 @@ textarea {
     </textarea>
   </div>
 </div>
+<div>
+  <h3>html dom</h3>
+  <textarea id="txt4" readonly="">
+  </textarea>
+</div>
 
-<script type="text/javascript">
-
-function change() {
-  var code = document.getElementById('txt').value;
+<script>
+function change(code) {
+  if (code) {
+    document.getElementById('txt').value = code;
+  } else {
+    code = document.getElementById('txt').value;
+  }
   var html = new HtmlDom(code);
 
   document.getElementById('txt2').innerHTML = html.stringify();
   document.getElementById('txt3').innerHTML = html.beautify();
-  document.getElementById('txt4').value = jsBeautify(stringifyDom(html.dom), {
-        'indent_size': 1,
-        'indent_char': '\t'
-      });
+  var clone = extend([], html.dom);
+  document.getElementById('txt4').value = jsBeautify(JSON.stringify(clone), {
+    'indent_size': 1,
+    'indent_char': '\t'
+  });
+
+  window.htmldom = html;
+  window.$ = html.$;
 }
 
+function isObject(value) {
+  return Object.prototype.toString.call(value) === '[object Object]';
+}
 
-function stringifyDom(dom) {
-  function rescurse(item) {
-    item.parent = 'circular';
-    if (item.children) {
-      item.children.forEach(rescurse);
+function extend(target, source) {
+  var value;
+
+  for (var key in source) {
+    if (key === 'parent') {
+      target.parent = 'circular';
+      continue;
+    }
+    value = source[key];
+
+    if (Array.isArray(value)) {
+      if (!Array.isArray(target[key])) {
+        target[key] = [];
+      }
+
+      extend(target[key], value);
+    } else if (isObject(value)) {
+      if (!isObject(target[key])) {
+        target[key] = {};
+      }
+
+      extend(target[key], value);
+    } else {
+      target[key] = value;
     }
   }
 
-  for (var i = 0; i < dom.length; i++) {
-    if (dom[i].children) {
-      dom[i].children.forEach(rescurse);
-    }
-  }
-  return JSON.stringify(dom);
+  return target;
 }
+
+Zepto('#run').click(function() {
+  var value = Zepto('#txt5').val();
+
+  try {
+    eval(value);
+    var newHtml = htmldom.html();
+    change(newHtml);
+  } catch (e) {
+  }
+});
 
 change();
 </script>
