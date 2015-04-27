@@ -2,6 +2,7 @@ var VOID_ELEMENTS = require('../lib/elements').VOID_ELEMENTS;
 var util = require('utils-extend');
 var CssDom = require('cssdom');
 var jsBeautify = require('js-beautify');
+var REG = require('../lib/reg');
 
 // for front
 if (typeof window !== 'undefined') {
@@ -50,10 +51,11 @@ module.exports = function(doms, options) {
       case 'tag':
         html.push(newline + '<' + name);
         for (var i in dom.attributes) {
+          var key = i.replace(REG.ATTR_BUG, '');
           if (dom.attributes[i] === null) {
-            html.push(' ' + i);
+            html.push(' ' + key);
           } else {
-            html.push(' ' + i + '="' + dom.attributes[i] + '"');
+            html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
           }
         }
         html.push('>');

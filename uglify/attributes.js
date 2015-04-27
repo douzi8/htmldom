@@ -29,12 +29,13 @@ module.exports = function(dom, options) {
   }
 
   for (var i in dom.attributes) {
+    var key = i.replace(REG.ATTR_BUG, '');
     html += ' ';
     var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
     if (optionEqual) {
-      html += i;
+      html += key;
     } else {
-      html += i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"';
+      html += key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"';
     }
   }
 

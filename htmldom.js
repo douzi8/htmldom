@@ -117,6 +117,7 @@ HtmlDom.prototype._attrs = function(name) {
   if (this._str[0] === '>') {
     this._str = this._str.slice(1);
     var attrs = {};
+    var count = 0;
     /**
      * attributes syntax
      * @example
@@ -126,11 +127,12 @@ HtmlDom.prototype._attrs = function(name) {
      * Double-quoted attribute value: <input name="be evil">
      */
     match[0].replace(REG.ATTR, function(match, key, value) {
-      // <div id="1" id="2"></div>, use the first key as attribute
-      if (!attrs.hasOwnProperty(key)) {
-        value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
-        attrs[key] = value;
+      // fixed same key bug
+      if (attrs.hasOwnProperty(key)) {
+        key += '__' + count++;       
       }
+      value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
+      attrs[key] = value;
     });
     var dom = {
       name: name.toLowerCase(),
@@ -225,7 +227,7 @@ HtmlDom.prototype._unescape = function(html) {
     html = html.replace(new RegExp(this._escape[i], 'g'), esc.unescape);
   }
   return html;
-}
+};
 
 // Get html code fast.
 HtmlDom.prototype.html = function(dom) {
@@ -246,10 +248,11 @@ HtmlDom.prototype.html = function(dom) {
       case 'tag':
         html.push('<' + name);
         for (var i in dom.attributes) {
+          var key = i.replace(REG.ATTR_BUG, '');
           if (dom.attributes[i] === null) {
-            html.push(' ' + i);
+            html.push(' ' + key);
           } else {
-            html.push(' ' + i + '="' + dom.attributes[i] + '"');
+            html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
           }
         }
         html.push('>');
