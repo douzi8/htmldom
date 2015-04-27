@@ -30,7 +30,8 @@ module.exports = function(dom, options) {
 
   for (var i in dom.attributes) {
     html += ' ';
-    if (options.booleanAttributes && isBooleanAttr(i)) {
+    var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
+    if (optionEqual) {
       html += i;
     } else {
       html += i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"';

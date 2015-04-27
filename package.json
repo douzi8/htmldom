@@ -1,7 +1,7 @@
 {
   "name": "htmldom",
   "version": "0.0.2",
-  "description": "Make html string as dom structure for html operation simple, then the dom structure can be stringify or beautify",
+  "description": "Simplified html handle in nodejs",
   "main": "htmldom.js",
   "scripts": {
     "test": "mocha --recursive"

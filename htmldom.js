@@ -2,9 +2,19 @@ var REG = require('./lib/reg');
 var Parser = require('./lib/parser');
 var VOID_ELEMENTS = require('./lib/elements').VOID_ELEMENTS;
 var Selector = require('./selector/index');
+var esc = require('./lib/escape');
 
-function HtmlDom(str) {
+function HtmlDom(str, escape) {
   str = (str || '') + '';
+  this._escape = [];
+
+  if (escape) {
+    for (var i = 0; i < escape.length; i++) {
+      str = str.replace(escape[i], esc.escape);
+      this._escape.push(esc.escape(escape[i].source));
+    }
+  }
+
   this._str = str.trimRight();
   this.dom = [];
   this._scanner();
@@ -118,7 +128,7 @@ HtmlDom.prototype._attrs = function(name) {
     match[0].replace(REG.ATTR, function(match, key, value) {
       // <div id="1" id="2"></div>, use the first key as attribute
       if (!attrs.hasOwnProperty(key)) {
-        value = value ? value.replace(REG.TRIM_QUOTES, '') : '';
+        value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
         attrs[key] = value;
       }
     });
@@ -210,6 +220,13 @@ HtmlDom.prototype._text = function() {
   }
 };
 
+HtmlDom.prototype._unescape = function(html) {
+  for (var i = 0; i < this._escape.length; i++) {
+    html = html.replace(new RegExp(this._escape[i], 'g'), esc.unescape);
+  }
+  return html;
+}
+
 // Get html code fast.
 HtmlDom.prototype.html = function(dom) {
   var html = [];
@@ -229,7 +246,11 @@ HtmlDom.prototype.html = function(dom) {
       case 'tag':
         html.push('<' + name);
         for (var i in dom.attributes) {
-          html.push(' ' + i + '="' + dom.attributes[i] + '"');
+          if (dom.attributes[i] === null) {
+            html.push(' ' + i);
+          } else {
+            html.push(' ' + i + '="' + dom.attributes[i] + '"');
+          }
         }
         html.push('>');
 
@@ -247,17 +268,20 @@ HtmlDom.prototype.html = function(dom) {
     html.push(recurse(dom[i]));
   }
 
-  return html.join('');
+  html = html.join('');
+  return this._unescape(html);
 };
 
 HtmlDom.prototype.stringify = function(opt) {
   var uglify = require('./uglify/index');
-  return uglify(this.dom, opt || {});
+  var html = uglify(this.dom, opt || {});
+  return this._unescape(html);
 };
 
 HtmlDom.prototype.beautify = function(opt) {
   var beautify = require('./beautify/index');
-  return beautify(this.dom, opt || {});
+  var html = beautify(this.dom, opt || {});
+  return this._unescape(html);
 };
 
 module.exports = HtmlDom;

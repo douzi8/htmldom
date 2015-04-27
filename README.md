@@ -24,10 +24,15 @@ uglifyjs htmldom.front.js -o htmldom.front.js
 ```
 
 ## API
-### Constructor(code)
+### Constructor(code, escape)
 * {string} ``code`` html string
+* {array} ``[escape]`` escape server code
 ```js
+// html code
 var html = new HtmlDom('<div>1</div>');
+
+// mix server code
+var html = new HtmlDom('<div <%= a %>></div>', [/<%([\s\S]+?)%>/g]);
 ```
 
 ### dom

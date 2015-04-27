@@ -50,7 +50,11 @@ module.exports = function(doms, options) {
       case 'tag':
         html.push(newline + '<' + name);
         for (var i in dom.attributes) {
-          html.push(' ' + i + '="' + dom.attributes[i] + '"');
+          if (dom.attributes[i] === null) {
+            html.push(' ' + i);
+          } else {
+            html.push(' ' + i + '="' + dom.attributes[i] + '"');
+          }
         }
         html.push('>');
 
