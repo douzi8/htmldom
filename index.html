@@ -73,7 +73,7 @@ function change(code) {
   } else {
     code = document.getElementById('txt').value;
   }
-  var html = new HtmlDom(code);
+  var html = new HtmlDom(code, [/<%([\s\S]+?)%>/g]);
 
   document.getElementById('txt2').innerHTML = html.stringify();
   document.getElementById('txt3').innerHTML = html.beautify();
