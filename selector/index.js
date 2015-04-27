@@ -139,13 +139,12 @@ Selector.prototype.html = function(html) {
       return null;
     }
   } else {
-    var htmldom = new HtmlDom(html);
     this.each(function(index, item) {
-      var clonedom = util.extend([], htmldom.dom);
-      clonedom.forEach(function(child) {
+      var htmldom = new HtmlDom(html);
+      htmldom.dom.forEach(function(child) {
         child.parent = item;
       });
-      item.children = clonedom;
+      item.children = htmldom.dom;
     });
   }
 
