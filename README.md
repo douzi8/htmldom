@@ -98,6 +98,10 @@ $('').length;
 $('')[0]        // first element
 $('')[1]        // second
 ```
+* hasClass(class)
+```
+$('').hasClass('cls');
+```
 * addClass(class)
 ```
 $('').addClass('cls');

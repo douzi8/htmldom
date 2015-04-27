@@ -2,6 +2,7 @@ var cssSelector = require('./css-selector');
 var util = require('utils-extend');
 var cssMatch = require('./css-match');
 var CLS_REG = /\s+/;
+var style = require('./style');
 
 function filterSelector(selector) {
   selector = selector.replace(/('[^]*'|"[^]*")/g, function(match) {
@@ -148,6 +149,39 @@ Selector.prototype.html = function(html) {
     });
   }
 
+  return this;
+};
+
+Selector.prototype.css = function(property, value) {
+  if (util.isUndefined(value)) {
+    if (util.isObject(property)) {
+      var result = style.parser(this[0].attributes.style);
+      util.extend(result, property);
+
+      for (var i in result) {
+        if (result[i] === null || result[i] === '') {
+          delete result[i];
+        }
+      }
+
+      this[0].attributes.style = style.stringify(result);
+    } else {
+      if (this.length) {
+        var result = style.parser(this[0].attributes.style);
+        return result[property];
+      }
+    }
+  } else {
+    if (this.length) {
+      var result = style.parser(this[0].attributes.style);
+      if (value === null || value === '') {
+        delete result[property];
+      } else {
+        result[property] = value;
+      }
+      this[0].attributes.style = style.stringify(result);
+    }
+  }
   return this;
 };
 
