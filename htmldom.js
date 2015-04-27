@@ -7,6 +7,16 @@ function HtmlDom(str) {
   this._str = str.trimRight();
   this.dom = [];
   this._scanner();
+  /**
+   * @example
+   * var $ = html.$.bind(html);
+   * $('div').addClass()
+   * $('#id').attr('key')
+   */
+  this.$ = function(selector) {
+    var el = new Selector(selector, this.dom);
+    return el;
+  }.bind(this);
 }
 
 HtmlDom.prototype._scanner = function() {
@@ -197,17 +207,6 @@ HtmlDom.prototype._text = function() {
       value: value
     }];
   }
-};
-
-/**
- * @example
- * var $ = html.$.bind(html);
- * $('div').addClass()
- * $('#id').attr('key')
- */
-HtmlDom.prototype.$ = function(str) {
-  var el = new Selector(str, this.dom);
-  return el;
 };
 
 HtmlDom.prototype.stringify = function(opt) {

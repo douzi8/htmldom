@@ -1,16 +1,17 @@
 var assert = require('assert');
 var HtmlDom = require('../../htmldom');
+var util = require('utils-extend');
 
 describe('optional', function() {
   it('html head body', function() {
+    var time1 = util.hrtime();
     var html = new HtmlDom('<html><head><body><div>');
-
+    var time2 = util.hrtime();
     assert.equal(html.stringify(), '<html><head></head><body><div></div></body></html>');
   });
 
   it('ul li', function() {
     var html = new HtmlDom('<ul><li><div></div><div><li><div>');
-
     assert.equal(html.stringify(),'<ul><li><div></div><div></div></li><li><div></div></li></ul>');
   });
 

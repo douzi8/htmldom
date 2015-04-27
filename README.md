@@ -1,4 +1,4 @@
-# htmldom — Make html string as dom structure
+# htmldom — Simplified html handle in nodejs
 [![NPM](https://nodei.co/npm/htmldom.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/htmldom/)
 ```js
 var HtmlDom = require('htmldom');
@@ -80,6 +80,17 @@ it will return html dom object
   * element
   * [attribute]
   * [attribute=value]
+  * [attribute^=value]
+  * [attribute$=value]
+  * [attribute~=value]
+  * [attribtue*=value]
+```js
+var $ = html.$;
+
+$('div').addClass('cls');
+$('#id').attr('key').addClass('cls');
+$('[key=value]').html('<div></div>');
+```
 
 support jQuery method list
 * length
@@ -115,13 +126,6 @@ $('').html('12')             // set html
 $('').each(function(index, item) {
   
 });
-```
-```js
-var $ = html.$.bind(html);
-
-$('div').addClass('cls');
-$('#id').attr('key').addClass('cls');
-$('[key=value]').html('<div></div>');
 ```
 
 ### stringify()

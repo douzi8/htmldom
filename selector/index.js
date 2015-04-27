@@ -1,5 +1,6 @@
-var cssSelector = require('../lib/reg').cssSelector;
+var cssSelector = require('./css-selector');
 var util = require('utils-extend');
+var cssMatch = require('./css-match');
 
 function filterSelector(selector) {
   selector = selector.replace(/('[^]*'|"[^]*")/g, function(match) {
@@ -25,28 +26,7 @@ Selector.prototype._search = function() {
 
   function recurse(item) {
     if (item.type !== 'tag') return false;
-    var match = true;
-    var attributes = item.attributes;
-
-    if (selector.name) {
-      if (item.name !== selector.name) {
-        match = false;
-      }
-    }
-
-    if (match) {
-      for (var key in selector.attrs) {
-        if (key === 'class') {
-          if (attributes.class.indexOf(selector.attrs.class) === -1) {
-            match = false;
-          }
-        } else if (attributes[key] !== selector.attrs[key]) {
-          match = false;
-        }
-      }
-    }
-    
-    if (match) {
+    if (cssMatch(item, selector)) {
       self[self.length++] = item;
     }
 
@@ -88,7 +68,11 @@ Selector.prototype.attr = function(key, value) {
         }
       });
     } else {
-      return this[0].attributes[key];
+      if (this.length) {
+        return this[0].attributes[key];
+      } else {
+        return undefined;
+      }
     }
   } else {
     this.each(function(index, item) {
