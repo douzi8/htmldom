@@ -13,6 +13,12 @@ describe('optional', function() {
   it('ul li', function() {
     var html = new HtmlDom('<ul><li><div></div><div><li><div>');
     assert.equal(html.stringify(),'<ul><li><div></div><div></div></li><li><div></div></li></ul>');
+
+    html = new HtmlDom('<li><div><ul><li><div><li></ul><li>');
+    assert.equal(html.html(), '<li><div><ul><li><div></div></li><li></li></ul></div></li><li></li>');
+
+    html = new HtmlDom('<li><div><ul><li><div></div></li><li></li></ul><li>');
+    assert.equal(html.html(), '<li><div><ul><li><div></div></li><li></li></ul></div></li><li></li>');
   });
 
   it('dl dt dd', function() {
