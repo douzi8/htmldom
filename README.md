@@ -90,10 +90,11 @@ html.dom
   * [attribtue*=value]
 ```js
 var $ = html.$;
-
-$('div').addClass('cls');
-$('#id').attr('key').addClass('cls');
-$('[key=value]').html('<div></div>');
+// select by tagname is fastest
+$('div .class a')
+$('.wrap .item')
+$('#id li')
+$('#id').attr('key', 'value').addClass('cls').removeClass('cls2');
 ```
 
 support jQuery method list

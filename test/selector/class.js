@@ -3,7 +3,7 @@ var path = require('path');
 var HtmlDom = require('../../htmldom');
 var assert = require('assert');
 
-describe('attr', function() {
+describe('class', function() {
   var html = new HtmlDom('<div class="demo1 demo2"><div class="demo2 demo3"><div>');
   var $ = html.$;
 

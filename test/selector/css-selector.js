@@ -3,21 +3,21 @@ var cssSelector = require('../../selector/css-selector');
 
 describe('css selector', function() {
   it('div', function() {
-    assert.deepEqual(cssSelector('div'), {
+    assert.deepEqual(cssSelector.parser('div'), {
       name: 'div',
       attrs: []
     });
   });
 
   it('#id', function() {
-    assert.deepEqual(cssSelector('div'), {
+    assert.deepEqual(cssSelector.parser('div'), {
       name: 'div',
       attrs: []
     });
   });
 
   it('.class', function() {
-    assert.deepEqual(cssSelector('.class'), {
+    assert.deepEqual(cssSelector.parser('.class'), {
       name: '',
       class: ['class'],
       attrs: []
@@ -25,7 +25,7 @@ describe('css selector', function() {
   });
 
   it('attribute', function() {
-    assert.deepEqual(cssSelector('[key]'), {
+    assert.deepEqual(cssSelector.parser('[key]'), {
       name: '',
       attrs: [{
         name: 'key'
@@ -34,7 +34,7 @@ describe('css selector', function() {
   });
 
   it('=attribute', function() {
-    assert.deepEqual(cssSelector('[key="value"]'), {
+    assert.deepEqual(cssSelector.parser('[key="value"]'), {
       name: '',
       attrs: [{
         name: 'key',
@@ -45,7 +45,7 @@ describe('css selector', function() {
   });
 
   it('^attribute', function() {
-    assert.deepEqual(cssSelector('[key^=value]'), {
+    assert.deepEqual(cssSelector.parser('[key^=value]'), {
       name: '',
       attrs: [{
         name: 'key',
@@ -56,7 +56,7 @@ describe('css selector', function() {
   });
 
   it('$attribute', function() {
-    assert.deepEqual(cssSelector('[key$=value]'), {
+    assert.deepEqual(cssSelector.parser('[key$=value]'), {
       name: '',
       attrs: [{
         name: 'key',
@@ -67,7 +67,7 @@ describe('css selector', function() {
   });
 
   it('~attribute', function() {
-    assert.deepEqual(cssSelector('[key~=value]'), {
+    assert.deepEqual(cssSelector.parser('[key~=value]'), {
       name: '',
       attrs: [{
         name: 'key',
@@ -78,7 +78,7 @@ describe('css selector', function() {
   });
 
   it('*attribute', function() {
-    assert.deepEqual(cssSelector('[key*=value]'), {
+    assert.deepEqual(cssSelector.parser('[key*=value]'), {
       name: '',
       attrs: [{
         name: 'key',
@@ -89,7 +89,7 @@ describe('css selector', function() {
   });
 
   it('mix', function() {
-    assert.deepEqual(cssSelector('div#id.cls1.cls2[key^="value value"]'), {
+    assert.deepEqual(cssSelector.parser('div#id.cls1.cls2[key^="value value"]'), {
       name: 'div',
       class: ['cls1', 'cls2'],
       attrs: [

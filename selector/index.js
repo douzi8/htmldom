@@ -4,21 +4,19 @@ var cssMatch = require('./css-match');
 var CLS_REG = /\s+/;
 var style = require('./style');
 
-function filterSelector(selector) {
-  selector = selector.replace(/('[^]*'|"[^]*")/g, function(match) {
-    return match.replace(/\s/g, '%20');
-  });
-
-  return /\s+/.test(selector);
-}
-
 function Selector(selector, root) {
   if (util.isString(selector)) {
-    if (filterSelector(selector)) {
-      throw new Error('Not support child selector now');
-    }
     this.length = 0;
-    this._search(selector, root);
+    selector = cssSelector.split(selector);
+    this._search(selector.shift(), root);
+    // found child node by check parent
+    if (selector.length) {
+      var child = this;
+      for (var i = 0; i < selector.length; i++) {
+        child = child.find(selector[i]);
+      }
+      return child;
+    }
   } else {
     if (!util.isArray(selector)) {
       selector = [selector];
@@ -34,8 +32,8 @@ function Selector(selector, root) {
 
 Selector.prototype._search = function(selector, root) {
   var self = this;
-  var selector = cssSelector(selector);
-
+  selector = cssSelector.parser(selector);
+  
   function recurse(item) {
     if (item.type !== 'tag') return false;
     if (cssMatch(item, selector)) {

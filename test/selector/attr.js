@@ -44,6 +44,12 @@ describe('attr', function() {
     });
   });
 
+  it('quote value', function() {
+    var html = new HtmlDom('<ul data-value="\'1\'">');
+
+    assert.equal(html.$('ul').attr('data-value'), "'1'");
+  });
+
   it('set number or boolean', function() {
     $('div').attr('id', 1);
     $('div').attr('value', true);
