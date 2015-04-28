@@ -86,7 +86,21 @@ Selector.prototype.find = function(selector) {
     }
   }
 
-  return new Selector(selector, root);
+  var result;
+  if (root.length) {
+    // filter parent
+    result = root.reduce(function(pre, current,index) {
+      if (index === 0) {
+        return current.children;
+      } else {
+        return pre.concat(current.children);
+      }
+    }, true);
+  }  else {
+    result = [];
+  }
+
+  return new Selector(selector, result);
 };
 
 Selector.prototype.each = function(callback) {

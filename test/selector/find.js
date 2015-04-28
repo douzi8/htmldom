@@ -28,4 +28,14 @@ describe('found', function() {
     assert.equal($('ul').find('li').length, 4);
     assert.equal($('ul li').length, 4);
   });
+
+  it('filter parent', function() {
+    var html = new HtmlDom('<div><div><div>');
+    var $ = html.$;
+
+    assert.equal($('div').length, 3);
+    assert.equal($('div').find('div').length, 2);
+    assert.equal($('div').find('div').find('div').length, 1);
+    assert.equal($('div div div').length, 1);
+  });
 });
