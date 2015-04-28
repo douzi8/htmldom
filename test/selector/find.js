@@ -19,4 +19,13 @@ describe('found', function() {
     div.find('h3').html('').addClass('title');
     assert.equal(html.html(), '<div><h3 class="title"></h3></div><div><h3 class="title"></h3></div>');
   });
+
+  it('child unique', function() {
+    var html = new HtmlDom('<ul><li><ul><li></ul><li><ul><li></ul></ul><ul><li></ul>');
+    var $ = html.$;
+
+    assert.equal($('ul').length, 4);
+    assert.equal($('ul').find('li').length, 4);
+    assert.equal($('ul li').length, 4);
+  });
 });
