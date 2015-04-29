@@ -159,7 +159,7 @@ $('').eq(-1)    // last element
 * each(function(index, item) {})
 ```
 $('').each(function(index, item) {
-  
+  var $item = $(item);
 });
 ```
 
