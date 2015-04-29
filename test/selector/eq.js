@@ -1,5 +1,3 @@
-var fs = require('fs');
-var path = require('path');
 var HtmlDom = require('../../htmldom');
 var assert = require('assert');
 

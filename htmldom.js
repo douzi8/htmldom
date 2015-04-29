@@ -26,6 +26,7 @@ function HtmlDom(str, escape) {
    */
   this.$ = function(selector) {
     var el = new Selector(selector, this.dom);
+    el._document = this.dom;
     return el;
   }.bind(this);
 }

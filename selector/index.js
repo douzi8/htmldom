@@ -50,6 +50,29 @@ Selector.prototype._search = function(selector, root) {
   }
 };
 
+Selector.prototype._keepParent = function() {
+  var root = [];
+  var parent;
+
+  for (var i = 0; i < this.length; i++) {
+    var isChild = false;
+    parent = this[i].parent;
+    while (parent) {
+      if (root.indexOf(parent) !== -1) {
+        isChild = true;
+        break;
+      }
+      parent = parent.parent;
+    }
+
+    if (!isChild) {
+      root.push(this[i]);
+    }
+  }
+
+  return root;
+};
+
 /**
  * @example
  * $('').eq(0)
@@ -89,29 +112,12 @@ Selector.prototype.filter = function(selector) {
  * $('').find('a');
  */
 Selector.prototype.find = function(selector) {
-  var root = [];
-  var parent;
-
-  for (var i = 0; i < this.length; i++) {
-    var isChild = false;
-    parent = this[i].parent;
-    while (parent) {
-      if (root.indexOf(parent) !== -1) {
-        isChild = true;
-        break;
-      }
-      parent = parent.parent;
-    }
-
-    if (!isChild) {
-      root.push(this[i]);
-    }
-  }
-
+  var els = this._keepParent();
   var result;
-  if (root.length) {
+
+  if (els.length) {
     // filter parent
-    result = root.reduce(function(pre, current,index) {
+    result = els.reduce(function(pre, current,index) {
       if (index === 0) {
         return current.children;
       } else {
@@ -196,6 +202,30 @@ Selector.prototype.html = function(html) {
       });
       item.children = htmldom.dom;
     });
+  }
+
+  return this;
+};
+
+/**
+ * @example
+ * $('').remove()
+ */
+Selector.prototype.remove = function() {
+  var els = this._keepParent();
+
+  for (var i = 0, l = els.length; i < l; i++) {
+    var item = els[i];
+    var parent = item.parent || this._document;
+    var children = parent.children || parent;
+
+    for (var j = 0; j < children.length; j++) {
+      if (children[j] === item) {
+        break;
+      }
+    }
+
+    children.splice(j, 1);
   }
 
   return this;

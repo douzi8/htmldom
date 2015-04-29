@@ -131,6 +131,10 @@ $('').attr('key', null)      // remove attr
 $('').html()                 // get html
 $('').html('12')             // set html
 ```
+* remove()
+```js
+$('').remove();
+```
 * css(property, value)
 ```js
 $('').css('height');               // get
