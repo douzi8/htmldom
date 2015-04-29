@@ -39,6 +39,11 @@ module.exports = function(doms, options) {
       case 'documentType':
         html.push(dom.value);
         break;
+      case 'comment':
+        if (dom.isIEHack) {
+          html.push('<!--' + dom.value.trim() + '-->');
+        }
+        break;
       case 'text':
         html.push(dom.value.trim());
         break;

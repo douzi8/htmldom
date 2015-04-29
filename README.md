@@ -73,7 +73,8 @@ html.dom
 ```js
 {
   type: 'comment',
-  value: 'header comment'
+  value: 'header comment',
+  isIEHack: false
 }
 ```
 

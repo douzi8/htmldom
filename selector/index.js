@@ -68,10 +68,10 @@ Selector.prototype.eq = function(index) {
  */
 Selector.prototype.find = function(selector) {
   var root = [];
-  var isChild = false;
   var parent;
 
   for (var i = 0; i < this.length; i++) {
+    var isChild = false;
     parent = this[i].parent;
     while (parent) {
       if (root.indexOf(parent) !== -1) {

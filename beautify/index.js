@@ -46,7 +46,7 @@ module.exports = function(doms, options) {
         html.push(dom.value.trim());
         break;
       case 'comment':
-        html.push('<!--' + dom.value.trim() + '-->');
+        html.push('<!--' + dom.value + '-->');
         break;
       case 'tag':
         html.push(newline + '<' + name);

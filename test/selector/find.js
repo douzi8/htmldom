@@ -25,8 +25,8 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('ul').length, 4);
-    assert.equal($('ul').find('li').length, 4);
-    assert.equal($('ul li').length, 4);
+    assert.equal($('ul').find('li').length, 5);
+    assert.equal($('ul li').length, 5);
   });
 
   it('filter parent', function() {
@@ -37,5 +37,15 @@ describe('found', function() {
     assert.equal($('div').find('div').length, 2);
     assert.equal($('div').find('div').find('div').length, 1);
     assert.equal($('div div div').length, 1);
+  });
+
+  it('filter child', function() {
+    var html = new HtmlDom('<div><div><a></div></div><div><a>');
+    var $ = html.$;
+
+    assert.equal($('a').length, 2);
+    assert.equal($('div a').length, 2);
+    assert.equal($('div').find('a').length, 2);
+    assert.equal($('div').find('div').find('a').length, 1);
   });
 });

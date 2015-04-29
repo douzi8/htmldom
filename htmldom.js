@@ -82,8 +82,10 @@ HtmlDom.prototype._comment = function() {
 
     this.dom.push({
       type: 'comment',
-      value: value
+      value: value,
+      isIEHack: value.slice(value.length- REG.IE_HACK.length) === REG.IE_HACK
     });
+
     return true;
   } else {
     return false;
@@ -239,6 +241,9 @@ HtmlDom.prototype.html = function(dom) {
     var name = dom.name;
 
     switch (dom.type) {
+      case 'documentType':
+        html.push(dom.value);
+        break;
       case 'text':
         html.push(dom.value);
         break;
