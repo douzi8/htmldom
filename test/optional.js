@@ -49,5 +49,9 @@ describe('optional', function() {
     var html = new HtmlDom('<table><thead><tr><tr><tbody><tr><th><th><tr>');
 
     assert.equal(html.stringify(), '<table><thead><tr></tr><tr></tr></thead><tbody><tr><th></th><th></th></tr><tr></tr></tbody></table>');
+
+    html = new HtmlDom('<table><tbody><tr><th><div><table><caption><tbody><tr><th><th><tr><td><td><tr><td><div></div></table></div><th><tr></table>');
+
+    assert.equal(html.stringify(), '<table><tbody><tr><th><div><table><caption></caption><tbody><tr><th></th><th></th></tr><tr><td></td><td></td></tr><tr><td><div></div></td></tr></tbody></table></div></th><th></th></tr><tr></tr></tbody></table>');
   });
 });
