@@ -144,6 +144,13 @@ $('').css({
 ```
 $('').find('a').attr('title', 'title');
 ```
+* filter(selector)
+```
+$('').filter('[data-id=1]')
+$('').filter(function(index) {
+  return $(this[index]).attr('data-id') == 1;
+});
+```
 * eq(index)
 ```
 $('').eq(0)     // first element

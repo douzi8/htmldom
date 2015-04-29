@@ -64,6 +64,28 @@ Selector.prototype.eq = function(index) {
 
 /**
  * @example
+ * $('').filter('[data-id=1]')
+ * $('').filter(function(index) {});
+ */
+Selector.prototype.filter = function(selector) {
+  var result = [];
+  var isFunction = util.isFunction(selector);
+
+  for (var i = 0; i < this.length; i++) {
+    if (isFunction) {
+      if (selector.call(this, i)) {
+        result.push(this[i]);
+      }
+    } else if (cssMatch(this[i], cssSelector.parser(selector))) {
+      result.push(this[i]);
+    }
+  }
+
+  return new Selector(result);
+}
+
+/**
+ * @example
  * $('').find('a');
  */
 Selector.prototype.find = function(selector) {
