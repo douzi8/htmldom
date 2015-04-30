@@ -140,7 +140,7 @@ HtmlDom.prototype._attrs = function(name) {
       }
 
       if (attrs.hasOwnProperty(key)) {
-        key += '__' + count;
+        key += '__' + count++;
       }
 
       value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
