@@ -27,22 +27,14 @@ module.exports = function(dom, options) {
   if (options.removeCssType && dom.name === 'style' && dom.attributes.type === 'text/css') {
     delete dom.attributes.type;
   }
-  var count = 0;
   for (var i in dom.attributes) {
-    html .push(' ');
-    if (dom._serverCode[count]) {
-      html.push(dom._serverCode[count].join(' '));
-    }
+    var key = i.replace(REG.ATTR_BUG, '');
     var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
     if (optionEqual) {
-      html.push(i);
+      html.push(' ' + key);
     } else {
-      html.push(i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+      html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
     }
-    count++;
-  }
-  if (dom._serverCode[count]) {
-    html.push(' ' + dom._serverCode[count].join(' '));
   }
 
   return html.join('');

@@ -50,24 +50,14 @@ module.exports = function(doms, options) {
         break;
       case 'tag':
         html.push(newline + '<' + name);
-        var count = 0;
         for (var i in dom.attributes) {
-          html.push(' ');
-          if (dom._serverCode[count]) {
-            html.push(dom._serverCode[count].join(' '));
-          }
+          var key = i.replace(REG.ATTR_BUG, '');
           if (dom.attributes[i] === null) {
-            html.push(i);
+            html.push(' ' + key);
           } else {
-            html.push(i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+            html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
           }
-          count++;
         }
-
-        if (dom._serverCode[count]) {
-          html.push(' ' + dom._serverCode[count].join(' '));
-        }
-
         html.push('>');
 
         if (VOID_ELEMENTS.indexOf(name) == -1) {
@@ -80,7 +70,6 @@ module.exports = function(doms, options) {
             html.push(newline + cssbeaut);
           } else if (isJs(name, dom.attributes.type)) {
             var jsbeaut = jsBeautify(dom.children[0].value, options.jsBeautify).replace(/\n/g, newline);
-
             html.push(newline + jsbeaut);
           } else {
             dom.children.forEach(function(item) {

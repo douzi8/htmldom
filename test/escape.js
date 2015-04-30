@@ -11,6 +11,6 @@ describe('escape', function() {
   it('same code in attribute', function() {
     var html = new HtmlDom('<div <%= id %> <%= id %>></div>', [/<%([\s\S]+?)%>/g]);
 
-    assert.equal(html.html(), '<div <%= id %> <%= id %>></div>');
+    assert.equal(html.html(), '<div <%= id %><%= id %>></div>');
   });
 });

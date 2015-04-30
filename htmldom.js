@@ -11,9 +11,10 @@ function HtmlDom(str, escape) {
   if (escape) {
     // Escape server code first
     for (var i = 0; i < escape.length; i++) {
-      str = str.replace(escape[i], esc.escape);
-      var reg = new RegExp(esc.escape(escape[i].source), 'g');
-      this._escape.push(reg);
+      str = str.replace(escape[i], function(match) {
+        return esc.escape(match) + ' ';
+      });
+      this._escape.push(esc.escape(escape[i].source) + '\\s?');
     }
   }
 
@@ -123,8 +124,8 @@ HtmlDom.prototype._attrs = function(name) {
   if (this._str[0] === '>') {
     this._str = this._str.slice(1);
     var attrs = {};
-    var serverCode = {};
     var count = 0;
+
     /**
      * attributes syntax
      * @example
@@ -134,23 +135,19 @@ HtmlDom.prototype._attrs = function(name) {
      * Double-quoted attribute value: <input name="be evil">
      */
     match[0].replace(REG.ATTR, function(match, key, value) {
-      // fixed server code
-      if (self._isServerCode(key)) {
-        serverCode[count] = serverCode[count] || [];
-        serverCode[count].push(key);
-      } else {
+      if (!self._isServerCode(key)) {
         key = key.toLowerCase();
-        value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
-
-        if (!attrs.hasOwnProperty(key)) {
-          count++;
-          attrs[key] = value;
-        }
       }
+
+      if (attrs.hasOwnProperty(key)) {
+        key += '__' + count;
+      }
+
+      value = value ? value.replace(REG.TRIM_QUOTES, '') : null;
+      attrs[key] = value;
     });
     var dom = {
       name: name.toLowerCase(),
-      _serverCode: serverCode,
       attributes: attrs
     };
 
@@ -238,7 +235,14 @@ HtmlDom.prototype._text = function() {
 };
 
 HtmlDom.prototype._isServerCode = function(code) {
-  return code !== this._unescape(code);
+  for (var i = 0; i < this._escape.length; i++) {
+    var reg = new RegExp(this._escape[i]);
+    if (reg.test(code)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 HtmlDom.prototype._unescape = function(html, callback) {
@@ -247,11 +251,11 @@ HtmlDom.prototype._unescape = function(html, callback) {
     if (callback) {
       match = callback(match);
     }
-    return match;
+    return match.trimRight();
   }
 
   for (var i = 0; i < this._escape.length; i++) {
-    html = html.replace(this._escape[i], replace);
+    html = html.replace(new RegExp(this._escape[i], 'g'), replace);
   }
   return html;
 };
@@ -277,24 +281,14 @@ HtmlDom.prototype.html = function(dom) {
         break;
       case 'tag':
         html.push('<' + name);
-        var count = 0;
         for (var i in dom.attributes) {
-          html.push(' ');
-          if (dom._serverCode[count]) {
-            html.push(dom._serverCode[count].join(' '));
-          }
+          var key = i.replace(REG.ATTR_BUG, '');
           if (dom.attributes[i] === null) {
-            html.push(i);
+            html.push(' ' + key);
           } else {
-            html.push(i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+            html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
           }
-          count++;
         }
-
-        if (dom._serverCode[count]) {
-          html.push(' ' + dom._serverCode[count].join(' '));
-        }
-
         html.push('>');
 
         if (VOID_ELEMENTS.indexOf(name) == -1) {

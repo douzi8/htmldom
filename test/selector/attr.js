@@ -32,17 +32,9 @@ describe('attr', function() {
       key: 'value'
     });
 
-    assert.deepEqual(div[0], {
-      type: 'tag',
-      name: 'div',
-      _serverCode: {},
-      attributes: {
-        'data-id': '2',
-        key: 'value'
-      },
-      children: [],
-      parent: null
-    });
+    assert.equal(div.attr('id'), null);
+    assert.equal(div.attr('data-id'), '2');
+    assert.equal(div.attr('key'), 'value');
   });
 
   it('quote value', function() {
