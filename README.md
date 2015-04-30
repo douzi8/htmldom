@@ -205,13 +205,6 @@ html.html()
   </script>
   ```
   * {function} ``[options.onServerCode]`` uglify server code callback
-  ```js
-  {
-    onServerCode: function(code) {
-      return code;
-    }
-  }
-  ```
   * {object} ``[options.cssdom]``  
 Use [cssdom](https://github.com/douzi8/cssdom) uglify css code
   ```html
@@ -231,7 +224,11 @@ Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code
 ```js
 html.stringify({
   booleanAttributes: true,
-  templateType: ['text/template']
+  templateType: ['text/template'],
+  // handle server code by callback
+  onServerCode: function(code) {
+    return code;
+  },
   uglifyJs: {}
 });
 ```
