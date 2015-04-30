@@ -204,6 +204,14 @@ html.html()
     </div>
   </script>
   ```
+  * {function} ``[options.onServerCode]`` uglify server code callback
+  ```js
+  {
+    onServerCode: function(code) {
+      return code;
+    }
+  }
+  ```
   * {object} ``[options.cssdom]``  
 Use [cssdom](https://github.com/douzi8/cssdom) uglify css code
   ```html

@@ -18,7 +18,7 @@ function isBooleanAttr(name) {
 
 
 module.exports = function(dom, options) {
-  var html = '';
+  var html = [];
 
   if (options.removeJsType && dom.name === 'script' && dom.attributes.type === 'text/javascript') {
     delete dom.attributes.type;
@@ -27,17 +27,23 @@ module.exports = function(dom, options) {
   if (options.removeCssType && dom.name === 'style' && dom.attributes.type === 'text/css') {
     delete dom.attributes.type;
   }
-
+  var count = 0;
   for (var i in dom.attributes) {
-    var key = i.replace(REG.ATTR_BUG, '');
-    html += ' ';
+    html .push(' ');
+    if (dom._serverCode[count]) {
+      html.push(dom._serverCode[count].join(' '));
+    }
     var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
     if (optionEqual) {
-      html += key;
+      html.push(i);
     } else {
-      html += key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"';
+      html.push(i + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
     }
+    count++;
+  }
+  if (dom._serverCode[count]) {
+    html.push(' ' + dom._serverCode[count].join(' '));
   }
 
-  return html;
+  return html.join('');
 };

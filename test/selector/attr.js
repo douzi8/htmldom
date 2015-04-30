@@ -35,8 +35,9 @@ describe('attr', function() {
     assert.deepEqual(div[0], {
       type: 'tag',
       name: 'div',
+      _serverCode: {},
       attributes: {
-        'data-id': 2,
+        'data-id': '2',
         key: 'value'
       },
       children: [],
@@ -61,5 +62,11 @@ describe('attr', function() {
     });
 
     assert.equal($('div').attr('value'), 'false');
+  });
+
+  it('lowercase', function() {
+    var html = new HtmlDom('<div ID="test">');
+
+    assert.equal(html.$('div').attr('Id'), 'test');
   });
 });
