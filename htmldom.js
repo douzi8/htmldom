@@ -29,8 +29,7 @@ function HtmlDom(str, escape) {
    */
   var dom = this.dom;
   this.$ = function(selector) {
-    $.document = dom;
-    return $(selector);
+    return $(selector, dom);
   };
 }
 

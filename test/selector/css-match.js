@@ -86,6 +86,10 @@ describe('selecor', function() {
     assert.equal($('.cls + p + p').length, 1);
     assert.equal($('.cls + p + p').attr('value'), '2');
     assert.equal($('h3 + p').length, 1);
+
+    var html2 = new HtmlDom('<div></div><!-- commnet -->text<div>');
+
+    assert.equal(html2.$('div + div').length, 1);
   });
 
   it('element ~ element', function() {

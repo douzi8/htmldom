@@ -3,10 +3,12 @@ var util = require('utils-extend');
 var CLS_REG = /\s+/;
 var style = require('./style');
 
-function $(selector) {
+function $(selector, doc) {
   if (!(this instanceof $)) {
-    return new $(selector);
+    return new $(selector, doc);
   }
+
+  this.document = doc;
 
   if (util.isString(selector)) {
     selector = css.split(selector);
@@ -65,8 +67,8 @@ $.prototype._search = function(selector) {
     }
   }
 
-  for (var i = 0, l = $.document.length; i < l; i++) {
-    recurse($.document[i]);
+  for (var i = 0, l = this.document.length; i < l; i++) {
+    recurse(this.document[i]);
   }
 
   return result;
@@ -134,7 +136,14 @@ $.prototype._matchNextWithBrother = function(selector, nodes) {
         break;
       }
     }
-    return brother[i - 1];
+
+    while (i--) {
+      var item = brother[i];
+
+      if (item.type === 'tag') {
+        return item;
+      }
+    }
   }
 
   for (var i = 0, l = nodes.length; i < l; i++) {
@@ -143,7 +152,7 @@ $.prototype._matchNextWithBrother = function(selector, nodes) {
     if (searchNode.parent) {
       brother = searchNode.parent.children;
     } else {
-      brother = $.document;
+      brother = this.document;
     }
     var pre = preceded(brother, searchNode);
 
@@ -180,7 +189,7 @@ $.prototype._matchPrecededByBrother = function(selector, nodes) {
     if (searchNode.parent) {
       brother = searchNode.parent.children;
     } else {
-      brother = $.document;
+      brother = this.document;
     }
 
     var pres = preceded(brother, searchNode);
@@ -321,7 +330,7 @@ $.prototype.html = function(html) {
 $.prototype.remove = function() {
   for (var i = 0, l = this.length; i < l; i++) {
     var item = this[i];
-    var parent = item.parent || $.document;
+    var parent = item.parent || this.document;
     var children = parent.children || parent;
 
     for (var j = 0; j < children.length; j++) {

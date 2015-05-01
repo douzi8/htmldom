@@ -84,7 +84,7 @@ html.dom
 ### $(selector)
 * {string} ``selector`` [w3c selector](http://www.w3schools.com/cssref/css_selectors.asp), support list
   * element
-  * \*
+  * &ast;
   * element > element
   * element + element
   * element ~ element
@@ -171,7 +171,8 @@ $('').eq(-1)    // last element
 * each(function(index, item) {})
 ```
 $('').each(function(index, item) {
-  var $item = $(item);
+  // this.document means current html dom structor
+  var $item = $(item, this.document);
 });
 ```
 
