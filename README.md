@@ -84,7 +84,7 @@ html.dom
 ### $(selector)
 * {string} ``selector`` [w3c selector](http://www.w3schools.com/cssref/css_selectors.asp), support list
   * element
-  * *
+  * \*
   * element > element
   * element + element
   * element ~ element
