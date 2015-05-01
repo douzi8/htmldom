@@ -211,6 +211,25 @@ $.prototype._matchPrecededByBrother = function(selector, nodes) {
 };
 
 /**
+ * $('').parent();
+ * $('').parent('.cls')
+ */
+$.prototype.parent = function(selector) {
+  var result = [];
+  selector = css.parser(selector || '');
+
+  for (var i = 0; i < this.length; i++) {
+    var parent = this[i].parent;
+
+    if (parent && css.match(parent, selector)) {
+      result.push(parent);
+    }
+  }
+
+  return $(result, this.document);
+}
+
+/**
  * @example
  * $('').eq(0)
  * $('').eq(-1)
@@ -219,7 +238,7 @@ $.prototype.eq = function(index) {
   if (index < 0) {
     index += this.length;
   }
-  return $(this[index]);
+  return $(this[index], this.document);
 }
 
 /**
@@ -241,7 +260,7 @@ $.prototype.filter = function(selector) {
     }
   }
 
-  return $(result);
+  return $(result, this.document);
 };
 
 $.prototype.each = function(callback) {
@@ -290,33 +309,6 @@ $.prototype.attr = function(key, value) {
         value += '';
         item.attributes[key] = value;
       }
-    });
-  }
-
-  return this;
-};
-
-/**
- * @example
- * $('').html()                // get
- * $('').html('<div></div>')   // set
- */
-$.prototype.html = function(html) {
-  var HtmlDom = require('../htmldom');
-  if (util.isUndefined(html)) {
-    if (this.length) {
-      var htmldom = new HtmlDom();
-      return htmldom.html(this[0].children);
-    } else {
-      return null;
-    }
-  } else {
-    this.each(function(index, item) {
-      var htmldom = new HtmlDom(html);
-      htmldom.dom.forEach(function(child) {
-        child.parent = item;
-      });
-      item.children = htmldom.dom;
     });
   }
 
@@ -461,5 +453,68 @@ $.prototype.removeClass = function(name) {
   });
   return this;
 }
+
+$.prototype._createdom = function(html, callback) {
+  var HtmlDom = require('../htmldom');
+
+  for (var i = 0; i < this.length; i++) {
+    var htmldom = new HtmlDom(html).dom;
+    callback(this[i], htmldom);
+  }
+}
+
+/**
+ * @example
+ * $('').html()                // get
+ * $('').html('<div></div>')   // set
+ */
+$.prototype.html = function(content) {
+  if (util.isUndefined(content)) {
+    if (this.length) {
+      var HtmlDom = require('../htmldom');
+      var htmldom = new HtmlDom();
+      return htmldom.html(this[0].children);
+    } else {
+      return null;
+    }
+  } else {
+    this._createdom(content, function(item, children) {
+      children.forEach(function(child) {
+        child.parent = item;
+      });
+      item.children = children;
+    });
+  }
+
+  return this;
+};
+
+/**
+ * $('').append('<ul><li>1');
+ */
+$.prototype.append = function(content) {
+  this._createdom(content, function(item, children) {
+    children.forEach(function(child) {
+      child.parent = item;
+      item.children.push(child);
+    });  
+  });
+
+  return this;
+};
+
+/**
+ * $('')
+ */
+$.prototype.prepend = function(content) {
+  this._createdom(content, function(item, children) {
+    length = children.length;
+    while (length--) {
+      var child = children[length];
+      child.parent = item;
+      item.children.unshift(child);
+    }
+  });
+};
 
 module.exports = $;

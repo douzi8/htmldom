@@ -136,10 +136,23 @@ $('').attr('key', 'value')   // assign
 $('').attr({});              // multiple assign
 $('').attr('key', null)      // remove attr
 ```
-* html(html)
+* parent(selector)
+```
+$('').parent()
+$('').parent('.cls')
+```
+* html(content)
 ```js
 $('').html()                 // get html
 $('').html('12')             // set html
+```
+* append(content)
+```js
+$('').append('<h3>title');
+```
+* prepend(content)
+```js
+$('').prepend('<h3>title');
 ```
 * remove()
 ```js
