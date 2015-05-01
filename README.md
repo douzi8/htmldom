@@ -31,8 +31,11 @@ uglifyjs htmldom.front.js -o htmldom.front.js
 // html code
 var html = new HtmlDom('<div>1</div>');
 
-// mix server code
+// underscore template
 var html = new HtmlDom('<div <%= a %>></div>', [/<%([\s\S]+?)%>/g]);
+
+// AngularJs template
+var html = new HtmlDom('<div {{name}}></div>', [/\{\{([\s\S]+?)\}\}/g]);
 ```
 
 ### dom
@@ -81,6 +84,10 @@ html.dom
 ### $(selector)
 * {string} ``selector`` [w3c selector](http://www.w3schools.com/cssref/css_selectors.asp), support list
   * element
+  * *
+  * element > element
+  * element + element
+  * element ~ element
   * #id
   * .class
   * [attribute]
@@ -91,11 +98,14 @@ html.dom
   * [attribtue*=value]
 ```js
 var $ = html.$;
-// select by tagname is fastest
 $('div .class a')
+$('.item > *')
+$('div + p')
+$('.item ~ p')
+$('.item > a')
 $('.wrap .item')
 $('#id li')
-$('#id').attr('key', 'value').addClass('cls').removeClass('cls2');
+$('[title]').attr('key', 'value').addClass('cls').removeClass('cls2');
 ```
 
 support jQuery method list
@@ -144,10 +154,8 @@ $('').css({
   
 });
 ```
-* find(selector)
-```
-$('').find('a').attr('title', 'title');
-```
+* find(selector)  
+The api is deprecated. The ``$`` is faster then ``find``.
 * filter(selector)
 ```
 $('').filter('[data-id=1]')

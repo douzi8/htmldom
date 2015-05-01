@@ -1,7 +1,7 @@
 var REG = require('./lib/reg');
 var Parser = require('./lib/parser');
 var VOID_ELEMENTS = require('./lib/elements').VOID_ELEMENTS;
-var Selector = require('./selector/index');
+var $ = require('./selector/index');
 var esc = require('./lib/escape');
 
 function HtmlDom(str, escape) {
@@ -23,15 +23,15 @@ function HtmlDom(str, escape) {
   this._scanner();
   /**
    * @example
-   * var $ = html.$.bind(html);
+   * var $ = html.$;
    * $('div').addClass()
    * $('#id').attr('key')
    */
+  var dom = this.dom;
   this.$ = function(selector) {
-    var el = new Selector(selector, this.dom);
-    el._document = this.dom;
-    return el;
-  }.bind(this);
+    $.document = dom;
+    return $(selector);
+  };
 }
 
 HtmlDom.prototype._scanner = function() {

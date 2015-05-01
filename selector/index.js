@@ -1,22 +1,42 @@
-var cssSelector = require('./css-selector');
+var css = require('./css');
 var util = require('utils-extend');
-var cssMatch = require('./css-match');
 var CLS_REG = /\s+/;
 var style = require('./style');
 
-function Selector(selector, root) {
+function $(selector) {
+  if (!(this instanceof $)) {
+    return new $(selector);
+  }
+
   if (util.isString(selector)) {
-    this.length = 0;
-    selector = cssSelector.split(selector);
-    this._search(selector.shift(), root);
-    // found child node by check parent
-    if (selector.length) {
-      var child = this;
-      for (var i = 0; i < selector.length; i++) {
-        child = child.find(selector[i]);
+    selector = css.split(selector);
+    var result = this._search(selector.shift());
+
+    while (selector.length) {
+      var item = selector.shift();
+
+      switch (item.operator) {
+        case '>':
+          result = this._matchDirectParent(item, result);
+          break;
+        case '+':
+          result = this._matchNextWithBrother(item, result);
+          break;
+        case '~':
+          result = this._matchPrecededByBrother(item, result);
+          break;
+        default:
+          result = this._matchParent(item, result);
       }
-      return child;
     }
+
+    for (var i = 0; i < result.length; i++) {
+      delete result[i]._searchNode;
+      this[i] = result[i];     
+    }
+
+    this.length = result.length;
+
   } else {
     if (!util.isArray(selector)) {
       selector = [selector];
@@ -30,14 +50,14 @@ function Selector(selector, root) {
   }
 }
 
-Selector.prototype._search = function(selector, root) {
-  var self = this;
-  selector = cssSelector.parser(selector);
-  
+
+$.prototype._search = function(selector) {
+  var result = [];
+
   function recurse(item) {
-    if (item.type !== 'tag') return false;
-    if (cssMatch(item, selector)) {
-      self[self.length++] = item;
+    if (item.type !== 'tag') return;
+    if (css.match(item, selector)) {
+      result.push(item);
     }
 
     for (var i = 0, l = item.children.length; i < l; i++) {
@@ -45,32 +65,140 @@ Selector.prototype._search = function(selector, root) {
     }
   }
 
-  for (var i = 0, l = root.length; i < l; i++) {
-    recurse(root[i]);
+  for (var i = 0, l = $.document.length; i < l; i++) {
+    recurse($.document[i]);
   }
+
+  return result;
 };
 
-Selector.prototype._keepParent = function() {
-  var root = [];
-  var parent;
+/**
+ * @example
+ * $('div a')
+ */
+$.prototype._matchParent = function(selector, nodes) {
+  var result = [];
 
-  for (var i = 0; i < this.length; i++) {
-    var isChild = false;
-    parent = this[i].parent;
-    while (parent) {
-      if (root.indexOf(parent) !== -1) {
-        isChild = true;
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    var searchNode = nodes[i]._searchNode || nodes[i];
+    var match = false; 
+    while (searchNode = searchNode.parent) {
+      if (css.match(searchNode, selector)) {
+        result.push(nodes[i]);
+        nodes[i]._searchNode = searchNode;
+        match = true;
         break;
       }
-      parent = parent.parent;
     }
 
-    if (!isChild) {
-      root.push(this[i]);
+    if (!match) {
+      delete nodes[i]._searchNode;
     }
   }
 
-  return root;
+  return result;
+};
+
+/**
+ * @example
+ * $('div > a')
+ */
+$.prototype._matchDirectParent = function(selector, nodes) {
+  var result = [];
+
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    var searchNode = nodes[i]._searchNode || nodes[i];
+    searchNode = searchNode.parent;
+
+    if (searchNode && css.match(searchNode, selector)) {
+      result.push(nodes[i]);
+      nodes[i]._searchNode = searchNode;
+    } else {
+      delete nodes[i]._searchNode;
+    }
+  }
+
+  return result;
+};
+
+/**
+ * @example
+ * $('div + p')
+ */
+$.prototype._matchNextWithBrother = function(selector, nodes) {
+  var result = [];
+
+  function preceded(brother, node) {
+    for (var i = 0; i < brother.length; i++) {
+      if (brother[i] === node) {
+        break;
+      }
+    }
+    return brother[i - 1];
+  }
+
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    var searchNode = nodes[i]._searchNode || nodes[i];
+    var brother;
+    if (searchNode.parent) {
+      brother = searchNode.parent.children;
+    } else {
+      brother = $.document;
+    }
+    var pre = preceded(brother, searchNode);
+
+    if (pre && css.match(pre, selector)) {
+      result.push(nodes[i]);
+      nodes[i]._searchNode = pre;
+    } else {
+      delete nodes[i]._searchNode;
+    }
+  }
+
+  return result;
+};
+/**
+ * @example 
+ * $('div ~ p')
+ */
+$.prototype._matchPrecededByBrother = function(selector, nodes) {
+  var result = [];
+
+  function preceded(brother, node) {
+    for (var i = 0; i < brother.length; i++) {
+      if (brother[i] === node) {
+        break;
+      }
+    }
+    
+    return brother.slice(0, i);
+  }
+
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    var searchNode = nodes[i]._searchNode || nodes[i];
+    var brother;
+    if (searchNode.parent) {
+      brother = searchNode.parent.children;
+    } else {
+      brother = $.document;
+    }
+
+    var pres = preceded(brother, searchNode);
+
+    if (pres.length) {
+      for (var j = 0; j < pres.length; j++) {
+        if (css.match(pres[j], selector)) {
+          result.push(nodes[i]);
+          nodes[i]._searchNode = pres[i];
+          break;
+        }
+      }
+    } else {
+      delete nodes[i]._searchNode;
+    }
+  }
+
+  return result;
 };
 
 /**
@@ -78,11 +206,11 @@ Selector.prototype._keepParent = function() {
  * $('').eq(0)
  * $('').eq(-1)
  */
-Selector.prototype.eq = function(index) {
+$.prototype.eq = function(index) {
   if (index < 0) {
     index += this.length;
   }
-  return new Selector(this[index]);
+  return $(this[index]);
 }
 
 /**
@@ -90,7 +218,7 @@ Selector.prototype.eq = function(index) {
  * $('').filter('[data-id=1]')
  * $('').filter(function(index) {});
  */
-Selector.prototype.filter = function(selector) {
+$.prototype.filter = function(selector) {
   var result = [];
   var isFunction = util.isFunction(selector);
 
@@ -99,43 +227,19 @@ Selector.prototype.filter = function(selector) {
       if (selector.call(this, i)) {
         result.push(this[i]);
       }
-    } else if (cssMatch(this[i], cssSelector.parser(selector))) {
+    } else if (css.match(this[i], css.parser(selector))) {
       result.push(this[i]);
     }
   }
 
-  return new Selector(result);
-}
-
-/**
- * @example
- * $('').find('a');
- */
-Selector.prototype.find = function(selector) {
-  var els = this._keepParent();
-  var result;
-
-  if (els.length) {
-    // filter parent
-    result = els.reduce(function(pre, current,index) {
-      if (index === 0) {
-        return current.children;
-      } else {
-        return pre.concat(current.children);
-      }
-    }, true);
-  }  else {
-    result = [];
-  }
-
-  return new Selector(selector, result);
+  return $(result);
 };
 
-Selector.prototype.each = function(callback) {
+$.prototype.each = function(callback) {
   for (var i = 0; i < this.length; i++) {
     callback.call(this, i, this[i]);
   }
-}
+};
 
 /**
  * get or set attributes
@@ -146,7 +250,7 @@ Selector.prototype.each = function(callback) {
  * 
  * });
  */
-Selector.prototype.attr = function(key, value) {
+$.prototype.attr = function(key, value) {
   if (util.isUndefined(value)) {
     if (util.isObject(key)) {
       this.each(function(index, item) {
@@ -188,7 +292,7 @@ Selector.prototype.attr = function(key, value) {
  * $('').html()                // get
  * $('').html('<div></div>')   // set
  */
-Selector.prototype.html = function(html) {
+$.prototype.html = function(html) {
   var HtmlDom = require('../htmldom');
   if (util.isUndefined(html)) {
     if (this.length) {
@@ -214,12 +318,10 @@ Selector.prototype.html = function(html) {
  * @example
  * $('').remove()
  */
-Selector.prototype.remove = function() {
-  var els = this._keepParent();
-
-  for (var i = 0, l = els.length; i < l; i++) {
-    var item = els[i];
-    var parent = item.parent || this._document;
+$.prototype.remove = function() {
+  for (var i = 0, l = this.length; i < l; i++) {
+    var item = this[i];
+    var parent = item.parent || $.document;
     var children = parent.children || parent;
 
     for (var j = 0; j < children.length; j++) {
@@ -234,7 +336,7 @@ Selector.prototype.remove = function() {
   return this;
 };
 
-Selector.prototype.css = function(property, value) {
+$.prototype.css = function(property, value) {
   if (util.isUndefined(value)) {
     if (util.isObject(property)) {
       var result = style.parser(this[0].attributes.style);
@@ -272,7 +374,7 @@ Selector.prototype.css = function(property, value) {
  * $('').hasClass('cls');
  * $('').hasClass('cls1 cls2');
  */
-Selector.prototype.hasClass = function(name) {
+$.prototype.hasClass = function(name) {
   if (!name) return false;
   var has = false;
   name = name.split(CLS_REG);
@@ -301,7 +403,7 @@ Selector.prototype.hasClass = function(name) {
   return has;
 }
 
-Selector.prototype.addClass = function(name) {
+$.prototype.addClass = function(name) {
   name = name.split(CLS_REG);
   this.each(function(index, item) {
     for (var i = 0; i < name.length; i ++) {
@@ -321,7 +423,7 @@ Selector.prototype.addClass = function(name) {
   return this;
 };
 
-Selector.prototype.removeClass = function(name) {
+$.prototype.removeClass = function(name) {
   var removeAll = util.isUndefined(name) ? true : false;
   if (!removeAll) {
     name = name.split(CLS_REG);
@@ -351,4 +453,4 @@ Selector.prototype.removeClass = function(name) {
   return this;
 }
 
-module.exports = Selector;
+module.exports = $;

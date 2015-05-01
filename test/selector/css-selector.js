@@ -1,5 +1,5 @@
 var assert = require('assert');
-var cssSelector = require('../../selector/css-selector');
+var cssSelector = require('../../selector/css');
 
 describe('css selector', function() {
   it('div', function() {

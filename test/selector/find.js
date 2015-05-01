@@ -6,17 +6,16 @@ var assert = require('assert');
 describe('found', function() {
   var html = new HtmlDom('<div><h3><a class="link"></a></h3></div><div><h3>1</h3></div>');
   var $ = html.$;
-  var div = $('div');
 
   it('tag', function() {
-    assert.equal(div.find('h3').length, 2);
-    assert.equal(div.find('h3').html(), '<a class="link"></a>');
-    assert.equal(div.find('a').length, 1);
+    assert.equal($('div h3').length, 2);
+    assert.equal($('div h3').html(), '<a class="link"></a>');
+    assert.equal($('div a').length, 1);
   });
 
   it('class', function() {
-    assert.equal(div.find('.link').length, 1);
-    div.find('h3').html('').addClass('title');
+    assert.equal($('div .link').length, 1);
+    $('div h3').html('').addClass('title');
     assert.equal(html.html(), '<div><h3 class="title"></h3></div><div><h3 class="title"></h3></div>');
   });
 
@@ -25,7 +24,6 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('ul').length, 4);
-    assert.equal($('ul').find('li').length, 5);
     assert.equal($('ul li').length, 5);
   });
 
@@ -34,8 +32,7 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('div').length, 3);
-    assert.equal($('div').find('div').length, 2);
-    assert.equal($('div').find('div').find('div').length, 1);
+    assert.equal($('div div').length, 2);
     assert.equal($('div div div').length, 1);
   });
 
@@ -45,7 +42,6 @@ describe('found', function() {
 
     assert.equal($('a').length, 2);
     assert.equal($('div a').length, 2);
-    assert.equal($('div').find('a').length, 2);
-    assert.equal($('div').find('div').find('a').length, 1);
+    assert.equal($('div div a').length, 1);
   });
 });

@@ -57,4 +57,53 @@ describe('selecor', function() {
     assert.equal($('div#id.cls1.cls2').length, 1);
     assert.equal($('ul[class="cls1"]').length, 1);
   });
+
+  it('class', function() {
+    var html = new HtmlDom('<div class="ab">');
+    var $ = html.$;
+
+    assert.equal($('.a').length, 0);
+    assert.equal($('.b').length, 0);
+    assert.equal($('.ab').length, 1);
+  });
+
+  it('element > element', function() {
+    var html = new HtmlDom('<div><p value="1"><a><p value="2"></div><ul><li><ul><li>');
+    var $ = html.$;
+
+    assert.equal($('div > p').length, 2);
+    assert.equal($('[value=1] > a').length, 1);
+    assert.equal($('div > p > a').length, 1);
+    assert.equal($('.cls > p > a').length, 0);
+    assert.equal($('ul>li').length, 2);
+  });
+
+  it('element + element', function() {
+    var html = new HtmlDom('<div class="cls"></div><p value="1"><p value="2"><h3></h3><p value="4">');
+    var $ = html.$;
+
+    assert.equal($('div + p').length, 1);
+    assert.equal($('.cls + p + p').length, 1);
+    assert.equal($('.cls + p + p').attr('value'), '2');
+    assert.equal($('h3 + p').length, 1);
+  });
+
+  it('element ~ element', function() {
+    var html = new HtmlDom('<div class="cls"></div><p value="1"><p value="2"><h3></h3><p value="4">');
+    var $ = html.$;
+
+    assert.equal($('div ~ p').length, 3);
+    assert.equal($('.cls ~ p ~ p').length, 2);
+    assert.equal($('.cls ~ p ~ p').attr('value'), '2');
+    assert.equal($('h3 ~ p').length, 1);
+  });
+
+  it('*', function() {
+    var html = new HtmlDom('<div><h2><p></h2><h3><p></h3></div>');
+    var $ = html.$;
+
+    assert.equal($('*').length, 5);
+    assert.equal($('div *').length, 4);
+    assert.equal($('div * > p').length, 2);
+  });
 });
