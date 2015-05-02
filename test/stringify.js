@@ -49,7 +49,7 @@ describe('stringify', function() {
     var html = new HtmlDom(code);
     var newcode = html.stringify();
 
-    assert.equal(newcode, '<!DOCTYPE html><!--[if lt IE 7]> <html lang="en" class="ie ie6 lte9 lte8 lte7 os-mac"> <![endif]--><!--[if IE 7]> <html lang="en" class="ie ie7 lte9 lte8 lte7 os-mac"> <![endif]--><!--[if IE 8]> <html lang="en" class="ie ie8 lte9 lte8 os-mac"> <![endif]--><!--[if IE 9]> <html lang="en" class="ie ie9 lte9 os-mac"> <![endif]--><!--[if gt IE 9]> <html lang="en" class="os-mac"> <![endif]--><html lang="en" class="os-mac"><!--<![endif]--></html>');
+    assert.equal(newcode, '<!DOCTYPE html><!--[if lt IE 7]><html lang="en" class="ie ie6 lte9 lte8 lte7 os-mac"><![endif]--><!--[if IE 7]><html lang="en" class="ie ie7 lte9 lte8 lte7 os-mac"><![endif]--><!--[if IE 8]><html lang="en" class="ie ie8 lte9 lte8 os-mac"><![endif]--><!--[if IE 9]><html lang="en" class="ie ie9 lte9 os-mac"><![endif]--><!--[if gt IE 9]><html lang="en" class="os-mac"><![endif]--><html lang="en" class="os-mac"><!--<![endif]--></html>');
   });
 
   it('onServerCode', function() {

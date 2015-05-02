@@ -41,7 +41,10 @@ module.exports = function(doms, options) {
         break;
       case 'comment':
         if (dom.isIEHack) {
-          html.push('<!--' + dom.value.trim() + '-->');
+          dom.value = dom.value
+                         .replace(/(\[[^\]]+\]\s*>)\s+/, '$1')
+                         .replace(/\s+(<!\[endif\])$/, '$1');
+          html.push('<!--' + dom.value + '-->');
         }
         break;
       case 'text':

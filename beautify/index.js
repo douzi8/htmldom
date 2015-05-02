@@ -43,10 +43,18 @@ module.exports = function(doms, options) {
         html.push(dom.value);
         break;
       case 'text':
-        html.push(dom.value.trim());
+        var value = dom.value.trim();
+        if (value) {
+          html.push(newline + value);
+        }
         break;
       case 'comment':
-        html.push('<!--' + dom.value + '-->');
+        if (dom.isIEHack) {
+          dom.value = dom.value
+            .replace(/(\[[^\]]+\]\s*>)\s+/, '$1')
+            .replace(/\s+(<!\[endif\])$/, '$1');
+        }
+        html.push(newline + '<!--' + dom.value + '-->');
         break;
       case 'tag':
         html.push(newline + '<' + name);
@@ -69,14 +77,21 @@ module.exports = function(doms, options) {
             }).replace(/\n/g, newline);
             html.push(newline + cssbeaut);
           } else if (isJs(name, dom.attributes.type)) {
-            var jsbeaut = jsBeautify(dom.children[0].value, options.jsBeautify).replace(/\n/g, newline);
-            html.push(newline + jsbeaut);
+            if (dom.attributes.src) {
+              html.push('</script>');
+            } else {
+              var jsbeaut = jsBeautify(dom.children[0].value, options.jsBeautify).replace(/\n/g, newline);
+              html.push(newline + jsbeaut);
+              html.push(newline + '</script>');
+            }
           } else {
             dom.children.forEach(function(item) {
               html.push(recurse(item, depth + 1));
             });
           }
-          html.push(newline + '</' + name + '>');
+          if (name !== 'script') {
+            html.push(newline + '</' + name + '>');
+          }
         }
     }
     depth++;
