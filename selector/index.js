@@ -305,6 +305,8 @@ $.prototype.attr = function(key, value) {
     this.each(function(index, item) {
       if (value === null) {
         delete item.attributes[key];
+      } else if (util.isFunction(value)) {
+        item.attributes[key] = value(index, item.attributes[key]);
       } else {
         value += '';
         item.attributes[key] = value;

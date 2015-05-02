@@ -59,4 +59,16 @@ describe('attr', function() {
 
     assert.equal(html.$('div').attr('Id'), 'test');
   });
+
+  it('function', function() {
+    var html = new HtmlDom('<h1 title="1">');
+    var $ = html.$;
+
+    $('h1').attr('title', function(index, oldValue) {
+      assert.equal(oldValue, 1);
+      return oldValue + '2';
+    });
+
+    assert.equal($('*').attr('title'), '12');
+  });
 });
