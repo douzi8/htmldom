@@ -7,6 +7,7 @@ module.exports = function(grunt) {
         './lib/*.js',
         './beautify/*.js',
         './uglify/*.js',
+        './selector/*.js',
         '!./lib/htmldom.front.js'
       ]
     }

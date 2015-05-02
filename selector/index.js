@@ -9,42 +9,23 @@ function $(selector, doc) {
   }
 
   this.document = doc;
+  var i;
 
   if (util.isString(selector)) {
-    selector = css.split(selector);
-    var result = this._search(selector.shift());
+    var result = this._oneByOne(css.split(selector));
 
-    while (selector.length) {
-      var item = selector.shift();
-
-      switch (item.operator) {
-        case '>':
-          result = this._matchDirectParent(item, result);
-          break;
-        case '+':
-          result = this._matchNextWithBrother(item, result);
-          break;
-        case '~':
-          result = this._matchPrecededByBrother(item, result);
-          break;
-        default:
-          result = this._matchParent(item, result);
-      }
-    }
-
-    for (var i = 0; i < result.length; i++) {
+    for (i = 0; i < result.length; i++) {
       delete result[i]._searchNode;
       this[i] = result[i];     
     }
 
     this.length = result.length;
-
   } else {
     if (!util.isArray(selector)) {
       selector = [selector];
     }
 
-    for (var i = 0; i < selector.length; i++) {
+    for (i = 0; i < selector.length; i++) {
       this[i] = selector[i];
     }
     
@@ -52,6 +33,29 @@ function $(selector, doc) {
   }
 }
 
+$.prototype._oneByOne = function(selector) {
+  var result = this._search(selector.shift());
+
+  while (selector.length) {
+    var item = selector.shift();
+
+    switch (item.operator) {
+      case '>':
+        result = this._matchDirectParent(item, result);
+        break;
+      case '+':
+        result = this._matchNextWithBrother(item, result);
+        break;
+      case '~':
+        result = this._matchPrecededByBrother(item, result);
+        break;
+      default:
+        result = this._matchParent(item, result);
+    }
+  }
+
+  return result;
+};
 
 $.prototype._search = function(selector) {
   var result = [];
@@ -227,7 +231,7 @@ $.prototype.parent = function(selector) {
   }
 
   return $(result, this.document);
-}
+};
 
 /**
  * @example
@@ -239,7 +243,7 @@ $.prototype.eq = function(index) {
     index += this.length;
   }
   return $(this[index], this.document);
-}
+};
 
 /**
  * @example
@@ -340,9 +344,10 @@ $.prototype.remove = function() {
 };
 
 $.prototype.css = function(property, value) {
+  var result;
   if (util.isUndefined(value)) {
     if (util.isObject(property)) {
-      var result = style.parser(this[0].attributes.style);
+      result = style.parser(this[0].attributes.style);
       util.extend(result, property);
 
       for (var i in result) {
@@ -354,13 +359,13 @@ $.prototype.css = function(property, value) {
       this[0].attributes.style = style.stringify(result);
     } else {
       if (this.length) {
-        var result = style.parser(this[0].attributes.style);
+        result = style.parser(this[0].attributes.style);
         return result[property];
       }
     }
   } else {
     if (this.length) {
-      var result = style.parser(this[0].attributes.style);
+      result = style.parser(this[0].attributes.style);
       if (value === null || value === '') {
         delete result[property];
       } else {
@@ -404,7 +409,7 @@ $.prototype.hasClass = function(name) {
   }
 
   return has;
-}
+};
 
 $.prototype.addClass = function(name) {
   name = name.split(CLS_REG);
@@ -454,7 +459,7 @@ $.prototype.removeClass = function(name) {
     }
   });
   return this;
-}
+};
 
 $.prototype._createdom = function(html, callback) {
   var HtmlDom = require('../htmldom');
@@ -463,7 +468,7 @@ $.prototype._createdom = function(html, callback) {
     var htmldom = new HtmlDom(html).dom;
     callback(this[i], htmldom);
   }
-}
+};
 
 /**
  * @example

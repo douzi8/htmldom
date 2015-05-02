@@ -100,18 +100,19 @@ function match(tag, selector) {
   if (selector.name && tag.name !== selector.name) {
     return false;
   }
+  var i;
 
   if (selector.class) {
     if (!tag.attributes.class) return false;
     var cls = tag.attributes.class.split(REG.CLASS_SPLIT);
-    for (var i = 0; i < selector.class.length; i++) {
+    for (i = 0; i < selector.class.length; i++) {
       if (cls.indexOf(selector.class[i]) === -1) {
         return false;
       }
     }
   }
 
-  for (var i = 0, l = selector.attrs.length; i < l; i++) {
+  for (i = 0, l = selector.attrs.length; i < l; i++) {
     var item = selector.attrs[i];
     var itemValue = item.value;
     var tagValue = tag.attributes[item.name] || '';
@@ -168,7 +169,7 @@ function match(tag, selector) {
   }] 
 */
 function split(selector) {
-  var split = [''];
+  var ret = [''];
   var matched;
 
   function match(reg) {
@@ -185,27 +186,25 @@ function split(selector) {
   selector = selector.trim();
 
   while (selector) {
-    matched = match(REG.SINGLE_QUOTE) || match(REG.DOUBLE_QUOTE) || match(REG.ATTR);
-    
-    if (matched) {
-      split[split.length - 1] += matched[0];
+    if (matched = match(REG.ATTR)) {
+      ret[ret.length - 1] += matched[0];
       continue;
     }
 
     if (matched = match(REG.CSS_OP)) {
-      split.push(matched[1]);
-      split.push('');
+      ret.push(matched[1]);
+      ret.push('');
     } else if (match(REG.SPACE)) {
-      split.push('');
+      ret.push('');
     }
 
-    split[split.length - 1] += selector[0];
+    ret[ret.length - 1] += selector[0];
     selector = selector.slice(1);
   }
 
   var result = [];
 
-  split.reduceRight(function(pre, current) {
+  ret.reduceRight(function(pre, current) {
     if (REG.CSS_OP.test(current)) {
       return current;
     } else {

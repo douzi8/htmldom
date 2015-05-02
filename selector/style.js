@@ -18,7 +18,7 @@ exports.parser = function(style) {
   }
 
   return result;
-}
+};
 
 exports.stringify = function(style) {
   var code = [];
@@ -28,4 +28,4 @@ exports.stringify = function(style) {
   }
 
   return code.join('');
-}
+};
