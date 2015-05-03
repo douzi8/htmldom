@@ -1,5 +1,6 @@
 // @see http://stackoverflow.com/questions/706384/boolean-html-attributes
 var REG = require('../lib/reg');
+var uglifyJS = require("uglify-js");
 var booleanAttributes = [
   'checked', 
   'selected', 
@@ -30,10 +31,24 @@ module.exports = function(dom, options) {
   for (var i in dom.attributes) {
     var key = i.replace(REG.ATTR_BUG, '');
     var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
+
     if (optionEqual) {
       html.push(' ' + key);
     } else {
-      html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+      var value = dom.attributes[i];
+      // uglify inline events
+      if (key.indexOf('on') === 0) {
+        try {
+          var jsCode = 'function __(){' + value +'}';
+          jsCode = uglifyJS.minify(jsCode, {
+            fromString: true
+          });
+          value = jsCode.code
+                        .replace('function __(){', '')
+                        .replace(/\}$/, '');
+        } catch (e) {}
+      }
+      html.push(' ' + key + '="' + value.replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
     }
   }
 
