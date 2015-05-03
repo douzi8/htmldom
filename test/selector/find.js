@@ -8,9 +8,9 @@ describe('found', function() {
   var $ = html.$;
 
   it('tag', function() {
-    assert.equal($('div h3').length, 2);
-    assert.equal($('div h3').html(), '<a class="link"></a>');
-    assert.equal($('div a').length, 1);
+    assert.equal($('div').find('h3').length, 2);
+    assert.equal($('div').find('h3').html(), '<a class="link"></a>');
+    assert.equal($('div').find('a').length, 1);
   });
 
   it('class', function() {
@@ -24,7 +24,8 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('ul').length, 4);
-    assert.equal($('ul li').length, 5);
+    assert.equal($('ul').find('li').length, 5);
+    assert.equal($('ul').find('ul > li').length, 2);
   });
 
   it('filter parent', function() {
@@ -32,8 +33,9 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('div').length, 3);
-    assert.equal($('div div').length, 2);
-    assert.equal($('div div div').length, 1);
+    assert.equal($('div').find('div').length, 2);
+    assert.equal($('div').find('div div').length, 1);
+    assert.equal($('div').find('div').find('div').length, 1);
   });
 
   it('filter child', function() {
@@ -41,7 +43,7 @@ describe('found', function() {
     var $ = html.$;
 
     assert.equal($('a').length, 2);
-    assert.equal($('div a').length, 2);
-    assert.equal($('div div a').length, 1);
+    $('div').find('div').append('<a>').append('<a>');
+    assert.equal($('div').find('div > a').length, 3);
   });
 });

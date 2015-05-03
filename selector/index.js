@@ -2,6 +2,7 @@ var css = require('./css');
 var util = require('utils-extend');
 var CLS_REG = /\s+/;
 var style = require('./style');
+var _private = require('./private');
 
 function $(selector, doc) {
   if (!(this instanceof $)) {
@@ -12,7 +13,7 @@ function $(selector, doc) {
   var i;
 
   if (util.isString(selector)) {
-    var result = this._oneByOne(css.split(selector));
+    var result = this.oneByOne(css.split(selector));
 
     for (i = 0; i < result.length; i++) {
       delete result[i]._searchNode;
@@ -33,184 +34,16 @@ function $(selector, doc) {
   }
 }
 
-$.prototype._oneByOne = function(selector) {
-  var result = this._search(selector.shift());
-
-  while (selector.length) {
-    var item = selector.shift();
-
-    switch (item.operator) {
-      case '>':
-        result = this._matchDirectParent(item, result);
-        break;
-      case '+':
-        result = this._matchNextWithBrother(item, result);
-        break;
-      case '~':
-        result = this._matchPrecededByBrother(item, result);
-        break;
-      default:
-        result = this._matchParent(item, result);
-    }
-  }
-
-  return result;
-};
-
-$.prototype._search = function(selector) {
-  var result = [];
-
-  function recurse(item) {
-    if (item.type !== 'tag') return;
-    if (css.match(item, selector)) {
-      result.push(item);
-    }
-
-    for (var i = 0, l = item.children.length; i < l; i++) {
-      recurse(item.children[i]);
-    }
-  }
-
-  for (var i = 0, l = this.document.length; i < l; i++) {
-    recurse(this.document[i]);
-  }
-
-  return result;
-};
+_private($.prototype);
 
 /**
- * @example
- * $('div a')
+ * $('div').find('.item > a')
  */
-$.prototype._matchParent = function(selector, nodes) {
-  var result = [];
+$.prototype.find = function(selector) {
+  var ctx = this.newContext();
+  var result = $(selector, ctx);
 
-  for (var i = 0, l = nodes.length; i < l; i++) {
-    var searchNode = nodes[i]._searchNode || nodes[i];
-    var match = false; 
-    while (searchNode = searchNode.parent) {
-      if (css.match(searchNode, selector)) {
-        result.push(nodes[i]);
-        nodes[i]._searchNode = searchNode;
-        match = true;
-        break;
-      }
-    }
-
-    if (!match) {
-      delete nodes[i]._searchNode;
-    }
-  }
-
-  return result;
-};
-
-/**
- * @example
- * $('div > a')
- */
-$.prototype._matchDirectParent = function(selector, nodes) {
-  var result = [];
-
-  for (var i = 0, l = nodes.length; i < l; i++) {
-    var searchNode = nodes[i]._searchNode || nodes[i];
-    searchNode = searchNode.parent;
-
-    if (searchNode && css.match(searchNode, selector)) {
-      result.push(nodes[i]);
-      nodes[i]._searchNode = searchNode;
-    } else {
-      delete nodes[i]._searchNode;
-    }
-  }
-
-  return result;
-};
-
-/**
- * @example
- * $('div + p')
- */
-$.prototype._matchNextWithBrother = function(selector, nodes) {
-  var result = [];
-
-  function preceded(brother, node) {
-    for (var i = 0; i < brother.length; i++) {
-      if (brother[i] === node) {
-        break;
-      }
-    }
-
-    while (i--) {
-      var item = brother[i];
-
-      if (item.type === 'tag') {
-        return item;
-      }
-    }
-  }
-
-  for (var i = 0, l = nodes.length; i < l; i++) {
-    var searchNode = nodes[i]._searchNode || nodes[i];
-    var brother;
-    if (searchNode.parent) {
-      brother = searchNode.parent.children;
-    } else {
-      brother = this.document;
-    }
-    var pre = preceded(brother, searchNode);
-
-    if (pre && css.match(pre, selector)) {
-      result.push(nodes[i]);
-      nodes[i]._searchNode = pre;
-    } else {
-      delete nodes[i]._searchNode;
-    }
-  }
-
-  return result;
-};
-/**
- * @example 
- * $('div ~ p')
- */
-$.prototype._matchPrecededByBrother = function(selector, nodes) {
-  var result = [];
-
-  function preceded(brother, node) {
-    for (var i = 0; i < brother.length; i++) {
-      if (brother[i] === node) {
-        break;
-      }
-    }
-    
-    return brother.slice(0, i);
-  }
-
-  for (var i = 0, l = nodes.length; i < l; i++) {
-    var searchNode = nodes[i]._searchNode || nodes[i];
-    var brother;
-    if (searchNode.parent) {
-      brother = searchNode.parent.children;
-    } else {
-      brother = this.document;
-    }
-
-    var pres = preceded(brother, searchNode);
-
-    if (pres.length) {
-      for (var j = 0; j < pres.length; j++) {
-        if (css.match(pres[j], selector)) {
-          result.push(nodes[i]);
-          nodes[i]._searchNode = pres[i];
-          break;
-        }
-      }
-    } else {
-      delete nodes[i]._searchNode;
-    }
-  }
-
+  this.resetContext(ctx);
   return result;
 };
 
@@ -461,15 +294,6 @@ $.prototype.removeClass = function(name) {
   return this;
 };
 
-$.prototype._createdom = function(html, callback) {
-  var HtmlDom = require('../htmldom');
-
-  for (var i = 0; i < this.length; i++) {
-    var htmldom = new HtmlDom(html).dom;
-    callback(this[i], htmldom);
-  }
-};
-
 /**
  * @example
  * $('').html()                // get
@@ -485,7 +309,7 @@ $.prototype.html = function(content) {
       return null;
     }
   } else {
-    this._createdom(content, function(item, children) {
+    this.createdom(content, function(item, children) {
       children.forEach(function(child) {
         child.parent = item;
       });
@@ -500,7 +324,7 @@ $.prototype.html = function(content) {
  * $('').append('<ul><li>1');
  */
 $.prototype.append = function(content) {
-  this._createdom(content, function(item, children) {
+  this.createdom(content, function(item, children) {
     children.forEach(function(child) {
       child.parent = item;
       item.children.push(child);
@@ -511,10 +335,10 @@ $.prototype.append = function(content) {
 };
 
 /**
- * $('')
+ * $('').prepend('<h2>')
  */
 $.prototype.prepend = function(content) {
-  this._createdom(content, function(item, children) {
+  this.createdom(content, function(item, children) {
     length = children.length;
     while (length--) {
       var child = children[length];

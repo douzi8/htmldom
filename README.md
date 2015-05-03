@@ -169,12 +169,14 @@ $('').css({
 });
 ```
 * find(selector)  
-The api is deprecated. The ``$`` is faster then ``find``.
+```
+$('div').find('.item > a')
+```
 * filter(selector)
 ```
 $('').filter('[data-id=1]')
 $('').filter(function(index) {
-  return $(this[index]).attr('data-id') == 1;
+  return $(this[index], this.document).attr('data-id') == 1;
 });
 ```
 * eq(index)
