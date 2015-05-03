@@ -89,11 +89,11 @@ textarea {
 </div>
 
 <script>
-
-if (!performance) {
-  alert('please use chrom or firefox');
-}
-
+var performance = performance || {
+    now: function() {
+      return Date.now();
+    }
+};
 
 function change(code) {
   if (code) {
