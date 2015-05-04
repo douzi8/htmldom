@@ -8,12 +8,10 @@ function $(selector, doc) {
   if (!(this instanceof $)) {
     return new $(selector, doc);
   }
-
-  this.document = doc;
   var i;
 
   if (util.isString(selector)) {
-    var result = this.oneByOne(css.split(selector));
+    var result = this.oneByOne(css.split(selector), doc);
 
     for (i = 0; i < result.length; i++) {
       delete result[i]._searchNode;
@@ -58,12 +56,12 @@ $.prototype.parent = function(selector) {
   for (var i = 0; i < this.length; i++) {
     var parent = this[i].parent;
 
-    if (parent && css.match(parent, selector)) {
+    if (parent.name && css.match(parent, selector)) {
       result.push(parent);
     }
   }
 
-  return $(result, this.document);
+  return $(result);
 };
 
 /**
@@ -75,7 +73,7 @@ $.prototype.eq = function(index) {
   if (index < 0) {
     index += this.length;
   }
-  return $(this[index], this.document);
+  return $(this[index]);
 };
 
 /**
@@ -97,7 +95,7 @@ $.prototype.filter = function(selector) {
     }
   }
 
-  return $(result, this.document);
+  return $(result);
 };
 
 $.prototype.each = function(callback) {
@@ -161,7 +159,7 @@ $.prototype.attr = function(key, value) {
 $.prototype.remove = function() {
   for (var i = 0, l = this.length; i < l; i++) {
     var item = this[i];
-    var parent = item.parent || this.document;
+    var parent = item.parent;
     var children = parent.children || parent;
 
     for (var j = 0; j < children.length; j++) {
@@ -324,27 +322,34 @@ $.prototype.html = function(content) {
  * $('').append('<ul><li>1');
  */
 $.prototype.append = function(content) {
-  this.createdom(content, function(item, children) {
-    children.forEach(function(child) {
-      child.parent = item;
-      item.children.push(child);
-    });  
+  return this.createdom(content, function(item, children) {
+    this.insertChild(item, item.children.length, children);
   });
-
-  return this;
 };
 
 /**
  * $('').prepend('<h2>')
  */
 $.prototype.prepend = function(content) {
-  this.createdom(content, function(item, children) {
-    length = children.length;
-    while (length--) {
-      var child = children[length];
-      child.parent = item;
-      item.children.unshift(child);
-    }
+  return this.createdom(content, function(item, children) {
+    this.insertChild(item, 0, children);
+  });
+};
+
+/**
+ * $('').after('<li>')
+ */
+$.prototype.after = function(content) {
+  return this.createdom(content, function(item, children) {
+    var parent = item.parent;
+    this.insertChild(parent, parent.children.indexOf(item) + 1, children);
+  });
+};
+
+$.prototype.before = function(content) {
+  return this.createdom(content, function(item, children) {
+    var parent = item.parent;
+    this.insertChild(parent, parent.children.indexOf(item), children);
   });
 };
 

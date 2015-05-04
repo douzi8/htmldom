@@ -23,7 +23,7 @@ function isJs(name, type) {
   return name === 'script' && (!type || type === 'text/javascript');
 }
 
-module.exports = function(doms, options) {
+module.exports = function(nodes, options) {
   var html = [];
   options = util.extend({
     indent: '  ',
@@ -98,8 +98,8 @@ module.exports = function(doms, options) {
     return html.join('');
   }
 
-  for (var i = 0, l = doms.length; i < l; i++) {
-    html.push(recurse(doms[i], 0));
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    html.push(recurse(nodes[i], 0));
   }
 
   return html.join('').trim();

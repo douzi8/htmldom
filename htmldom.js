@@ -28,10 +28,9 @@ function HtmlDom(str, escape, _escape) {
    * $('div').addClass()
    * $('#id').attr('key')
    */
-  var dom = this.dom;
   this.$ = function(selector) {
-    return $(selector, dom);
-  };
+    return $(selector, this.dom.children);
+  }.bind(this);
 }
 
 HtmlDom.prototype._scanner = function() {
@@ -261,9 +260,9 @@ HtmlDom.prototype._unescape = function(html, callback) {
 };
 
 // Get html code fast.
-HtmlDom.prototype.html = function(dom) {
+HtmlDom.prototype.html = function(nodes) {
   var html = [];
-  dom = dom || this.dom;
+  nodes = nodes || this.dom.children;
 
   function recurse(dom) {
     var html = [];
@@ -283,10 +282,10 @@ HtmlDom.prototype.html = function(dom) {
         html.push('<' + name);
         for (var i in dom.attributes) {
           var key = i.replace(REG.ATTR_BUG, '');
-          if (dom.attributes[i] === null) {
-            html.push(' ' + key);
-          } else {
+          if (dom.attributes[i]) {
             html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+          } else {
+            html.push(' ' + key);
           }
         }
         html.push('>');
@@ -301,8 +300,8 @@ HtmlDom.prototype.html = function(dom) {
     return html.join('');
   }
 
-  for (var i = 0, l = dom.length; i < l; i++) {
-    html.push(recurse(dom[i]));
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    html.push(recurse(nodes[i]));
   }
 
   html = html.join('');
@@ -314,13 +313,13 @@ HtmlDom.prototype.stringify = function(opt) {
   var uglify = require('./uglify/index');
   opt._escape = this._escape;
 
-  var html = uglify(this.dom, opt);
+  var html = uglify(this.dom.children, opt);
   return this._unescape(html, opt.onServerCode);
 };
 
 HtmlDom.prototype.beautify = function(opt) {
   var beautify = require('./beautify/index');
-  var html = beautify(this.dom, opt || {});
+  var html = beautify(this.dom.children, opt || {});
   return this._unescape(html);
 };
 

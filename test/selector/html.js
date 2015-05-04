@@ -19,8 +19,8 @@ describe('html', function() {
   it('set', function() {
     $('div').html('txt');
 
-    assert.equal(html.dom[0].children[0].parent, $('div')[0]);
-    assert.equal(html.dom[1].children[0].parent, $('div')[1]);
+    assert.equal(html.dom.children[0].children[0].parent, $('div')[0]);
+    assert.equal(html.dom.children[1].children[0].parent, $('div')[1]);
     assert.equal(html.html(), '<div id="demo">txt</div><div>txt</div>');
   });
 
@@ -31,7 +31,7 @@ describe('html', function() {
     assert.equal($('div').length, 2);
     $('div').html(1);
     
-    assert.equal(html.dom[0].children[0].parent, $('div')[0]);
+    assert.equal(html.dom.children[0].children[0].parent, $('div')[0]);
     assert.equal(html.html(), '<div>1</div>');
   });
 

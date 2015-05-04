@@ -10,8 +10,8 @@ function _private(fn) {
   }
 }
 
-_private.oneByOne = function(selector) {
-  var result = this.search(selector.shift());
+_private.oneByOne = function(selector, doc) {
+  var result = this.search(selector.shift(), doc);
 
   while (selector.length) {
     var item = selector.shift();
@@ -35,21 +35,17 @@ _private.oneByOne = function(selector) {
 };
 
 // find all child first
-_private.search = function(selector) {
+_private.search = function(selector, nodes) {
   var result = [];
-  function recurse(item) {
-    if (item.type !== 'tag') return;
-    if (css.match(item, selector)) {
-      result.push(item);
-    }
 
-    for (var i = 0, l = item.children.length; i < l; i++) {
-      recurse(item.children[i]);
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    var item = nodes[i];
+    if (item.type === 'tag') {
+      if (css.match(item, selector)) {
+        result.push(item);
+      }
+      result = result.concat(this.search(selector, item.children));
     }
-  }
-
-  for (var i = 0, l = this.document.length; i < l; i++) {
-    recurse(this.document[i]);
   }
 
   return result;
@@ -129,12 +125,7 @@ _private.matchNextWithBrother = function(selector, nodes) {
 
   for (var i = 0, l = nodes.length; i < l; i++) {
     var searchNode = nodes[i]._searchNode || nodes[i];
-    var brother;
-    if (searchNode.parent) {
-      brother = searchNode.parent.children;
-    } else {
-      brother = this.document;
-    }
+    var brother = searchNode.parent.children;
     var pre = preceded(brother, searchNode);
 
     if (pre && css.match(pre, selector)) {
@@ -166,13 +157,7 @@ _private.matchPrecededByBrother = function(selector, nodes) {
 
   for (var i = 0, l = nodes.length; i < l; i++) {
     var searchNode = nodes[i]._searchNode || nodes[i];
-    var brother;
-    if (searchNode.parent) {
-      brother = searchNode.parent.children;
-    } else {
-      brother = this.document;
-    }
-
+    var brother = searchNode.parent.children;
     var pres = preceded(brother, searchNode);
 
     if (pres.length) {
@@ -238,13 +223,26 @@ _private.resetContext = function(ctx) {
   }
 };
 
+_private.insertChild = function(parent, index, children) {
+  var arg = [index, 0];
+
+  for (var i = 0; i < children.length; i++) {
+    children[i].parent = parent;
+    arg.push(children[i]);
+  }
+
+  Array.prototype.splice.apply(parent.children, arg);
+};
+
 _private.createdom = function(html, callback) {
   var HtmlDom = require('../htmldom');
 
   for (var i = 0; i < this.length; i++) {
     var htmldom = new HtmlDom(html).dom;
-    callback(this[i], htmldom);
+    callback.call(this, this[i], htmldom.children);
   }
+  
+  return this;
 };
 
 module.exports = _private;

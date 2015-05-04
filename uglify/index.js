@@ -60,7 +60,7 @@ function recurse(dom, options) {
   return html.join('');
 }
 
-module.exports = function(doms, options, escape) {
+module.exports = function(nodes, options) {
   var html = '';
   options = util.extend({
     // checked="checked" => checked
@@ -85,8 +85,8 @@ module.exports = function(doms, options, escape) {
 
   options.jsCodeType.push('type/javascript');
 
-  for (var i = 0, l = doms.length; i < l; i++) {
-    html += recurse(doms[i], options);
+  for (var i = 0, l = nodes.length; i < l; i++) {
+    html += recurse(nodes[i], options);
   }
   
   return html.trim();

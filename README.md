@@ -148,12 +148,12 @@ $('').html()                 // get html
 $('').html('12')             // set html
 ```
 * append(content)
+* prepend(content)
+* before(content)
+* after(content)
 ```js
 $('').append('<h3>title');
-```
-* prepend(content)
-```js
-$('').prepend('<h3>title');
+$('').before('<h3>title');
 ```
 * remove()
 ```js
@@ -176,7 +176,7 @@ $('div').find('.item > a')
 ```
 $('').filter('[data-id=1]')
 $('').filter(function(index) {
-  return $(this[index], this.document).attr('data-id') == 1;
+  return $(this[index]).attr('data-id') == 1;
 });
 ```
 * eq(index)
@@ -187,8 +187,7 @@ $('').eq(-1)    // last element
 * each(function(index, item) {})
 ```
 $('').each(function(index, item) {
-  // this.document means current html dom structor
-  var $item = $(item, this.document);
+  var $item = $(item);
 });
 ```
 
