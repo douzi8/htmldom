@@ -4,9 +4,10 @@ var VOID_ELEMENTS = require('./lib/elements').VOID_ELEMENTS;
 var $ = require('./selector/index');
 var esc = require('./lib/escape');
 
-function HtmlDom(str, escape) {
+function HtmlDom(str, escape, _escape) {
   str = (str || '') + '';
-  this._escape = [];
+  // fixed escape bug
+  this._escape = _escape || [];
 
   if (escape) {
     // Escape server code first
@@ -311,6 +312,8 @@ HtmlDom.prototype.html = function(dom) {
 HtmlDom.prototype.stringify = function(opt) {
   opt = opt || {};
   var uglify = require('./uglify/index');
+  opt._escape = this._escape;
+
   var html = uglify(this.dom, opt);
   return this._unescape(html, opt.onServerCode);
 };

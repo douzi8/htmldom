@@ -18,25 +18,25 @@ function isBooleanAttr(name) {
   return booleanAttributes.indexOf(name) !== -1;
 }
 
-
 module.exports = function(dom, options) {
   var html = [];
+  var name = dom.name;
+  var type = dom.attributes.type;
 
-  if (options.removeJsType && dom.name === 'script' && dom.attributes.type === 'text/javascript') {
+  if (options.removeJsType && name === 'script' && type === 'text/javascript') {
+    delete dom.attributes.type;
+  } else if (options.removeCssType && name === 'style' && type === 'text/css') {
     delete dom.attributes.type;
   }
 
-  if (options.removeCssType && dom.name === 'style' && dom.attributes.type === 'text/css') {
-    delete dom.attributes.type;
-  }
   for (var i in dom.attributes) {
     var key = i.replace(REG.ATTR_BUG, '');
-    var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || dom.attributes[i] === null;
+    var value = dom.attributes[i];
+    var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || !value;
 
     if (optionEqual) {
       html.push(' ' + key);
     } else {
-      var value = dom.attributes[i];
       // uglify inline events
       if (key.indexOf('on') === 0) {
         try {
@@ -48,10 +48,8 @@ module.exports = function(dom, options) {
                         .replace('function __(){', '')
                         .replace(/\}$/, '');
         } catch (e) {}
-      }
-
-      // ugliy inline style
-      if (key === 'style') {
+      } else if (key === 'style') {
+        // ugliy inline style
         value = 'a{' + value + '}';
         var css = new CssDom(value);
         value = css.stringify()
@@ -59,17 +57,13 @@ module.exports = function(dom, options) {
                    .replace(/\}$/, ''); 
       }
 
-      if (value) {
-        value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
-        html.push(' ' + key + '=');
-        
-        if (options.removeAttributeQuotes && !/\s/.test(value)) {
-          html.push(value);
-        } else {
-          html.push('"' + value +'"');
-        }
+      value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
+      html.push(' ' + key + '=');
+      
+      if (options.removeAttributeQuotes && !/\s/.test(value)) {
+        html.push(value);
       } else {
-        html.push(' ' + key);
+        html.push('"' + value +'"');
       }
     }
   }
