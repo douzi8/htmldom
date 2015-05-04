@@ -58,6 +58,21 @@ describe('stringify', function() {
     assert.equal(html.stringify(), '<body onselectstart="return!1"></body>')
   });
 
+  it('style', function() {
+    var html = new HtmlDom('<body style="color: red;">');
+
+    assert.equal(html.stringify(), '<body style="color:#f00"></body>')
+  });
+
+  it('removeAttributeQuotes', function() {
+    var html = new HtmlDom('<div id="key" value="a b">');
+    var code = html.stringify({
+      removeAttributeQuotes: true
+    });
+
+    assert.equal(code, '<div id=key value="a b"></div>');
+  });
+
   it('onServerCode', function() {
     var html = new HtmlDom('<div <%= a%>>', [/<%([\s\S]+?)%>/g]);
     var newcode = html.stringify({

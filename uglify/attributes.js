@@ -1,6 +1,7 @@
 // @see http://stackoverflow.com/questions/706384/boolean-html-attributes
 var REG = require('../lib/reg');
 var uglifyJS = require("uglify-js");
+var CssDom = require('cssdom');
 var booleanAttributes = [
   'checked', 
   'selected', 
@@ -48,7 +49,24 @@ module.exports = function(dom, options) {
                         .replace(/\}$/, '');
         } catch (e) {}
       }
-      html.push(' ' + key + '="' + value.replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+
+      // ugliy inline style
+      if (key === 'style') {
+        value = 'a{' + value + '}';
+        var css = new CssDom(value);
+        value = css.stringify()
+                   .replace('a{', '')
+                   .replace(/\}$/, ''); 
+      }
+
+      value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
+      html.push(' ' + key + '=');
+      
+      if (options.removeAttributeQuotes && !/\s/.test(value)) {
+        html.push(value);
+      } else {
+        html.push('"' + value +'"');
+      }
     }
   }
 

@@ -4,8 +4,6 @@ var REG = {
   CLASS: /^\.(\w+)/,
   ATTR: /^\[([^\]]+)\]/,
   ALL: /^\*/,
-  SINGLE_QUOTE: /^'[^]*'/,
-  DOUBLE_QUOTE: /^"[^]*"/,
   SPACE: /^\s+/,
   CLASS_SPLIT: /\s+/,
   CSS_OP: /^\s*([>+~])\s*/

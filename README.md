@@ -204,6 +204,10 @@ html.html()
   ```html
   <input disabled="disabled"> => <input disbaled>
   ```
+  * {boolean} ``[options.removeAttributeQuotes=false]``
+  ```html
+  <div id="test"></div> => <div id=test></div>
+  ```
   * {boolean} ``[options.removeJsType=true]``
   ```html
   <script type="text/javascript"></script> => <script></script>
@@ -231,20 +235,16 @@ html.html()
   ```
   * {function} ``[options.onServerCode]`` uglify server code callback
   * {object} ``[options.cssdom]``  
-Use [cssdom](https://github.com/douzi8/cssdom) uglify css code
+Use [cssdom](https://github.com/douzi8/cssdom) uglify css code with style tag and style attribute
   ```html
-  <style>
-  a{
-    color:red;
-  }
-  </style>
+  <style>a { color:red; } </style> => <style>a{color:#f00}</style>
+  <div style="margin: 10px 15px 10px 15px;"></div> => <div style="margin:10 15px"></div>
   ```
   * {object} ``[options.uglifyJs]``  
-Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code
+Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code with script tag and inline events
   ```html
-  <script>
-  var a = 5;
-  </script>
+  <script> var a = 5; </script>         => ...
+  <div onclick="return false"></div>    => <div onclick="return !1"></div>
   ```
 ```js
 html.stringify({

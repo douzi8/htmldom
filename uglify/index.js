@@ -15,6 +15,7 @@ module.exports = function(doms, options) {
   options = util.extend({
     // checked="checked" => checked
     booleanAttributes: false,
+    removeAttributeQuotes: false,
     removeJsType: true,
     removeCssType: true,
     // Custom js code type, like <script type="text/config">{ key: 'value' }</script>
