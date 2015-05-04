@@ -59,13 +59,17 @@ module.exports = function(dom, options) {
                    .replace(/\}$/, ''); 
       }
 
-      value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
-      html.push(' ' + key + '=');
-      
-      if (options.removeAttributeQuotes && !/\s/.test(value)) {
-        html.push(value);
+      if (value) {
+        value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
+        html.push(' ' + key + '=');
+        
+        if (options.removeAttributeQuotes && !/\s/.test(value)) {
+          html.push(value);
+        } else {
+          html.push('"' + value +'"');
+        }
       } else {
-        html.push('"' + value +'"');
+        html.push(' ' + key);
       }
     }
   }
