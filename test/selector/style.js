@@ -23,11 +23,11 @@ describe('style', function() {
     h1.css('height', null);
     h1.css('color', '');
     assert.equal(h1.css('height'), undefined);
-    assert.equal(h1.css('width'), undefined);
+    assert.equal(h1.css('width'), '');
   });
 
   it('multiple', function() {
-    assert.deepEqual(h1[0].attributes.style, '');
+    h1[0].attributes.style = '';
 
     h1.css('width', 200);
     h1.css({
@@ -35,7 +35,7 @@ describe('style', function() {
       height: 200
     });
 
-    assert.equal(h1.css('width'), undefined);
+    assert.equal(h1.css('width'), '');
     assert.equal(h1.css('height'), 200);
   })
 });

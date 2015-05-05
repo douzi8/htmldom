@@ -1,4 +1,6 @@
 var css = require('./css');
+var REG = require('../lib/reg');
+var VOID_ELEMENTS = require('../lib/elements').VOID_ELEMENTS;
 
 function _private(fn) {
   for (var i in _private) {
@@ -243,6 +245,56 @@ _private.createdom = function(html, callback) {
   }
   
   return this;
+};
+
+function getHtml(node) {
+  var html = [];
+  var name = node.name;
+
+  switch (node.type) {
+    case 'text':
+      html.push(node.value);
+      break;
+    case 'tag':
+      html.push('<' + name);
+      for (var i in node.attributes) {
+        var key = i.replace(REG.ATTR_BUG, '');
+        var value = node.attributes[i];
+        if (value) {
+          html.push(' ' + key + '="' + value.replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+        } else {
+          html.push(' ' + key);
+        }
+      }
+      html.push('>');
+
+      if (VOID_ELEMENTS.indexOf(name) == -1) {
+        node.children.forEach(function(item) {
+          html.push(getHtml(item));
+        });
+        html.push('</' + name + '>');
+      }
+    break;
+    case 'comment':
+      html.push('<!--' + node.value + '-->');
+      break;
+    case 'documentType':
+      html.push(node.value);
+      break;
+  }
+
+  return html.join('');
+}
+
+_private.getHtml = function(node) {
+  var html = '';
+  var children = node.children;
+
+  for (var i = 0; i < children.length; i++) {
+    html += getHtml(children[i]);
+  }
+
+  return html;
 };
 
 module.exports = _private;

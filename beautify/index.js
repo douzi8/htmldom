@@ -84,14 +84,13 @@ module.exports = function(nodes, options) {
               html.push(newline + jsbeaut);
               html.push(newline + '</script>');
             }
+            break;
           } else {
             dom.children.forEach(function(item) {
               html.push(recurse(item, depth + 1));
             });
           }
-          if (name !== 'script') {
-            html.push(newline + '</' + name + '>');
-          }
+          html.push(newline + '</' + name + '>');
         }
     }
     depth++;

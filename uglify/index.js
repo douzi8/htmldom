@@ -45,7 +45,7 @@ function recurse(dom, options) {
           }
         } else if (isJs(name, dom.attributes.type, options.templateType)) {
           var HtmlDom = require('../htmldom');
-          var textHtml = new HtmlDom(dom.children[0].value, [], options._escape);
+          var textHtml = new HtmlDom(dom.children[0].value, null, options._escape);
           html.push(textHtml.stringify(options));
         } else {
           dom.children.forEach(function(item) {

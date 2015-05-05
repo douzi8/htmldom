@@ -259,52 +259,9 @@ HtmlDom.prototype._unescape = function(html, callback) {
   return html;
 };
 
-// Get html code fast.
-HtmlDom.prototype.html = function(nodes) {
-  var html = [];
-  nodes = nodes || this.dom.children;
+HtmlDom.prototype.html = function() {
+  var html = $.prototype.getHtml(this.dom);
 
-  function recurse(dom) {
-    var html = [];
-    var name = dom.name;
-
-    switch (dom.type) {
-      case 'documentType':
-        html.push(dom.value);
-        break;
-      case 'text':
-        html.push(dom.value);
-        break;
-      case 'comment':
-        html.push('<!--' + dom.value + '-->');
-        break;
-      case 'tag':
-        html.push('<' + name);
-        for (var i in dom.attributes) {
-          var key = i.replace(REG.ATTR_BUG, '');
-          if (dom.attributes[i]) {
-            html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
-          } else {
-            html.push(' ' + key);
-          }
-        }
-        html.push('>');
-
-        if (VOID_ELEMENTS.indexOf(name) == -1) {
-          dom.children.forEach(function(item) {
-            html.push(recurse(item));
-          });
-          html.push('</' + name + '>');
-        }
-    }
-    return html.join('');
-  }
-
-  for (var i = 0, l = nodes.length; i < l; i++) {
-    html.push(recurse(nodes[i]));
-  }
-
-  html = html.join('');
   return this._unescape(html);
 };
 
@@ -312,14 +269,15 @@ HtmlDom.prototype.stringify = function(opt) {
   opt = opt || {};
   var uglify = require('./uglify/index');
   opt._escape = this._escape;
-
   var html = uglify(this.dom.children, opt);
+
   return this._unescape(html, opt.onServerCode);
 };
 
 HtmlDom.prototype.beautify = function(opt) {
   var beautify = require('./beautify/index');
   var html = beautify(this.dom.children, opt || {});
+   
   return this._unescape(html);
 };
 

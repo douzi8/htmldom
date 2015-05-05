@@ -175,36 +175,40 @@ $.prototype.remove = function() {
 };
 
 $.prototype.css = function(property, value) {
-  var result;
+  var result, i;
+
+  function set(item, obj) {
+    var ret = style.parser(item.attributes.style);
+    util.extend(ret, obj);
+
+    for (var i in ret) {
+      if (ret[i] === null) {
+        delete ret[i];
+      }
+    }
+
+    item.attributes.style = style.stringify(ret);
+  }
+
   if (util.isUndefined(value)) {
     if (util.isObject(property)) {
+      for (i = 0; i < this.length; i++) {
+        set(this[i], property);
+      }
+    } else if (this.length) {
       result = style.parser(this[0].attributes.style);
-      util.extend(result, property);
-
-      for (var i in result) {
-        if (result[i] === null || result[i] === '') {
-          delete result[i];
-        }
-      }
-
-      this[0].attributes.style = style.stringify(result);
+      return result[property];
     } else {
-      if (this.length) {
-        result = style.parser(this[0].attributes.style);
-        return result[property];
-      }
+      return null;
     }
   } else {
-    if (this.length) {
-      result = style.parser(this[0].attributes.style);
-      if (value === null || value === '') {
-        delete result[property];
-      } else {
-        result[property] = value;
-      }
-      this[0].attributes.style = style.stringify(result);
+    for (i = 0; i < this.length; i++) {
+      var obj = {};
+      obj[property] = value;
+      set(this[i], obj);
     }
   }
+
   return this;
 };
 
@@ -300,9 +304,7 @@ $.prototype.removeClass = function(name) {
 $.prototype.html = function(content) {
   if (util.isUndefined(content)) {
     if (this.length) {
-      var HtmlDom = require('../htmldom');
-      var htmldom = new HtmlDom();
-      return htmldom.html(this[0].children);
+      return this.getHtml(this[0]);
     } else {
       return null;
     }
