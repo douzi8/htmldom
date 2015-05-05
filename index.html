@@ -126,7 +126,7 @@ function change(code) {
   document.getElementById('txt3').innerHTML = beautifyhtml;
   
 
-  var clone = extend([], html.dom);
+  var clone = extend([], html.dom.children);
   document.getElementById('txt4').value = jsBeautify(JSON.stringify(clone), {
     'indent_size': 1,
     'indent_char': '\t'
