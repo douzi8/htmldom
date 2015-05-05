@@ -6,28 +6,32 @@ var REG = {
   ALL: /^\*/,
   SPACE: /^\s+/,
   CLASS_SPLIT: /\s+/,
-  CSS_OP: /^\s*([>+~])\s*/
+  CSS_OP: /^\s*([>+~\s])\s*/
 };
 
 /**
  * @example
- * div.cls#id
- * {
+ * div.cls#id > a
+ * [{
+ *   name: 'a',
+ *   attrs: [] 
+ * }, {
  *   name: div,
  *   class: ['cls'],
+ *   operator: '>'
  *   attrs: [
  *     { name: 'id', operator: '=', value: '' }
  *   ] 
- * }
+ * }]
  */
 function parser(selector) {
-  var obj = {
-    attrs: []
-  };
-  var str = selector;
+  var str = selector.trim();
+  var start = true;
+  var ret = [];
+  var item;
+
   function match(reg) {
     var result = str.match(reg);
-
     if (result) {
       str = str.slice(result[0].length);
       return result;
@@ -35,13 +39,24 @@ function parser(selector) {
       return false;
     }
   }
-  var matched = match(REG.TAG);
-  
-  obj.name = matched ? matched[0] : '';
 
   while (str) {
+    if (start) {
+      item = {
+        attrs: [],
+        name: ''
+      };
+
+      if (matched = match(REG.TAG)) {
+        item.name = matched[0];
+      }
+      
+      start = false;
+      continue;
+    }
+
     if (matched = match(REG.ID)) {
-      obj.attrs.push({
+      item.attrs.push({
         name: 'id',
         operator: '=',
         value: matched[1]
@@ -50,8 +65,8 @@ function parser(selector) {
     }
 
     if (matched = match(REG.CLASS)) {
-      obj.class = obj.class || [];
-      obj.class.push(matched[1]);
+      item.class = item.class || [];
+      item.class.push(matched[1]);
       continue;
     }
 
@@ -60,7 +75,7 @@ function parser(selector) {
       var index = matched.indexOf('=');
 
       if (index === -1) {
-        obj.attrs.push({
+        item.attrs.push({
           name: matched
         });
       } else {
@@ -75,7 +90,7 @@ function parser(selector) {
           name = name.slice(0, name.length - 1);
         }
 
-        obj.attrs.push({
+        item.attrs.push({
           name: name,
           operator: operator,
           value: value
@@ -87,13 +102,28 @@ function parser(selector) {
     if (match(REG.ALL)) {
       continue;
     }
+
+    if (matched = match(REG.CSS_OP)) {
+      item.operator = matched[1];
+      ret.push(item);
+      start = true;
+      continue;
+    }
     
     throw new Error(selector + ' is not a valid selector');
   }
 
-  return obj;
-}
+  if (!start) {
+    ret.push(item);
+  }
 
+  if (!ret.length) {
+    throw new Error(selector + ' is not a valid selector');
+  }
+
+  return ret.reverse();
+}
+// Check the tag is matched
 function match(tag, selector) {
   if (selector.name && tag.name !== selector.name) {
     return false;
@@ -152,75 +182,6 @@ function match(tag, selector) {
   return true;
 }
 
-/* 
- * .item li > a
-  [{
-    name: 'a'
-  }, {
-    operator: '>',
-    name: 'li',
-    attrs: [{
-
-    }]
-  }, {
-    class: ['item']
-  }] 
-*/
-function split(selector) {
-  var ret = [''];
-  var matched;
-
-  function match(reg) {
-    var result = selector.match(reg);
-
-    if (result) {
-      selector = selector.slice(result[0].length);
-      return result;
-    } else {
-      return false;
-    }
-  }
-
-  selector = selector.trim();
-
-  while (selector) {
-    if (matched = match(REG.ATTR)) {
-      ret[ret.length - 1] += matched[0];
-      continue;
-    }
-
-    if (matched = match(REG.CSS_OP)) {
-      ret.push(matched[1]);
-      ret.push('');
-    } else if (match(REG.SPACE)) {
-      ret.push('');
-    }
-
-    ret[ret.length - 1] += selector[0];
-    selector = selector.slice(1);
-  }
-
-  var result = [];
-
-  ret.reduceRight(function(pre, current) {
-    if (REG.CSS_OP.test(current)) {
-      return current;
-    } else {
-      var parserObj = parser(current);
-
-      if (pre) {
-        parserObj.operator = pre;
-      }
-
-      result.push(parserObj);
-    }
-  }, '');
-
-  return result;
-}
-
 exports.parser = parser;
 
 exports.match = match;
-
-exports.split = split;

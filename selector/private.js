@@ -13,6 +13,7 @@ function _private(fn) {
 }
 
 _private.oneByOne = function(selector, doc) {
+  selector = css.parser(selector);
   var result = this.search(selector.shift(), doc);
 
   while (selector.length) {

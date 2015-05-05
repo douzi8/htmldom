@@ -7,7 +7,8 @@ describe('parent', function() {
     var $ = html.$;
     var parent = $('div').parent();
 
-    assert.equal(parent.length, 0);
+    assert.equal(parent.length, 1);
+    assert.equal(parent.parent().length, 0);
   });
 
   it('parent()', function() {

@@ -11,7 +11,7 @@ function $(selector, doc) {
   var i;
 
   if (util.isString(selector)) {
-    var result = this.oneByOne(css.split(selector), doc);
+    var result = this.oneByOne(selector, doc);
 
     for (i = 0; i < result.length; i++) {
       delete result[i]._searchNode;
@@ -51,13 +51,21 @@ $.prototype.find = function(selector) {
  */
 $.prototype.parent = function(selector) {
   var result = [];
-  selector = css.parser(selector || '');
+  if (selector) {
+    selector = css.parser(selector)[0];
+  }
 
   for (var i = 0; i < this.length; i++) {
     var parent = this[i].parent;
 
-    if (parent.name && css.match(parent, selector)) {
-      result.push(parent);
+    if (parent) {
+      if (selector) {
+        if (css.match(parent, selector)) {
+          result.push(parent);
+        }
+      } else {
+        result.push(parent);
+      }
     }
   }
 
@@ -90,7 +98,7 @@ $.prototype.filter = function(selector) {
       if (selector.call(this, i)) {
         result.push(this[i]);
       }
-    } else if (css.match(this[i], css.parser(selector))) {
+    } else if (css.match(this[i], css.parser(selector)[0])) {
       result.push(this[i]);
     }
   }
