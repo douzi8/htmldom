@@ -21,7 +21,7 @@ _private.oneByOne = function(selector, doc) {
 
     switch (item.operator) {
       case '>':
-        result = this.matchDirectParent(item, result);
+        result = this.matchDirectParent(item, result, doc);
         break;
       case '+':
         result = this.matchNextWithBrother(item, result);
@@ -30,7 +30,7 @@ _private.oneByOne = function(selector, doc) {
         result = this.matchPrecededByBrother(item, result);
         break;
       default:
-        result = this.matchParent(item, result);
+        result = this.matchParent(item, result, doc);
     }
   }
 
@@ -58,19 +58,22 @@ _private.search = function(selector, nodes) {
  * @example
  * $('div a')
  */
-_private.matchParent = function(selector, nodes) {
+_private.matchParent = function(selector, nodes, doc) {
   var result = [];
 
   for (var i = 0, l = nodes.length; i < l; i++) {
     var searchNode = nodes[i]._searchNode || nodes[i];
-    var match = false; 
-    while (searchNode = searchNode.parent) {
-      if (css.match(searchNode, selector)) {
+    var match = false;
+
+    while (doc.indexOf(searchNode) === -1 && searchNode) {
+      var parent = searchNode.parent;
+      if (css.match(parent, selector)) {
         result.push(nodes[i]);
-        nodes[i]._searchNode = searchNode;
+        nodes[i]._searchNode = parent;
         match = true;
         break;
       }
+      searchNode = parent;
     }
 
     if (!match) {
@@ -85,16 +88,15 @@ _private.matchParent = function(selector, nodes) {
  * @example
  * $('div > a')
  */
-_private.matchDirectParent = function(selector, nodes) {
+_private.matchDirectParent = function(selector, nodes, doc) {
   var result = [];
 
   for (var i = 0, l = nodes.length; i < l; i++) {
     var searchNode = nodes[i]._searchNode || nodes[i];
-    searchNode = searchNode.parent;
 
-    if (searchNode && css.match(searchNode, selector)) {
+    if (doc.indexOf(searchNode) === -1 && css.match(searchNode.parent, selector)) {
       result.push(nodes[i]);
-      nodes[i]._searchNode = searchNode;
+      nodes[i]._searchNode = searchNode.parent;
     } else {
       delete nodes[i]._searchNode;
     }
@@ -206,24 +208,14 @@ _private.newContext = function(dom) {
 
     for (var i = 0; i < children.length; i++) {
       if (children[i].type === 'tag') {
-        children[i]._parent = children[i].parent;
-        children[i].parent = null;
         result.push(children[i]);
       }
     }
 
-    return pre.concat(current.children);
+    return pre.concat(result);
   }, result);
 
   return result;
-};
-
-_private.resetContext = function(ctx) {
-  for (var i = 0; i < ctx.length; i++) {
-    var item = ctx[i];
-    item.parent = item._parent;
-    delete item._parent;
-  }
 };
 
 _private.insertChild = function(parent, index, children) {

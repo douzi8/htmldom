@@ -39,10 +39,7 @@ _private($.prototype);
  */
 $.prototype.find = function(selector) {
   var ctx = this.newContext();
-  var result = $(selector, ctx);
-
-  this.resetContext(ctx);
-  return result;
+  return $(selector, ctx);
 };
 
 /**

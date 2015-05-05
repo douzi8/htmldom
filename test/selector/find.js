@@ -46,4 +46,22 @@ describe('found', function() {
     $('div').find('div').append('<a>').append('<a>');
     assert.equal($('div').find('div > a').length, 3);
   });
+
+  it('child', function() {
+    var html = new HtmlDom('<div><div><div><a></div></div><a></a></div>');
+    var $ = html.$;
+
+    assert.equal($('div').find('div + a').length, 1);
+    assert.equal($('div').find('div div a').length, 1);
+    assert.equal($('div').find('div div div a').length, 0);
+  });
+
+  it('multiple parent', function() {
+    var html = new HtmlDom('<div><ul><li><li></div><div><ul><li><li>');
+    var $ = html.$;
+
+    assert.equal($('div').find('li').length, 4);
+    assert.equal($('div').find('ul li').length, 4);
+    assert.equal($('div').find('ul li + li').length, 2);
+  });
 });
