@@ -197,7 +197,7 @@ HtmlDom.prototype._closetag = function() {
 
     this.dom.push({
       type: 'closetag',
-      name: tagname
+      name: tagname.toLowerCase()
     });
     return true;
   } else {

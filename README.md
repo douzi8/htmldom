@@ -1,4 +1,4 @@
-# htmldom — Simplified html handle in nodejs
+# htmldom — Simplified html or xml handle in nodejs
 [![NPM](https://nodei.co/npm/htmldom.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/htmldom/)
 ```js
 var HtmlDom = require('htmldom');
@@ -36,6 +36,9 @@ var html = new HtmlDom('<div <%= a %>></div>', [/<%([\s\S]+?)%>/g]);
 
 // AngularJs template
 var html = new HtmlDom('<div {{name}}></div>', [/\{\{([\s\S]+?)\}\}/g]);
+
+// xml code
+var xml = new HtmlDom('<?xml version="1.0" encoding="utf-8" ?><tag><item></item></tag>')
 ```
 
 ### dom

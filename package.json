@@ -1,6 +1,6 @@
 {
   "name": "htmldom",
-  "version": "0.1.15",
+  "version": "0.1.17",
   "description": "Simplified html handle in nodejs",
   "main": "htmldom.js",
   "scripts": {
@@ -18,7 +18,9 @@
     "online",
     "jQuery",
     "query",
-    "node html"
+    "node html",
+    "xml",
+    "parser"
   ],
   "author": "douzi <liaowei08@gmail.com>",
   "license": "MIT",

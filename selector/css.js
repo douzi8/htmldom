@@ -39,7 +39,7 @@ function parser(selector) {
       };
 
       if (matched = match(REG.TAG)) {
-        item.name = matched[0];
+        item.name = matched[0].toLowerCase();
       }
       
       start = false;

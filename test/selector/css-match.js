@@ -18,6 +18,7 @@ describe('selecor', function() {
 
   it('tag', function() {
     assert.equal($('div').length, 1);
+    assert.equal($('DIV').length, 1);
     assert.equal($('li').length, 2);
   });
 
