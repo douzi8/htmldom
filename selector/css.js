@@ -1,13 +1,4 @@
-var REG = {
-  TAG: /^(\w+)/,
-  ID: /^#(\w+)/,
-  CLASS: /^\.(\w+)/,
-  ATTR: /^\[([^\]]+)\]/,
-  ALL: /^\*/,
-  SPACE: /^\s+/,
-  CLASS_SPLIT: /\s+/,
-  CSS_OP: /^\s*([>+~\s])\s*/
-};
+var REG = require('./reg');
 
 /**
  * @example

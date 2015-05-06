@@ -1,6 +1,6 @@
 var css = require('./css');
 var util = require('utils-extend');
-var CLS_REG = /\s+/;
+var REG = require('./reg');
 var style = require('./style');
 var _private = require('./private');
 
@@ -156,6 +156,39 @@ $.prototype.attr = function(key, value) {
 
   return this;
 };
+/**
+ * @example
+ * $('').data('value')
+ */
+$.prototype.data = function(name, value) {
+  var attrName = 'data-' + name.replace(REG.CAPTIAL, '-$1').toLowerCase();
+
+  if (util.isUndefined(value)) {
+    value = this.attr(attrName);
+
+    switch (value) {
+      case 'true':
+        return true;
+      case 'false':
+        return false;
+      case 'null':
+        return null;
+      default:
+        if (REG.OBJECT.test(value)) {
+          try {
+            value = JSON.parse(value);
+          } catch (e) {}
+        } else if (REG.NUMBER.test(value)) {
+          value = parseInt(value, 10);
+        }
+
+        return value; 
+    }
+  } else {
+    this.attr(attrName, value);
+    return this;
+  }
+};
 
 /**
  * @example
@@ -225,13 +258,13 @@ $.prototype.css = function(property, value) {
 $.prototype.hasClass = function(name) {
   if (!name) return false;
   var has = false;
-  name = name.split(CLS_REG);
+  name = name.split(REG.CLASS_SPLIT);
 
   for (var i = 0; i < this.length; i++) {
     var cls = this[i].attributes.class;
 
     if (cls) {
-      cls = cls.split(CLS_REG);
+      cls = cls.split(REG.CLASS_SPLIT);
       var length = name.length;
 
       while (length--) {
@@ -252,13 +285,13 @@ $.prototype.hasClass = function(name) {
 };
 
 $.prototype.addClass = function(name) {
-  name = name.split(CLS_REG);
+  name = name.split(REG.CLASS_SPLIT);
   this.each(function(index, item) {
     for (var i = 0; i < name.length; i ++) {
       var cls = item.attributes.class;
 
       if (cls) {
-        cls = cls.split(CLS_REG);
+        cls = cls.split(REG.CLASS_SPLIT);
         if (cls.indexOf(name[i]) === -1) {
           cls.push(name[i]);
         }
@@ -274,7 +307,7 @@ $.prototype.addClass = function(name) {
 $.prototype.removeClass = function(name) {
   var removeAll = util.isUndefined(name) ? true : false;
   if (!removeAll) {
-    name = name.split(CLS_REG);
+    name = name.split(REG.CLASS_SPLIT);
   }
   
   this.each(function(index, item) {
@@ -285,7 +318,7 @@ $.prototype.removeClass = function(name) {
         var cls = item.attributes.class;
 
         if (cls) {
-          cls = cls.split(CLS_REG);
+          cls = cls.split(REG.CLASS_SPLIT);
           cls = cls.filter(function(item) {
              return item !== name[i];
           });

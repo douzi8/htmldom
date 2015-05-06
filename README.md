@@ -137,6 +137,17 @@ $('').attr('key', function(index,oldValue) {});
 $('').attr({});              // multiple assign
 $('').attr('key', null)      // remove attr
 ```
+* data(name, value)
+```
+<div data-true="true" data-false="false" data-null="null" 
+     data-obj='{"key": "value"}' data-array="[1, 2]" 
+     data-string="word"></div>
+
+$('div').data('true') === true
+$('div').data('null') === null
+$('div').data('obj')            // {key: "value" }
+$('div').data('id', 5)          // set data
+```
 * parent(selector)
 ```
 $('').parent()
