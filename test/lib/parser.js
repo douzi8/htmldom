@@ -9,9 +9,9 @@ describe('Parser dom', function() {
       { type: 'opentag', name: 'div' }
     ]);
 
-    assert.equal(parser.result.children[0].type, 'text');
-    assert.equal(parser.result.children[1].type, 'comment');
-    assert.equal(parser.result.children[2].type, 'tag');
+    assert.equal(parser.dom.children[0].type, 'text');
+    assert.equal(parser.dom.children[1].type, 'comment');
+    assert.equal(parser.dom.children[2].type, 'tag');
   });
 
   it('ul li', function() {
@@ -23,7 +23,7 @@ describe('Parser dom', function() {
       { type: 'closetag', name: 'ul' }
     ]);
 
-    assert.equal(parser.result.children[0].children[0].children[0].name, 'div');
+    assert.equal(parser.dom.children[0].children[0].children[0].name, 'div');
   });
 
   it('Void elements', function() {
@@ -33,8 +33,8 @@ describe('Parser dom', function() {
       { type: 'opentag', name: 'h3' }
     ]);
 
-    assert.equal(parser.result.children[0].name, 'img');
-    assert.equal(parser.result.children[1].name, 'input');
-    assert.equal(parser.result.children[2].name, 'h3');
+    assert.equal(parser.dom.children[0].name, 'img');
+    assert.equal(parser.dom.children[1].name, 'input');
+    assert.equal(parser.dom.children[2].name, 'h3');
   });
 });
