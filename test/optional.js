@@ -19,6 +19,10 @@ describe('optional', function() {
 
     html = new HtmlDom('<li><div><ul><li><div></div></li><li></li></ul><li>');
     assert.equal(html.html(), '<li><div><ul><li><div></div></li><li></li></ul></div></li><li></li>');
+
+    html = new HtmlDom('<ul><li><ul><li></li><div><li></li></div></ul></li></ul>');
+
+    assert.equal(html.html(), '<ul><li><ul><li></li><div><li></li></div></ul></li></ul>');
   });
 
   it('dl dt dd', function() {
