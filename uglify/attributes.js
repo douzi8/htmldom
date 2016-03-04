@@ -70,8 +70,8 @@ module.exports = function(dom, options) {
 
       value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
       html.push(' ' + key + '=');
-      
-      if (options.removeAttributeQuotes && !/\s/.test(value)) {
+      // data-url="accident/test"
+      if (options.removeAttributeQuotes && !/(\s|\/)/.test(value)) {
         html.push(value);
       } else {
         html.push('"' + value +'"');

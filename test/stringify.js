@@ -71,12 +71,12 @@ describe('stringify', function() {
   });
 
   it('removeAttributeQuotes', function() {
-    var html = new HtmlDom('<div id="key" value="a b" data-id="" data-key="">');
+    var html = new HtmlDom('<div id="key" value="a b" data-id="" data-key="" data-url="/index">');
     var code = html.stringify({
       removeAttributeQuotes: true
     });
 
-    assert.equal(code, '<div id=key value="a b" data-id data-key></div>');
+    assert.equal(code, '<div id=key value="a b" data-id data-key data-url="/index"></div>');
   });
 
   it('onServerCode', function() {
