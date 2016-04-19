@@ -20,6 +20,7 @@ function parser(selector) {
   var start = true;
   var ret = [];
   var item;
+  var matched;
 
   function match(reg) {
     var result = str.match(reg);
@@ -119,7 +120,7 @@ function match(tag, selector) {
   if (selector.name && tag.name !== selector.name) {
     return false;
   }
-  var i;
+  var i, l;
 
   if (selector.class) {
     if (!tag.attributes.class) return false;
