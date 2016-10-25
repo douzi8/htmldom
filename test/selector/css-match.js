@@ -26,10 +26,12 @@ describe('selecor', function() {
     assert.equal($('.cls1').length, 2);
     assert.equal($('.item.item2').length, 2);
     assert.equal($('.item.item3').length, 1);
+    assert.equal($('.class-test').length, 1);
   });
 
   it('id', function() {
     assert.equal($('#id').length, 1);
+    assert.equal($('#id-test').length, 1);
   });
 
   it('attributes', function() {
@@ -37,7 +39,7 @@ describe('selecor', function() {
   });
 
   it('^attributes', function() {
-    assert.equal($('[class^=c]').length, 2);
+    assert.equal($('[class^=c]').length, 3);
   });
 
   it('$attributes', function() {
