@@ -24,18 +24,12 @@ uglifyjs htmldom.front.js -o htmldom.front.js
 ```
 
 ## API
-### Constructor(code, escape)
+### Constructor(code)
 * {string} ``code`` html string
-* {array} ``[escape]`` escape server code
 ```js
 // html code
 var html = new HtmlDom('<div>1</div>');
 
-// underscore template
-var html = new HtmlDom('<div <%= a %>></div>', [/<%([\s\S]+?)%>/g]);
-
-// AngularJs template
-var html = new HtmlDom('<div {{name}}></div>', [/\{\{([\s\S]+?)\}\}/g]);
 
 // xml code
 var xml = new HtmlDom('<?xml version="1.0" encoding="utf-8" ?><tag><item></item></tag>')

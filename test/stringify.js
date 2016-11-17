@@ -62,12 +62,6 @@ describe('stringify', function() {
     var html = new HtmlDom('<body style="color: red;">');
 
     assert.equal(html.stringify(), '<body style="color:#f00"></body>');
-
-    var html2 = new HtmlDom('<div style="<%= color %>">', [
-      /<%([\s\S]+?)%>/g
-    ]);
-
-    assert.equal(html2.stringify(), '<div style="<%= color %>"></div>')
   });
 
   it('removeAttributeQuotes', function() {
@@ -78,16 +72,5 @@ describe('stringify', function() {
 
     assert.equal(code, '<div id=key value="a b" data-id data-key data-url="/index"></div>');
   });
-
-  it('onServerCode', function() {
-    var html = new HtmlDom('<div <%= a%>>', [/<%([\s\S]+?)%>/g]);
-    var newcode = html.stringify({
-      onServerCode: function(match) {
-        assert.equal(match, '<%= a%>');
-        return '<%=a%>';
-      }
-    });
-
-    assert.equal(newcode, '<div <%=a%>></div>');
-  });
+ 
 });

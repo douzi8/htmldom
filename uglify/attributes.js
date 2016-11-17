@@ -18,16 +18,6 @@ function isBooleanAttr(name) {
   return booleanAttributes.indexOf(name) !== -1;
 }
 
-function isServerCode(escape, code) {
-  for (var i = 0; i < escape.length; i++) {
-    var reg = new RegExp(escape[i]);
-    if (reg.test(code)) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 module.exports = function(dom, options) {
   var html = [];
@@ -59,7 +49,7 @@ module.exports = function(dom, options) {
                         .replace('function __(){', '')
                         .replace(/\}$/, '');
         } catch (e) {}
-      } else if (key === 'style' && !isServerCode(options._escape, value)) {
+      } else if (key === 'style') {
         // ugliy inline style
         value = 'a{' + value + '}';
         var css = new CssDom(value);

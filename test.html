@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Htmldom by douzi8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Simplified html handle in nodejs, beautify html online, uglify html online" />
+    <meta name="keywords" content="html, online, dom, uglify, beautify, nodejs" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Htmldom</h1>
+      <h2 class="project-tagline">Simplified html handle in nodejs</h2>
+      <a href="https://github.com/douzi8/htmldom" class="btn">View on GitHub</a>
+      <a href="https://github.com/douzi8/htmldom/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/douzi8/htmldom/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+<script src="./htmldom.front.js"></script>
+<script src="http://douzi8.github.io/htmldom/lib/zepto.min.js"></script>
+<style>
+textarea {
+  display: block;
+  height: 150px;
+  width: 100%;
+}
+.clearfix:after{
+  display: block;
+  content: '';
+  clear: both;
+}
+.dom-left {
+  float: left;
+  width: 50%;
+}
+.dom-right {
+  float: right;
+  width: 49.5%;
+}
+.main-content h3 {
+  margin: 10px 0;
+}
+</style>
+<div>
+    <h3>Input html code here</h3>
+    <textarea id="txt" oninput="change()" style="height: 250px;">
+<!-- origin html -->
+<div></div>
+<!-- underscore template-->
+<div <%= a%>></div>
+<!-- AngularJs template-->
+<div value={{name}}></div></textarea>
+    <h3>jQuery code here <button id="run" style="padding: 0 10px;">run code</button><span class="time1"></span></h3>
+    <textarea id="txt5">$('div').attr('data-id', 1);</textarea>
+</div>
+<div>
+  <h3>origin html code,
+    <span class="time2"></span>
+  </h3>
+  <textarea id="txt6" readonly="">
+  </textarea>
+</div>
+<div>
+  <h3>uglify html code,
+    <span class="time3"></span>
+  </h3>
+  <textarea id="txt2" readonly="">
+  </textarea>
+</div>
+<div>
+  <h3>
+    Beautify html code,
+    <span class="time4"></span></h3>
+    <textarea id="txt3" readonly="">
+    </textarea>
+</div>
+<div>
+  <h3>
+    html dom,
+    <span class="time5"></span>
+  </h3>
+  <textarea id="txt4" readonly="">
+  </textarea>
+</div>
+
+<script>
+var performance = performance || {
+    now: function() {
+      return Date.now();
+    }
+};
+function change(code) {
+  if (code) {
+    document.getElementById('txt').value = code;
+  } else {
+    code = document.getElementById('txt').value;
+  }
+  var t1 = performance.now();
+  var html = new HtmlDom(code, [/<%([\s\S]+?)%>/g]);
+  var t2 = performance.now();
+  $('.time5').html(t2 - t1 +'ms');
+  
+  t1 = performance.now();
+  var htmlcode = html.html();
+  t2 = performance.now();
+  $('.time2').html(t2 - t1 +'ms');
+  
+  t1 = performance.now();
+  var uglifyhtml = html.stringify();
+  t2 = performance.now();
+  $('.time3').html(t2 - t1 + 'ms');
+  t1 = performance.now();
+  var beautifyhtml = html.beautify();
+  t2 = performance.now();
+  $('.time4').html(t2 - t1 + 'ms');
+  document.getElementById('txt6').innerHTML = htmlcode;
+  document.getElementById('txt2').innerHTML = uglifyhtml;
+  document.getElementById('txt3').innerHTML = beautifyhtml;
+  
+  var clone = extend([], html.dom.children);
+  document.getElementById('txt4').value = jsBeautify(JSON.stringify(clone), {
+    'indent_size': 1,
+    'indent_char': '\t'
+  });
+  window.htmldom = html;
+  window.$ = html.$;
+}
+function isObject(value) {
+  return Object.prototype.toString.call(value) === '[object Object]';
+}
+function extend(target, source) {
+  var value;
+  for (var key in source) {
+    if (key === 'parent') {
+      target.parent = 'circular';
+      continue;
+    }
+    value = source[key];
+    if (Array.isArray(value)) {
+      if (!Array.isArray(target[key])) {
+        target[key] = [];
+      }
+      extend(target[key], value);
+    } else if (isObject(value)) {
+      if (!isObject(target[key])) {
+        target[key] = {};
+      }
+      extend(target[key], value);
+    } else {
+      target[key] = value;
+    }
+  }
+  return target;
+}
+Zepto('#run').click(function() {
+  var value = Zepto('#txt5').val();
+  try {
+    var t1 = performance.now();
+    eval(value);
+    var t2 = performance.now();
+    Zepto('.time1').html(t2 - t1 + 'ms');
+    var newHtml = htmldom.html();
+    change(newHtml);
+  } catch (e) {
+  }
+});
+change();
+</script>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/douzi8/htmldom">Htmldom</a> is maintained by <a href="https://github.com/douzi8">douzi8</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
