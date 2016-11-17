@@ -240,7 +240,6 @@ html.html()
     </div>
   </script>
   ```
-  * {function} ``[options.onServerCode]`` uglify server code callback
   * {object} ``[options.cssdom]``  
 Use [cssdom](https://github.com/douzi8/cssdom) uglify css code with style tag and style attribute
   ```html
@@ -257,10 +256,6 @@ Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code with scr
 html.stringify({
   booleanAttributes: true,
   templateType: ['text/template'],
-  // handle server code by callback
-  onServerCode: function(code) {
-    return code;
-  },
   uglifyJs: {}
 });
 ```
