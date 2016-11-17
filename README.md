@@ -29,6 +29,11 @@ uglifyjs htmldom.front.js -o htmldom.front.js
 ```js
 // html code
 var html = new HtmlDom('<div>1</div>');
+var $ = html.$;
+
+$('div').addClass('test').attr('k', 'v');
+console.log(html.html());
+
 
 
 // xml code
