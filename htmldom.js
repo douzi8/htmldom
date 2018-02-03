@@ -1,9 +1,12 @@
 var Scanner = require('./lib/scanner');
 var Parser = require('./lib/parser');
+var element = require('./lib/elements');
 var $ = require('./selector/index');
 
-function HtmlDom(str) {
+function HtmlDom(str, options = {}) {
   str = (str || '') + '';
+
+  element.config(options)
   
 
   // Scanner html code

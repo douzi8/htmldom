@@ -24,8 +24,9 @@ uglifyjs htmldom.front.js -o htmldom.front.js
 ```
 
 ## API
-### Constructor(code)
+### Constructor(code, options)
 * {string} ``code`` html string
+* [object] ``options``
 ```js
 // html code
 var html = new HtmlDom('<div>1</div>');
@@ -38,6 +39,15 @@ console.log(html.html());
 
 // xml code
 var xml = new HtmlDom('<?xml version="1.0" encoding="utf-8" ?><tag><item></item></tag>')
+
+
+// Append void elemtns
+var html = new HtmlDom('<div>1</div>', {
+  voidElements: ['include', 'image'],
+  // true: include type ==> <include />
+  // false: include type ==> <include></include>
+  selfClosed: true
+});
 ```
 
 ### dom

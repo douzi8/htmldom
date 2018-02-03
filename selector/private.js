@@ -1,6 +1,9 @@
 var css = require('./css');
 var REG = require('../lib/reg');
-var VOID_ELEMENTS = require('../lib/elements').VOID_ELEMENTS;
+var {
+  getVoidEls,
+  getSelfClosed
+} = require('../lib/elements');
 
 function _private(fn) {
   for (var i in _private) {
@@ -259,13 +262,15 @@ function getHtml(node) {
           html.push(' ' + key);
         }
       }
-      html.push('>');
-
-      if (VOID_ELEMENTS.indexOf(name) == -1) {
+      
+      if (getVoidEls().indexOf(name) == -1) {
+        html.push('>')
         node.children.forEach(function(item) {
           html.push(getHtml(item));
         });
         html.push('</' + name + '>');
+      } else {
+        html.push(getSelfClosed() ? '/>' : '>');
       }
     break;
     case 'comment':
