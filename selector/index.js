@@ -123,7 +123,6 @@ $.prototype.attr = function(key, value) {
     if (util.isObject(key)) {
       this.each(function(index, item) {
         for (var i in key) {
-          i = i.toLowerCase();
           if (key[i] === null) {
             delete item.attributes[i];
           } else {
@@ -134,14 +133,12 @@ $.prototype.attr = function(key, value) {
       });
     } else {
       if (this.length) {
-        key = key.toLowerCase();
         return this[0].attributes[key];
       } else {
         return undefined;
       }
     }
   } else {
-    key = key.toLowerCase();
     this.each(function(index, item) {
       if (value === null) {
         delete item.attributes[key];

@@ -54,11 +54,11 @@ describe('attr', function() {
     assert.equal($('div').attr('value'), 'false');
   });
 
-  it('lowercase', function() {
+  /*it('lowercase', function() {
     var html = new HtmlDom('<div ID="test">');
 
     assert.equal(html.$('div').attr('Id'), 'test');
-  });
+  });*/
 
   it('function', function() {
     var html = new HtmlDom('<h1 title="1">');

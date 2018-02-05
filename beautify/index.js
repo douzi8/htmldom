@@ -64,10 +64,10 @@ module.exports = function(nodes, options) {
         html.push(newline + '<' + name);
         for (var i in dom.attributes) {
           var key = i.replace(REG.ATTR_BUG, '');
-          if (dom.attributes[i] === null) {
-            html.push(' ' + key);
-          } else {
+          if (dom.attributes[i]) {
             html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
+          } else {
+            html.push(' ' + key);
           }
         }
 
