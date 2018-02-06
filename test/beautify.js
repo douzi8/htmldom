@@ -35,6 +35,14 @@ describe('beautify', function() {
     writeFileSync('beautify/style.html', newcode);
   });
 
+  it('wx', function() {
+    var code = readFileSync('html/wx.html');
+    var html = new HtmlDom(code);
+    var newcode = html.beautify();
+
+    writeFileSync('beautify/wx.html', newcode);
+  });
+
   it('script', function() {
     var code = readFileSync('html/script.html');
     var html = new HtmlDom(code);
