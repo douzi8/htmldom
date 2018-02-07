@@ -1,6 +1,11 @@
 <swiper class="wi-swiper" autoplay="true" interval="4000" duration="600" indicator-dots="true" indicator-color="#fff" indicator-active-color="#fa5a4b">
   <swiper-item wx:for="{{banner}}" wx:key="id">
-    <image src="{{item.img}}" class="slide-image wi-slide-image" bindtap="goAction" data-url="{{item.link}}">
-    </image>
+    <image src="{{item.img}}" class="slide-image wi-slide-image" bindtap="goAction" data-url="{{item.link}}"/>
   </swiper-item>
 </swiper>
+<view class="ji-add-car fix-content" wx:else>
+  <button class="btn btn-primary ji-login-btn serr screen-center" bindtap="addCard">
+    <image class="ji-add-icon" src="../../../img/jiayou/add.svg"/>
+    添加油卡
+  </button>
+</view>

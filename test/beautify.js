@@ -37,7 +37,15 @@ describe('beautify', function() {
 
   it('wx', function() {
     var code = readFileSync('html/wx.html');
-    var html = new HtmlDom(code);
+    var html = new HtmlDom(code, {
+      voidElements: [
+        'wxs',
+        'include',
+        'import',
+        'image'
+      ],
+      selfClosed: true
+    });
     var newcode = html.beautify();
 
     writeFileSync('beautify/wx.html', newcode);

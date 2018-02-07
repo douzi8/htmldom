@@ -3,3 +3,7 @@
     <image src="{{item.img}}" class="slide-image wi-slide-image" bindtap="goAction" data-url="{{item.link}}" />
   </swiper-item>
 </swiper>
+<view class="ji-add-car fix-content" wx:else> 
+  <button class="btn btn-primary ji-login-btn serr screen-center" bindtap="addCard">
+    <image class="ji-add-icon" src="../../../img/jiayou/add.svg"></image>添加油卡</button>
+</view>  
