@@ -1,11 +1,8 @@
 var util = require('utils-extend');
 var CssDom = require('cssdom');
 var uglifyJS = require("uglify-js");
-var {
-  getVoidEls,
-  getSelfClosed
-} = require('../lib/elements');
 var uglifyAttributes = require('./attributes');
+var elements = require('../lib/elements')
 
 function isJs(name, type, types) {
   return name === 'script' && (!type || types.indexOf(type) !== -1);
@@ -31,10 +28,10 @@ function recurse(dom, options) {
       html.push(dom.value.trim());
       break;
     case 'tag':
-      html.push('<' + name + uglifyAttributes(dom, options));
+      html.push('<' + name + uglifyAttributes(dom, options) + elements.closeTag(options.selfClosed, dom));
 
-      if (getVoidEls().indexOf(name) == -1) {
-        html.push('>')
+
+      if (!dom.isVoid) {
         if (name === 'style') {
           var css = new CssDom(dom.children[0].value);
           html.push(css.stringify());
@@ -56,8 +53,6 @@ function recurse(dom, options) {
         }
 
         html.push('</' + name + '>');
-      } else {
-        html.push(getSelfClosed() ? '/>' : '>');
       }
       break;
   }

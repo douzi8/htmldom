@@ -3,11 +3,8 @@ var Parser = require('./lib/parser');
 var element = require('./lib/elements');
 var $ = require('./selector/index');
 
-function HtmlDom(str, options = {}) {
+function HtmlDom(str) {
   str = (str || '') + '';
-
-  element.config(options)
-  
 
   // Scanner html code
   var scanner = new Scanner(str);
@@ -15,7 +12,6 @@ function HtmlDom(str, options = {}) {
   var parser = new Parser(scanner.dom);
 
   this.dom = parser.dom;
-  
   /**
    * @example
    * var $ = html.$;
@@ -29,10 +25,8 @@ function HtmlDom(str, options = {}) {
 
 
 
-HtmlDom.prototype.html = function() {
-  var html = $.prototype.getHtml(this.dom);
-
-  return $.prototype.getHtml(this.dom);
+HtmlDom.prototype.html = function(opt = {}) {
+  return $.prototype.getHtml(this.dom, opt);
 };
 
 HtmlDom.prototype.stringify = function(opt) {

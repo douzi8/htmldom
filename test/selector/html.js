@@ -43,4 +43,12 @@ describe('html', function() {
 
     assert.equal(html.html(), '<div><ul><li>1</li><li>2</li></ul></div>');
   });
+
+  it('selfClosed', () => {
+    var html = new HtmlDom(`<meta><div><input value="3"></div>`);
+
+      assert.equal(html.html({
+        selfClosed: true
+      }), '<meta/><div><input value="3"/></div>')
+  })
 });

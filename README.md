@@ -39,15 +39,6 @@ console.log(html.html());
 
 // xml code
 var xml = new HtmlDom('<?xml version="1.0" encoding="utf-8" ?><tag><item></item></tag>')
-
-
-// Append void elemtns
-var html = new HtmlDom('<div>1</div>', {
-  voidElements: ['include', 'image'],
-  // true: include type ==> <include />
-  // false: include type ==> <include></include>
-  selfClosed: true
-});
 ```
 
 ### dom
@@ -67,6 +58,7 @@ html.dom
 {
   type: 'tag',
   name: 'div',
+  isVoid: false,
   attributes: {
     id: 'test'
   },
@@ -218,6 +210,8 @@ $('').each(function(index, item) {
 If you want get html string fast, choose this api, it's only output origin html code
 ```js
 html.html()
+// Is tag closed with '/'
+html.html({ selfClosed: true })
 ```
 
 ### stringify()
@@ -230,6 +224,7 @@ html.html()
   ```html
   <div id="test"></div> => <div id=test></div>
   ```
+  * {boolean} ``[options.selfClosed]`` Is tag closed with '/'
   * {boolean} ``[options.removeJsType=true]``
   ```html
   <script type="text/javascript"></script> => <script></script>
@@ -271,6 +266,7 @@ Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code with scr
 html.stringify({
   booleanAttributes: true,
   templateType: ['text/template'],
+  selfClosed: false,
   uglifyJs: {}
 });
 ```
@@ -278,6 +274,7 @@ html.stringify({
 ### beautify()
 * {object} ``options``
   * {string} ``[options.indent='  ']`` code indent
+  * {boolean} ``[options.selfClosed]`` Is tag closed with '/'
   * {object} ``[options.cssdom]``  
 Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
   * {object} ``[options.jsBeautify]``  
@@ -285,6 +282,7 @@ Use [js-beautify](https://www.npmjs.com/package/js-beautify) beautify js code
 ```js
 html.beautify({
   indent: '  ',
+  selfClosed: false,
   jsBeautify: {}
 });
 ```

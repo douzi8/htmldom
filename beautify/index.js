@@ -1,12 +1,8 @@
-var {
-  getVoidEls,
-  getSelfClosed
-} = require('../lib/elements');
-
 var util = require('utils-extend');
 var CssDom = require('cssdom');
 var jsBeautify = require('js-beautify');
 var REG = require('../lib/reg');
+var elements = require('../lib/elements')
 
 // for front
 if (typeof window !== 'undefined') {
@@ -71,8 +67,9 @@ module.exports = function(nodes, options) {
           }
         }
 
-        if (getVoidEls().indexOf(name) == -1) {
-          html.push('>');
+        html.push(elements.closeTag(options.selfClosed, dom))
+
+        if (!dom.isVoid) {
           // beautify style tag
           if (name === 'style') {
             var css = new CssDom(dom.children[0].value);
@@ -95,8 +92,6 @@ module.exports = function(nodes, options) {
             });
           }
           html.push(newline + '</' + name + '>');
-        } else {
-          html.push(getSelfClosed() ? '/>' : '>');
         }
     }
     depth++;

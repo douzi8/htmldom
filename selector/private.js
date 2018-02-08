@@ -1,9 +1,6 @@
 var css = require('./css');
 var REG = require('../lib/reg');
-var {
-  getVoidEls,
-  getSelfClosed
-} = require('../lib/elements');
+var elements = require('../lib/elements')
 
 function _private(fn) {
   for (var i in _private) {
@@ -243,7 +240,7 @@ _private.createdom = function(html, callback) {
   return this;
 };
 
-function getHtml(node) {
+function getHtml(node, options = {}) {
   var html = [];
   var name = node.name;
 
@@ -262,15 +259,14 @@ function getHtml(node) {
           html.push(' ' + key);
         }
       }
+
+      html.push(elements.closeTag(options.selfClosed, node))
       
-      if (getVoidEls().indexOf(name) == -1) {
-        html.push('>')
+      if (!node.isVoid) {
         node.children.forEach(function(item) {
-          html.push(getHtml(item));
+          html.push(getHtml(item, options));
         });
         html.push('</' + name + '>');
-      } else {
-        html.push(getSelfClosed() ? '/>' : '>');
       }
     break;
     case 'comment':
@@ -284,12 +280,12 @@ function getHtml(node) {
   return html.join('');
 }
 
-_private.getHtml = function(node) {
+_private.getHtml = function(node, options) {
   var html = '';
   var children = node.children;
 
   for (var i = 0; i < children.length; i++) {
-    html += getHtml(children[i]);
+    html += getHtml(children[i], options);
   }
 
   return html;
