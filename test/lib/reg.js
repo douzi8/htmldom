@@ -52,7 +52,7 @@ describe('Reg', function() {
   });
 
   it('ATTR', function() {
-    var str = 'id="1" id="2" checked 中文="{k: \'v\'}"key=\'""\' disable ';
+    var str = 'id="1" id="2" checked 中文="{k: \'v\'}"key=\'""\' disable';
     var attrs = {};
 
     str.replace(REG.ATTR, function(match, key, value) {
