@@ -9,6 +9,13 @@ describe('css selector', function() {
     }]);
   });
 
+  it('picker-view', function() {
+    assert.deepEqual(cssSelector.parser('picker-view'), [{
+      name: 'picker-view',
+      attrs: []
+    }]);
+  });
+
   it('#id', function() {
     assert.deepEqual(cssSelector.parser('div'), [{
       name: 'div',
