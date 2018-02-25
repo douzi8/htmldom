@@ -19,4 +19,12 @@ describe('raw text element', function() {
 
     assert.equal(html.stringify(), '<script>var a=3;</script>');
   });
+
+  it('textarea closed', function() {
+    var html = new HtmlDom('<textarea /><view></view>');
+
+    assert.equal(html.stringify({
+      selfClosed: true
+    }), '<textarea/><view></view>');
+  });
 });
