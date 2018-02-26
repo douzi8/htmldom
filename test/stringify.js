@@ -72,5 +72,14 @@ describe('stringify', function() {
 
     assert.equal(code, '<div id=key value="a b" data-id data-key data-url="/index"></div>');
   });
+
+  it('keep attribute', function () {
+    var html = new HtmlDom('<button formType="submit">set</button>');
+    var code = html.html({
+      selfClosed: true
+    })
+
+    assert.equal(code, '<button formType="submit">set</button>');
+  })
  
 });

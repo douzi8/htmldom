@@ -1,6 +1,6 @@
 {
   "name": "htmldom",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Simplified html handle in nodejs",
   "main": "htmldom.js",
   "scripts": {
