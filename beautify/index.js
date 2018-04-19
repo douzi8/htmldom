@@ -23,6 +23,10 @@ function isJs(name, type) {
   return name === 'script' && (!type || type === 'text/javascript');
 }
 
+function hasTag (tags) {
+  return tags.find(item => item.type === 'tag')
+}
+
 module.exports = function(nodes, options) {
   var html = [];
   options = util.extend({
@@ -45,7 +49,7 @@ module.exports = function(nodes, options) {
       case 'text':
         var value = dom.value.trim();
         if (value) {
-          html.push(newline + value);
+          html.push(value);
         }
         break;
       case 'comment':
@@ -54,7 +58,8 @@ module.exports = function(nodes, options) {
             .replace(/(\[[^\]]+\]\s*>)\s+/, '$1')
             .replace(/\s+(<!\[endif\])$/, '$1');
         }
-        html.push(newline + '<!--' + dom.value + '-->');
+        
+        html.push('<!--' + dom.value + '-->');
         break;
       case 'tag':
         html.push(newline + '<' + name);
@@ -87,9 +92,18 @@ module.exports = function(nodes, options) {
             }
             break;
           } else {
-            dom.children.forEach(function(item) {
-              html.push(recurse(item, depth + 1));
-            });
+            // Has children tag indent
+            if (hasTag(dom.children)) {
+              dom.children.forEach(function(item) {
+                html.push(recurse(item, depth + 1));
+              });
+            } else {
+              newline = ''
+              dom.children.forEach(function(item) {
+                html.push(recurse(item, depth));
+              });
+            }
+            
           }
           html.push(newline + '</' + name + '>');
         }
@@ -97,6 +111,7 @@ module.exports = function(nodes, options) {
     depth++;
     return html.join('');
   }
+
 
   for (var i = 0, l = nodes.length; i < l; i++) {
     html.push(recurse(nodes[i], 0));
