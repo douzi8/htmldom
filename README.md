@@ -251,10 +251,9 @@ html.html({ selfClosed: true })
   </script>
   ```
   * {object} ``[options.cssdom]``  
-Use [cssdom](https://github.com/douzi8/cssdom) uglify css code with style tag and style attribute
+Use [cssdom](https://github.com/douzi8/cssdom) uglify css code with style tag
   ```html
   <style>a { color:red; } </style> => <style>a{color:#f00}</style>
-  <div style="margin: 10px 15px 10px 15px;"></div> => <div style="margin:10 15px"></div>
   ```
   * {object} ``[options.uglifyJs]``  
 Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code with script tag and inline events

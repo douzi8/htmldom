@@ -49,13 +49,6 @@ module.exports = function(dom, options) {
                         .replace('function __(){', '')
                         .replace(/\}$/, '');
         } catch (e) {}
-      } else if (key === 'style') {
-        // ugliy inline style
-        value = 'a{' + value + '}';
-        var css = new CssDom(value);
-        value = css.stringify()
-                   .replace('a{', '')
-                   .replace(/\}$/, ''); 
       }
 
       value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
