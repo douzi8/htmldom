@@ -64,7 +64,7 @@ module.exports = function(nodes, options) {
             .replace(/\s+(<!\[endif\])$/, '$1');
         }
         
-        html.push('<!--' + dom.value + '-->');
+        html.push(newline + '<!--' + dom.value + '-->');
         break;
       case 'tag':
         html.push(newline + '<' + name);

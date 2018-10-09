@@ -52,6 +52,14 @@ describe('beautify', function() {
 
     writeFileSync('beautify/script.html', newcode);
   });
+
+  it('comment', function() {
+    var code = readFileSync('html/comment.html');
+    var html = new HtmlDom(code);
+    var newcode = html.beautify();
+
+    writeFileSync('beautify/comment.html', newcode);
+  });
 });
 
   
