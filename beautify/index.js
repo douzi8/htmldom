@@ -27,6 +27,11 @@ function hasTag (tags) {
   return tags.find(item => item.type === 'tag')
 }
 
+function isUndefined(obj) {
+  return obj === void 0
+}
+
+
 module.exports = function(nodes, options) {
   var html = [];
   options = util.extend({
@@ -65,7 +70,8 @@ module.exports = function(nodes, options) {
         html.push(newline + '<' + name);
         for (var i in dom.attributes) {
           var key = i.replace(REG.ATTR_BUG, '');
-          if (dom.attributes[i]) {
+
+          if (util.isString(dom.attributes[i])) {
             html.push(' ' + key + '="' + dom.attributes[i].replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
           } else {
             html.push(' ' + key);

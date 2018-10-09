@@ -13,10 +13,12 @@ var booleanAttributes = [
   'compact',
   'noshade'
 ];
+var util = require('utils-extend');
 
 function isBooleanAttr(name) {
   return booleanAttributes.indexOf(name) !== -1;
 }
+
 
 
 module.exports = function(dom, options) {
@@ -33,32 +35,14 @@ module.exports = function(dom, options) {
   for (var i in dom.attributes) {
     var key = i.replace(REG.ATTR_BUG, '');
     var value = dom.attributes[i];
-    var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || !value;
+    var optionEqual = (options.booleanAttributes && isBooleanAttr(i)) || !util.isString(value);
 
     if (optionEqual) {
       html.push(' ' + key);
     } else {
-      // uglify inline events
-      if (key.indexOf('on') === 0) {
-        try {
-          var jsCode = 'function __(){' + value +'}';
-          jsCode = uglifyJS.minify(jsCode, {
-            fromString: true
-          });
-          value = jsCode.code
-                        .replace('function __(){', '')
-                        .replace(/\}$/, '');
-        } catch (e) {}
-      }
-
       value = value.replace(REG.DOUBLE_QUOTES, '&quot;');
       html.push(' ' + key + '=');
-      // data-url="accident/test"
-      if (options.removeAttributeQuotes && !/(\s|\/)/.test(value)) {
-        html.push(value);
-      } else {
-        html.push('"' + value +'"');
-      }
+      html.push('"' + value +'"');
     }
   }
 

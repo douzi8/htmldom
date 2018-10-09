@@ -52,21 +52,6 @@ describe('stringify', function() {
     assert.equal(newcode, '<!DOCTYPE html><!--[if lt IE 7]><html lang="en" class="ie ie6 lte9 lte8 lte7 os-mac"><![endif]--><!--[if IE 7]><html lang="en" class="ie ie7 lte9 lte8 lte7 os-mac"><![endif]--><!--[if IE 8]><html lang="en" class="ie ie8 lte9 lte8 os-mac"><![endif]--><!--[if IE 9]><html lang="en" class="ie ie9 lte9 os-mac"><![endif]--><!--[if gt IE 9]><html lang="en" class="os-mac"><![endif]--><html lang="en" class="os-mac"><!--<![endif]--></html>');
   });
 
-  it('uglify inline event', function() {
-    var html = new HtmlDom('<body onselectstart="return false">');
-
-    assert.equal(html.stringify(), '<body onselectstart="return!1"></body>')
-  });
-
-
-  it('removeAttributeQuotes', function() {
-    var html = new HtmlDom('<div id="key" value="a b" data-id="" data-key="" data-url="/index">');
-    var code = html.stringify({
-      removeAttributeQuotes: true
-    });
-
-    assert.equal(code, '<div id=key value="a b" data-id data-key data-url="/index"></div>');
-  });
 
   it('keep attribute', function () {
     var html = new HtmlDom('<button formType="submit">set</button>');
