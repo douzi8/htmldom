@@ -1,6 +1,7 @@
 var css = require('./css');
 var REG = require('../lib/reg');
 var elements = require('../lib/elements')
+var util = require('utils-extend');
 
 function _private(fn) {
   for (var i in _private) {
@@ -253,7 +254,8 @@ function getHtml(node, options = {}) {
       for (var i in node.attributes) {
         var key = i.replace(REG.ATTR_BUG, '');
         var value = node.attributes[i];
-        if (value) {
+
+        if (util.isString(value)) {
           html.push(' ' + key + '="' + value.replace(REG.DOUBLE_QUOTES, '&quot;') + '"');
         } else {
           html.push(' ' + key);
