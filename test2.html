@@ -1,0 +1,362 @@
+
+<script type="text/javascript">
+/**
+ * 空元素标签
+ * https://developer.mozilla.org/zh-CN/docs/Glossary/%E7%A9%BA%E5%85%83%E7%B4%A0
+ */
+
+// @see http://www.w3.org/html/wg/drafts/html/master/syntax.html#void-elements
+const VOID_ELEMENTS = [
+  'area', 
+  'base', 
+  'br', 
+  'col', 
+  'embed', 
+  'hr', 
+  'img', 
+  'input', 
+  'keygen', 
+  'link',
+  'menuitem', 
+  'meta', 
+  'param', 
+  'source', 
+  'track', 
+  'wbr'
+]; 
+
+// Raw text elements
+// script, style, textarea
+
+
+/**
+ * 自闭合标签
+ * 
+ */
+
+/**
+ *  {
+ *     type: 'tag',
+ *     name: 'div',
+ *     isSelfClosing: false,
+ *     children: 
+ *     parent
+ *     
+ *  }
+ */
+
+
+  let htmlCode = `
+
+<textarea class=">" data-name="dd"  ><div>111</div></textarea>
+<div>   
+<!-- 
+代码注释 
+1
+-->
+   <input id="6"   data-name="name"   > 
+   <image />
+ 纯         文 <本>了
+ </div>
+`
+
+
+
+
+  const REG = {
+    // <style, <script
+    RAW_TAG: /^<(script|style|textarea)/,
+    // <div
+    OPEN_TAG: /^<([\w-]+)/,
+    // >
+    OPEN_TAG_CLOSE: /^(?:'[^']*'|"[^"]*"|[^>])*>/,
+    // </div>
+    CLOSE_TAG: /^<\/([\w-]+)\s*>/,
+    // <!-- -->
+    COMMENT: /^<!--([\s\S]*)-->/,
+    TEXT: /^[^<]+/,
+    WHITESPACE: /^\s+/
+  }
+
+  function isVoidElement(name) {
+    return VOID_ELEMENTS.includes(name)
+  }
+
+
+  class Scanner {
+    /**
+     * @param {string} str Html code
+     */
+    constructor (str) {
+      this.str = str
+      this.doms = []
+      this.scan()
+    }
+
+    scan () {
+      while (this.str) {
+        this.trimLeft()
+
+        if (this.rawTag()) {
+          continue
+        }
+
+        if (this.openTag()) {
+          continue
+        }
+
+        if (this.closeTag()) {
+          continue
+        }
+
+        if (this.comment()) {
+          continue
+        }
+
+        this.text()
+      }
+    }
+    /**
+     * match content step by step
+     * @example
+     * this.match(/^<([\w-]+)/)
+     */
+    match (reg) {
+      let match = this.str.match(reg)
+
+      if (!match) {
+        return false
+      }
+
+      this.str = this.str.slice(match[0].length)
+
+      return match
+    }
+
+    trimLeft () {
+      let match = this.match(REG.WHITESPACE)
+
+      if (!match) return false
+
+      this.doms.push({
+        type: 'text',
+        value: match[0]
+      })
+
+      return true
+    }
+
+    /**
+     * match like: <script>, <style>, <textarea>
+     */
+    rawTag () {
+      let match = this.match(REG.RAW_TAG)
+
+      if (!match) return false
+
+
+      let attributes = this.match(REG.OPEN_TAG_CLOSE)
+
+      if (!attributes) return
+
+      let item = {
+        type: 'rawTag',
+        name: match[1],
+        attributes: attributes[0].slice(0, -1)
+      }
+
+      this.doms.push(item)
+
+      return true    
+    }
+
+    /**
+     * match like: <div>,  <input>, ...
+     */
+    openTag () {
+      let match = this.match(REG.OPEN_TAG)
+
+      if (!match) return false
+
+      let attributes = this.match(REG.OPEN_TAG_CLOSE)
+
+      if (!attributes) return false
+
+      attributes = attributes[0].slice(0, -1).trim()
+
+      let isSelfClosing = attributes.endsWith('/')
+
+      if (isSelfClosing) {
+        attributes = attributes.slice(0, -1)
+      }
+
+      let name = match[1]
+      let type
+
+      if (isSelfClosing) {
+        type = 'selfClosingTag'
+      } else {
+        type = isVoidElement(name) ? 'voidTag' : 'openTag'
+      }
+
+      let item = {
+        type,
+        name,
+        attributes
+      }
+
+      this.doms.push(item) 
+
+      return true
+    }
+
+    /**
+     * match like: </div>, </title>
+     */
+    closeTag () {
+      let match = this.match(REG.CLOSE_TAG)
+
+      if (!match) return false
+
+      let item = {
+        type: 'closeTag',
+        name: match[1]
+      }  
+
+      this.doms.push(item)
+
+      return true
+    }
+
+    comment () {
+      let match = this.match(REG.COMMENT)
+
+      if (!match) return false
+
+      let item = {
+        type: 'comment',
+        value: match[1]
+      }  
+
+      this.doms.push(item)
+
+      return true
+    }
+    /**
+     * match text node
+     */
+    text () {
+      let match = this.match(REG.TEXT)
+      let value
+
+      if (match) {
+        value = match[0]
+      } else if (this.str[0] === '<') {
+        value = '<'
+        this.str = this.str.slice(1)
+      } else {
+        return false
+      }
+
+      let doms = this.doms
+
+      let last = doms[doms.length - 1]
+
+      if (last && last.type === 'text') {
+        last.value += value
+        return
+      } 
+
+       doms.push({
+        type: 'text',
+        value
+      })
+    }
+  }
+
+  class Parser {
+    constructor (doms) {
+      this.doms = doms
+      this.parse()
+    }
+
+    parse () {
+      let nodes = []
+      let doms = this.doms
+
+      while (doms.length) {
+        let item = this.shift()
+
+        console.log(item)
+      }
+
+
+      this.nodes = nodes
+    }
+
+    shift () {
+      return this.doms.shift()
+    }
+  }
+
+  function innert (parent, dom) {
+    let children = []
+    let node = {
+      children,
+      parent
+    }
+    let type
+
+    switch (dom.type) {
+      case 'text':
+        type = 'text'
+        break
+      case 'rawTag':
+        type = 'tag'
+        break
+      case 'openTag':
+        type = 'tag'
+        break
+      case 'voidTag':
+        type = 'tag'
+        break
+      case 'selfClosingTag':
+        type = 'tag'
+        break
+      case 'closeTag':
+        break
+      case 'comment': 
+        type = 'comment'
+        break
+    }
+
+    node.type = type
+
+    return node
+  }
+
+
+  function createDomTree (str) {
+    let scan = new Scanner(str.trimRight())
+    let parser = new Parser(scan.doms)
+
+   /* let doms = scan.doms
+    let nodes = []
+
+    console.log(doms)
+
+    for (let item of doms) {
+      nodes.push(innert(null, item))
+    }*/
+
+    return parser.nodes
+  }
+  
+
+
+  let dom = createDomTree(htmlCode)
+
+  console.log(htmlCode)
+  console.log(dom)
+
+</script>
