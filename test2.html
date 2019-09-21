@@ -48,17 +48,8 @@ const VOID_ELEMENTS = [
 
   let htmlCode = `
 
-<textarea class=">" data-name="dd"  ><div>111</div></textarea>
-<div>   
-<!-- 
-代码注释 
-1
--->
-   <input id="6"   data-name="name"   > 
-   <image />
- 纯         文 <本>了
- </div>
-`
+<input name='utf8' demo='' checked demo3 type  =  "==''hidden" value = "&#x2713;"  />
+  `
 
 
 
@@ -66,6 +57,9 @@ const VOID_ELEMENTS = [
   const REG = {
     // <style, <script
     RAW_TAG: /^<(script|style|textarea)/,
+    STYLE_RAW: /([\s\S]*?)<\/style\s*>/,
+    SCRIPT_RAW: /([\s\S]*?)<\/script\s*>/,
+    TEXTARE_RAW: /([\s\S]*?)<\/textarea\s*>/,
     // <div
     OPEN_TAG: /^<([\w-]+)/,
     // >
@@ -76,6 +70,21 @@ const VOID_ELEMENTS = [
     COMMENT: /^<!--([\s\S]*)-->/,
     TEXT: /^[^<]+/,
     WHITESPACE: /^\s+/
+  }
+
+  function getRawEndTag (name) {
+    if (name === 'style') {
+      return REG.STYLE_RAW
+    }
+
+    if (name === 'script') {
+      return REG.SCRIPT_RAW
+    }
+
+
+    if (name === 'textarea') {
+      return REG.TEXTARE_RAW
+    }
   }
 
   function isVoidElement(name) {
@@ -159,10 +168,23 @@ const VOID_ELEMENTS = [
 
       if (!attributes) return
 
+      let name =  match[1]  
+      let endTag = getRawEndTag(name)
+
+      let content = this.match(endTag)
+
+      if (content) {
+        content = content[1]
+      }  else {
+        content = this.str
+        this.str = ''
+      }
+
       let item = {
         type: 'rawTag',
-        name: match[1],
-        attributes: attributes[0].slice(0, -1)
+        name,
+        attributes: attributes[0].slice(0, -1),
+        content
       }
 
       this.doms.push(item)
@@ -218,9 +240,14 @@ const VOID_ELEMENTS = [
 
       if (!match) return false
 
+      // if this is avoid tag, return statement 
+      let name =  match[1]
+
+      if (isVoidElement(name)) return false
+
       let item = {
         type: 'closeTag',
-        name: match[1]
+        name
       }  
 
       this.doms.push(item)
@@ -276,22 +303,90 @@ const VOID_ELEMENTS = [
 
   class Parser {
     constructor (doms) {
+      console.log([...doms])
+
       this.doms = doms
-      this.parse()
+      this.nodes = this.traverse(null)
     }
 
-    parse () {
-      let nodes = []
+    traverse (parent) {
       let doms = this.doms
+      let nodes = []
 
       while (doms.length) {
         let item = this.shift()
+        let node
 
-        console.log(item)
+        switch (item.type) {
+          case 'openTag':
+            node = {
+              ...item,
+              type: 'tag'
+            }
+
+            node.children =  this.traverse(node)
+            break
+          case 'closeTag':
+            if (parent.name === item.name) {
+               return nodes
+            }
+            break
+          case 'rawTag':
+          case 'voidTag':
+          case 'selfClosingTag':
+            node = {
+              ...item,
+              type: 'tag',
+              tagType: item.type,
+              children: []
+            }
+            break
+          case 'text':
+          case 'comment':
+            node = item
+            break
+        }
+
+        if (node) {
+          node.parent = parent
+
+          this.parseAttributes(node)
+
+          nodes.push(node)
+        }
       }
 
+      return nodes
+    }
+    /**
+     * Convert attributes string to object
+     * @example
+     * Empty attribute: <input disabled>
+     * Unquoted attribute value: <input value=yes>
+     * Single-quoted attribute value: <input type='checkbox'>
+     * Double-quoted attribute value: <input name="be evil">
+     */
+    parseAttributes (node) {
+      if (node.type !== 'tag') return
 
-      this.nodes = nodes
+      let attributes = node.attributes.trim()
+
+      if (!attributes) return
+
+      let result = {}
+      let reg = /([^=\s]+)(?:\s*=\s*(?:'([^']*)'|"([^"]*)"|([^\s]*)))?/g
+      let match = reg.exec(attributes)
+
+      while (match) {
+        let key = match[1]
+        let value = match[2] || match[3] || match[4] || ''
+
+        result[key] = value
+
+        match = reg.exec(attributes)
+      }
+
+      node.attributes = result
     }
 
     shift () {
@@ -338,6 +433,8 @@ const VOID_ELEMENTS = [
 
   function createDomTree (str) {
     let scan = new Scanner(str.trimRight())
+
+
     let parser = new Parser(scan.doms)
 
    /* let doms = scan.doms
