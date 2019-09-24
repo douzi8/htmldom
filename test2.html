@@ -54,6 +54,8 @@ const OPTIONAL_TAGS = {
   th: ['td', 'th', 'tr', 'tbody']
 }
 
+const OPTIONAL_END_TAGS = ['p']
+
 // Raw text elements
 // script, style, textarea
 
@@ -75,20 +77,7 @@ const OPTIONAL_TAGS = {
  */
 
 
-  let htmlCode = `
-<ul>
-  <li> 
-     <div>
-        1
-     </div>
-  <li>
-     <p>
-       2
-     </p>
-</ul>
-  `
-
-
+ 
 
 
   const REG = {
@@ -356,17 +345,13 @@ const OPTIONAL_TAGS = {
 
         switch (item.type) {
           case 'openTag':
-            node = {
-              ...item,
-              type: 'tag'
-            }
-
-            node.children =  this.traverse(node)
+            node = this.matchOpenTag(parent, item)
             break
           case 'closeTag':
-            if (parent.name === item.name) {
-               return nodes
+            if (this.matchCloseTag(parent, item)) {
+              return nodes
             }
+
             break
           case 'rawTag':
           case 'voidTag':
@@ -394,6 +379,46 @@ const OPTIONAL_TAGS = {
       }
 
       return nodes
+    }
+
+    matchOpenTag (prev, node) {
+      if (prev) {
+        let optional = OPTIONAL_TAGS[prev.name]
+
+        // optional tags
+        if (optional && optional.includes(node.name)) {
+
+          this.doms.unshift({
+            type: 'closeTag',
+            name:  prev.name
+          }, node)
+
+          return null         
+        }
+      }
+
+      node.type = 'tag'
+      node.children =  this.traverse(node)
+
+      return node
+    }
+
+    matchCloseTag (prev, node) {
+      let nodeName = node.name
+
+      if (prev && prev.name === nodeName) {
+        return true
+      }
+
+      if (nodeName === 'p') {
+        this.doms.unshift({
+          type: 'openTag',
+          attributes:'',
+          name: nodeName
+        }, node)
+      }
+
+      return false
     }
     /**
      * Convert attributes string to object
@@ -470,23 +495,15 @@ const OPTIONAL_TAGS = {
 
   function createDomTree (str) {
     let scan = new Scanner(str.trimRight())
-
-
     let parser = new Parser(scan.doms)
-
-   /* let doms = scan.doms
-    let nodes = []
-
-    console.log(doms)
-
-    for (let item of doms) {
-      nodes.push(innert(null, item))
-    }*/
 
     return parser.nodes
   }
-  
 
+   let htmlCode = `<head><title>Hello</title>
+ <meta charset="UTF-8">
+</head>
+1<p>2</p>3</p>`
 
   let dom = createDomTree(htmlCode)
 
