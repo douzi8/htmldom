@@ -23,7 +23,36 @@ const VOID_ELEMENTS = [
   'source', 
   'track', 
   'wbr'
-]; 
+]
+
+const OPTIONAL_TAGS = {
+  head: ['body'],
+  /**
+   * </li>可以在以下两种情况下缺省
+   * 1. <li>紧挨着另一个<li>
+   * 2. 父亲元素没有更多的内容
+   *
+   * @example
+   * <ul>
+   *  <li> 1
+   *  <li> 2
+   * </ul>
+   */
+  li: ['li'],
+  dt: ['dt', 'dd'],
+  dd: ['dd', 'dt'],
+  p: ['address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'main', 'menu', 'nav', 'ol', 'p',' pre', 'section', 'table', 'ul'],
+  option: ['option'],
+  caption: ['caption', 'thead', 'tbody'],
+  colgroup: ['tbody', 'tr', 'tfoot'],
+  col: ['col', 'tbody', 'tr'],
+  thead: ['tbody', 'tfoot'],
+  tbody: ['tbody', 'tfoot'],
+  tfoot: ['tbody'],
+  tr: ['tr', 'tbody'],
+  td: ['td', 'th', 'tr', 'tbody'],
+  th: ['td', 'th', 'tr', 'tbody']
+}
 
 // Raw text elements
 // script, style, textarea
@@ -47,8 +76,16 @@ const VOID_ELEMENTS = [
 
 
   let htmlCode = `
-
-<input name='utf8' demo='' checked demo3 type  =  "==''hidden" value = "&#x2713;"  />
+<ul>
+  <li> 
+     <div>
+        1
+     </div>
+  <li>
+     <p>
+       2
+     </p>
+</ul>
   `
 
 
@@ -361,7 +398,7 @@ const VOID_ELEMENTS = [
     /**
      * Convert attributes string to object
      * @example
-     * Empty attribute: <input disabled>
+     * Empty attribute syntax: <input disabled> (https://html.spec.whatwg.org/multipage/syntax.html#attributes-2)
      * Unquoted attribute value: <input value=yes>
      * Single-quoted attribute value: <input type='checkbox'>
      * Double-quoted attribute value: <input name="be evil">
