@@ -77,9 +77,6 @@ const OPTIONAL_END_TAGS = ['p']
  */
 
 
- 
-
-
   const REG = {
     // <style, <script
     RAW_TAG: /^<(script|style|textarea)/,
@@ -432,9 +429,6 @@ const OPTIONAL_END_TAGS = ['p']
       if (node.type !== 'tag') return
 
       let attributes = node.attributes.trim()
-
-      if (!attributes) return
-
       let result = {}
       let reg = /([^=\s]+)(?:\s*=\s*(?:'([^']*)'|"([^"]*)"|([^\s]*)))?/g
       let match = reg.exec(attributes)
@@ -456,58 +450,222 @@ const OPTIONAL_END_TAGS = ['p']
     }
   }
 
-  function innert (parent, dom) {
-    let children = []
-    let node = {
-      children,
-      parent
+  let util = {
+    isUndefined (obj) {
+      return obj === void 0
     }
-    let type
+  }
 
-    switch (dom.type) {
+  let GET_HTML = Symbol('getHtml')
+  let GET_NODES = Symbol('getNodes')
+
+
+  function getAttributesCode (attributes) {
+    let result = ''
+    
+    for (let key in attributes) {
+      let value = attributes[key]
+
+      if (value) {
+        result += ` ${key}=${value}`
+      } else {
+        result += ` ${key}`
+      }
+    }
+
+    return result
+  }
+
+  /**
+   * Get a node's html code
+   * 
+   * @example
+   * {
+   *   type: 'tag',
+   *   children: [{ type: 'text', value: 1 }],
+   *   name: 'div' 
+   * }
+   * <div>1</div>
+   */
+  function getOuterHTML ({
+    name, 
+    type, 
+    tagType, 
+    children,
+    attributes,
+    value
+  }) {
+    let code = []
+
+    switch (type) {
+      case 'tag':
+        code.push(`<${name}${getAttributesCode(attributes)}`)
+
+        if (tagType === 'selfClosingTag') {
+         // <img src="" />
+          code.push('/>')
+        } else if (tagType === 'voidTag') {
+          // <br>
+          code.push('>')
+        } else {
+          code.push('>')
+          
+          for (let item of children) {
+            code.push(getOuterHTML(item))
+          }
+
+          code.push(`</${name}>`)
+        }
+
+        break
       case 'text':
-        type = 'text'
-        break
-      case 'rawTag':
-        type = 'tag'
-        break
-      case 'openTag':
-        type = 'tag'
-        break
-      case 'voidTag':
-        type = 'tag'
-        break
-      case 'selfClosingTag':
-        type = 'tag'
-        break
-      case 'closeTag':
-        break
-      case 'comment': 
-        type = 'comment'
+        code.push(value)
         break
     }
 
-    node.type = type
+    return code.join('')
+  }
+ 
 
-    return node
+  class QuerySelector {
+    constructor (selector, rootNode) {
+      this.rootNode = rootNode
+    }
+
+    find (selector) {
+      let docCtx = this[GET_NODES]()
+
+      return new QuerySelector(selector, docCtx)
+    }
+
+    html (content) {
+      if (util.isUndefined(content)) {
+        return QuerySelector.getHtml(this.rootNode)
+      }
+    }
+
+    static getHtml (node) {
+      let html = '';
+      let children = node.children;
+
+      for (let i = 0; i < children.length; i++) {
+        html += getOuterHTML(children[i])
+      }
+
+      console.log(node)
+      console.log(html)
+
+      return html
+
+      /*breadthFirstSearch(node, function (item) {
+        let type = item.type
+
+        if (type === 'root') return
+
+        if (type === 'tag') {
+          code.push(`<${item.name}>`)
+          return
+        }
+
+        code.push(item.value)
+      })
+*/
+      //console.log(node)
+    }
+
+    [GET_NODES] () {
+      let nodes = []
+
+
+      for (let i = 0; i < this.length; i++) {
+        nodes.push(this[i])
+      }
+
+      return nodes
+    }
+  }
+
+  /**
+   * DFS
+   */
+  function depthFirstSearch (node, callback) {
+    let stack = [node]
+
+    while (stack.length) {
+      let current = stack.shift()
+
+      callback(current)
+
+      if (current.children) {
+        stack = current.children.concat(stack)
+      }
+    }
+  }
+
+  /**
+   * BFS
+   */
+  function breadthFirstSearch (node, callback) {
+    let stack = [node]
+
+    while (stack.length) {
+      let current = stack.shift()
+
+      callback(current)
+
+      if (current.children) {
+        stack = stack.concat(current.children)
+      }
+    }
+  }
+
+  function getRootHtml (nodes) {
+    let code = []
+
+    for (let item of nodes) {
+      depthFirstSearch(item, function (node) {
+        code.push(`<${node.name}`)
+      })
+    }
+
+    
   }
 
 
   function createDomTree (str) {
     let scan = new Scanner(str.trimRight())
     let parser = new Parser(scan.doms)
+    let rootNode = {
+      type: 'root',
+      children: parser.nodes
+    }
 
-    return parser.nodes
+    let $ = function (selector) {
+      return new QuerySelector(selector, rootNode)
+    }
+
+    $.html = function () {
+      //return getRootHtml(parser.nodes)
+    }
+
+    return $
   }
 
    let htmlCode = `<head><title>Hello</title>
- <meta charset="UTF-8">
+ <meta charset = "UTF-8">
 </head>
+<input id="0">
+<image src="" />
 1<p>2</p>3</p>`
 
-  let dom = createDomTree(htmlCode)
+  let $ = createDomTree(htmlCode)
 
-  console.log(htmlCode)
-  console.log(dom)
+  $('body').html()
+
+  //console.log($.html())  
+
+ // console.log()
+
+  //console.log(htmlCode)
 
 </script>
