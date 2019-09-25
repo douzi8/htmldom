@@ -467,7 +467,7 @@ const OPTIONAL_END_TAGS = ['p']
       let value = attributes[key]
 
       if (value) {
-        result += ` ${key}=${value}`
+        result += ` ${key}="${value.replace(DOUBLE_QUOTES, '&quot;')}"`
       } else {
         result += ` ${key}`
       }
@@ -475,6 +475,8 @@ const OPTIONAL_END_TAGS = ['p']
 
     return result
   }
+
+  const DOUBLE_QUOTES = /"/g
 
   /**
    * Get a node's html code
@@ -525,65 +527,6 @@ const OPTIONAL_END_TAGS = ['p']
 
     return code.join('')
   }
- 
-
-  class QuerySelector {
-    constructor (selector, rootNode) {
-      this.rootNode = rootNode
-    }
-
-    find (selector) {
-      let docCtx = this[GET_NODES]()
-
-      return new QuerySelector(selector, docCtx)
-    }
-
-    html (content) {
-      if (util.isUndefined(content)) {
-        return QuerySelector.getHtml(this.rootNode)
-      }
-    }
-
-    static getHtml (node) {
-      let html = '';
-      let children = node.children;
-
-      for (let i = 0; i < children.length; i++) {
-        html += getOuterHTML(children[i])
-      }
-
-      console.log(node)
-      console.log(html)
-
-      return html
-
-      /*breadthFirstSearch(node, function (item) {
-        let type = item.type
-
-        if (type === 'root') return
-
-        if (type === 'tag') {
-          code.push(`<${item.name}>`)
-          return
-        }
-
-        code.push(item.value)
-      })
-*/
-      //console.log(node)
-    }
-
-    [GET_NODES] () {
-      let nodes = []
-
-
-      for (let i = 0; i < this.length; i++) {
-        nodes.push(this[i])
-      }
-
-      return nodes
-    }
-  }
 
   /**
    * DFS
@@ -593,14 +536,17 @@ const OPTIONAL_END_TAGS = ['p']
 
     while (stack.length) {
       let current = stack.shift()
-
-      callback(current)
-
+    
+      if (current.type === 'tag') {
+        callback(current)
+      }      
+      
       if (current.children) {
         stack = current.children.concat(stack)
       }
     }
   }
+
 
   /**
    * BFS
@@ -619,17 +565,86 @@ const OPTIONAL_END_TAGS = ['p']
     }
   }
 
-  function getRootHtml (nodes) {
-    let code = []
+  const MATCH_SELECTOR = Symbol('matchSelector')
+ 
 
-    for (let item of nodes) {
-      depthFirstSearch(item, function (node) {
-        code.push(`<${node.name}`)
+  class QuerySelector {
+    constructor (selector, rootNode) {
+      let count = 0
+
+      depthFirstSearch(rootNode, (node) => {
+        if (node.name === selector) {
+          this[count++] = node
+        }       
       })
+
+      this.selector = selector
+      this.__length__ = count
+    }
+    /**
+     * @example
+     * $('div').find('li')
+     */
+    find (selector) {
+      let docCtx = this[GET_NODES]()
+
+      let $ = new QuerySelector(selector, {
+        type: 'root',
+        children: docCtx
+      })
+
+      // Unique child elements
+      let children = [...new Set($[GET_NODES]())]
+      let oldLength = $.length
+
+      while (oldLength--) {
+        delete $[oldLength]
+      }
+
+      children.forEach(function (child, index) {
+        $[index] = child
+      })           
+
+      $.__length__ = children.length
+      
+      return $
     }
 
-    
+    html (content) {
+      if (util.isUndefined(content)) {
+        let node = this[0]
+
+        return node ? QuerySelector.getHtml(node) : null
+      }
+    }
+
+    get length () {
+      return this.__length__
+    }
+
+    static getHtml (node) {
+      let html = '';
+      let children = node.children;
+
+      for (let i = 0; i < children.length; i++) {
+        html += getOuterHTML(children[i])
+      }
+
+      return html
+    }
+
+    [GET_NODES] () {
+      let nodes = []
+
+
+      for (let i = 0; i < this.length; i++) {
+        nodes.push(this[i])
+      }
+
+      return nodes
+    }
   }
+
 
 
   function createDomTree (str) {
@@ -651,16 +666,11 @@ const OPTIONAL_END_TAGS = ['p']
     return $
   }
 
-   let htmlCode = `<head><title>Hello</title>
- <meta charset = "UTF-8">
-</head>
-<input id="0">
-<image src="" />
-1<p>2</p>3</p>`
+   let htmlCode = `<!DOCTYPE html>`
 
   let $ = createDomTree(htmlCode)
 
-  $('body').html()
+  $('div').find('p')
 
   //console.log($.html())  
 
