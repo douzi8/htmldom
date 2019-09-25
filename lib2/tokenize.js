@@ -56,7 +56,13 @@ function isVoidElement(name) {
   return VOID_ELEMENTS.includes(name)
 }
 
-class Scanner {
+/**
+ *
+ * Html string tokenize
+ * @example
+ * let { doms } = new Tokenize('<div></div>') 
+ */
+class Tokenize {
   /**
    * @param {string} str Html code
    */
@@ -265,4 +271,4 @@ class Scanner {
   }
 }
 
-module.exports = Scanner
+module.exports = Tokenize

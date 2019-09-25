@@ -27,7 +27,11 @@ const OPTIONAL_TAGS = {
   th: ['td', 'th', 'tr', 'tbody']
 }
 
-
+/**
+ * Parser html dom that is created by tokenize
+ * @example
+ * let { nodes } = new Parser([{ }, {}]) 
+ */
 class Parser {
   constructor(doms) {
     this.doms = doms

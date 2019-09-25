@@ -1,12 +1,12 @@
 let assert = require('assert')
-let Scanner = require('../../lib2/scanner')
+let Tokenize = require('../../lib2/tokenize')
 let Parser = require('../../lib2/parser')
 
 
 describe('Parser', function () {
   describe('attributes', function() {
     it('key = value', function () {
-      let scan  = new Scanner(`<input key = value>`)
+      let scan  = new Tokenize(`<input key = value>`)
       let { nodes } = new Parser(scan.doms)
 
 
@@ -16,7 +16,7 @@ describe('Parser', function () {
     })
 
     it('key="value"', function () {
-      let scan  = new Scanner(`<input key="value">`)
+      let scan  = new Tokenize(`<input key="value">`)
       let { nodes } = new Parser(scan.doms)
 
 
@@ -27,7 +27,7 @@ describe('Parser', function () {
 
 
     it("key='value'", function () {
-      let scan  = new Scanner(`<input key='value'>`)
+      let scan  = new Tokenize(`<input key='value'>`)
       let { nodes } = new Parser(scan.doms)
 
 
@@ -37,7 +37,7 @@ describe('Parser', function () {
     })
 
     it('Empty attribute', function () {
-      let scan  = new Scanner('<input checked>')
+      let scan  = new Tokenize('<input checked>')
       let { nodes } = new Parser(scan.doms)
 
 
@@ -47,7 +47,7 @@ describe('Parser', function () {
     })
 
     it('Double-quoted value', function () {
-      let scan  = new Scanner(`<input key='""'>`)
+      let scan  = new Tokenize(`<input key='""'>`)
       let { nodes } = new Parser(scan.doms)
 
       assert.deepEqual(nodes[0].attributes, {
@@ -56,7 +56,7 @@ describe('Parser', function () {
     })
 
     it('Vue dynamic attribute name', function () {
-      let scan  = new Scanner(`<img :src="'/path/to/images/' + fileName">`)
+      let scan  = new Tokenize(`<img :src="'/path/to/images/' + fileName">`)
       let { nodes } = new Parser(scan.doms)
 
       assert.deepEqual(nodes[0].attributes, {
@@ -65,7 +65,7 @@ describe('Parser', function () {
     })
 
     it('Multiple row', function () {
-      let scan  = new Scanner(`<input
+      let scan  = new Tokenize(`<input
         k=v
         k2=v2 
       >`)
@@ -80,7 +80,7 @@ describe('Parser', function () {
 
   describe('children', function() {
     it('Void tag', function () {
-      let scan  = new Scanner(`<br><div></div>`)
+      let scan  = new Tokenize(`<br><div></div>`)
       let { nodes } = new Parser(scan.doms)
 
       assert.deepEqual(nodes[0].children, [])
@@ -89,7 +89,7 @@ describe('Parser', function () {
     })
 
     it('Self closing tag', function () {
-      let scan  = new Scanner(`<iamge /><div></div>`)
+      let scan  = new Tokenize(`<iamge /><div></div>`)
       let { nodes } = new Parser(scan.doms)
 
       assert.deepEqual(nodes[0].children, [])
@@ -98,7 +98,7 @@ describe('Parser', function () {
     })
 
     it('div tag', function () {
-      let scan  = new Scanner(`<div>
+      let scan  = new Tokenize(`<div>
         <p>1
         <p>2
       </div>`)
@@ -108,7 +108,7 @@ describe('Parser', function () {
     })
 
     it('li tag', function () {
-      let scan  = new Scanner(`<ul>
+      let scan  = new Tokenize(`<ul>
         <li>
           <div>1</div>
         <li>

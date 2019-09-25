@@ -1,16 +1,16 @@
 let assert = require('assert')
-let Scanner = require('../../lib2/scanner')
+let Tokenize = require('../../lib2/tokenize')
 
 
 describe('scanner', function () {
   it('Empty string', function () {
-     let scan = new Scanner('')
+     let scan = new Tokenize('')
 
      assert.deepEqual(scan.doms, [])
   })
 
   it('Void tag', function () {
-    let { doms } = new Scanner('<link><br><img><input>')
+    let { doms } = new Tokenize('<link><br><img><input>')
 
     for (let item of doms) {
       assert.equal(item.type, 'voidTag')
@@ -19,7 +19,7 @@ describe('scanner', function () {
 
 
   it('Self closing tag', function () {
-    let { doms } = new Scanner('<br/><img /><input />')
+    let { doms } = new Tokenize('<br/><img /><input />')
 
     for (let item of doms) {
       assert.equal(item.type, 'selfClosingTag')
@@ -28,7 +28,7 @@ describe('scanner', function () {
 
 
   it('text', function () {
-    let { doms } = new Scanner('text content')
+    let { doms } = new Tokenize('text content')
 
     assert.deepEqual(doms[0], {
       type: 'text',
@@ -37,7 +37,7 @@ describe('scanner', function () {
   })
 
   it('Space character', function () {
-    let { doms } = new Scanner('<div> 1 </div>')
+    let { doms } = new Tokenize('<div> 1 </div>')
 
     assert.deepEqual(doms[1], {
       type: 'text',
@@ -46,7 +46,7 @@ describe('scanner', function () {
   })
 
   it('comment', function () {
-    let { doms } = new Scanner('<!-- content -->')
+    let { doms } = new Tokenize('<!-- content -->')
 
     assert.deepEqual(doms[0], {
       type: 'comment',
