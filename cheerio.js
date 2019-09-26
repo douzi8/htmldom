@@ -1,10 +1,21 @@
 const cheerio = require('cheerio');
 const $ = cheerio.load(`<ul>
-        <li>
+        <li name2="demo">
           <div>1</div>
         <li>
           <div>2</div>
       </ul>`);
+
+
+var cssSelector = require('./selector/css');
+
+
+
+console.log(cssSelector.parser('*'))
+
+$('[name2 = demo]').each((index, item) => {
+  console.log(item)
+})
 
 /*$('div').each((index, item) => {
   console.log(item.attribs)
