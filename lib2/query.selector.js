@@ -23,6 +23,91 @@ function depthFirstSearch (node, callback) {
 
 let FILTER_CHILDREN = Symbol('filter')
 
+function getPrevNodeSibling (node) {
+  let parent = node.parent
+
+  if (!parent) return null
+
+  let children = parent.children.filter(node => node.type === 'tag')
+
+  let pos = children.indexOf(node)
+
+  let prev = children[pos - 1]
+
+  return prev ? prev : null
+}
+
+function getPrevNodeSiblings (node) {
+  let parent = node.parent
+
+  if (!parent) return null
+
+  let children = parent.children.filter(node => node.type === 'tag')
+
+  let pos = children.indexOf(node)
+
+  return pos === 0 ? null : children.slice(0, pos)
+}
+
+function filterNode (node, selectorData) {
+  let length = selectorData.length
+  let j = 0
+
+  while (j < length) {
+    let selector = selectorData[j]
+
+    switch (selector.operator) {
+      case '>':
+        if (!node.parent || !cssMatch(node.parent, selector)) return false
+
+        node = node.parent
+        break
+      case '+':
+        let prev = getPrevNodeSibling(node)
+
+        if (!prev || !cssMatch(prev, selector)) return false
+
+        node = prev
+        break
+      case '~':
+        let prevs = getPrevNodeSiblings(node)
+        let hasMatch = false
+
+        if (!prevs) return false
+
+        let prevsLength = prevs.length
+        
+        while (prevsLength--) {
+          let prevItem = prevs[prevsLength]
+
+          if (cssMatch(prevItem, selector)) {
+            hasMatch = true
+            node = prevItem
+            break
+          }
+        }  
+
+        if (!hasMatch) return false
+
+        break
+      default:
+        while (node) {
+          node = node.parent
+
+          if (!node) return false
+
+          if (cssMatch(node, selector)) {
+            break
+          }
+        }
+    }
+
+    j++
+  }
+
+  return true
+}
+
 
 class QuerySelector {
   /**
@@ -56,37 +141,8 @@ class QuerySelector {
    * E ~ F:  an F element preceded by an E element
    */
   [FILTER_CHILDREN] (list, selectorData) {
-    list = list.filter(node => {
-      let length = selectorData.length
-      let j = 0
-
-      while (j < length) {
-        let selector = selectorData[j]
-
-        switch (selector.operator) {
-          case '>':
-            if (!cssMatch(node.parent, selector)) return false
-
-            node = node.parent
-            break
-          case '+':
-            break
-          default:
-            while (node) {
-              node = node.parent
-
-              if (!node) return false
-
-              if (cssMatch(node, selector)) {
-                break
-              }
-            }
-        }
-
-        j++
-      }
-
-      return true
+    list = list.filter(function(node) {
+      return filterNode(node, selectorData)
     })
 
 
@@ -101,11 +157,7 @@ class QuerySelector {
     return this.__length__
   }
 
-  find () {
-
-  }
-
-  html () {
+  find (selector) {
 
   }
 }

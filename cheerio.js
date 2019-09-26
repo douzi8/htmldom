@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const $ =  cheerio.load(`<ul>
         <li name2="demo">
-           <div>1</div>
+            <div>1</div>
         <li>
           <div>2</div>
       </ul>`);
