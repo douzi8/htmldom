@@ -1,5 +1,5 @@
 const TAG_NAME = /^[\w-]+/
-const WHITE_SPACE = /^\s+/
+const WHITE_SPACE = /^\s*([>+~])?\s*/
 const CLASS_NAME = /^\.([\w-]+)/
 const ID = /^#([\w-]+)/
 const ALL = /^\*/
@@ -44,6 +44,7 @@ class Tokenize {
       if (this.attrs()) {
         continue
       }
+
 
       if (this.whitespace()) {
         continue
@@ -187,6 +188,14 @@ class Tokenize {
 
     if (!match) return false
 
+    let operator = match[1] || '' 
+
+    let current = this.nodes[0]
+
+    if (!current) return false
+
+    current.operator = operator
+
     this.nodes.unshift({})
 
     return true
@@ -211,7 +220,7 @@ class Tokenize {
  *   class: ['cls'],
  *   operator: '>'
  *   attrs: [
- *     { name: 'id', operator: '=', value: '' }
+ *     { key: 'id', operator: '=', value: '' }
  *   ] 
  * }]
  * 
@@ -220,7 +229,7 @@ class Tokenize {
  *    name: '',
  *    class: ['title'] 
  * }, {
- *    name: 'div',
+ *    key: 'div',
  *    operator: ' '
  * }]
  *  
@@ -236,8 +245,67 @@ function parser (selector) {
 }
 
 
-function match () {
+/**
+ * @example
+ * matchClass(['title', 'header'], ['title'])   => true
+ * matchClass(['title', 'header'], ['body'])   => false
+ */
+function matchClass(cls1, cls2) {
+  let result = new Set(cls1.concat(cls2))
 
+  return cls1.length === [...result].length
+}
+
+/**
+ * validate the selector is match node
+ * @example
+ * match({
+ *  name: 'div',
+ *  attributes: {
+ *    class: ''  
+ *  } 
+ *})
+ */
+function match (node, selector) {
+  if (selector.name && node.name !== selector.name) {
+    return false
+  }
+
+  let className = selector.class || []
+  let nodeClass = node.attributes.class || ''
+
+  if (!matchClass(nodeClass.split(/\s+/), className)) return false
+
+  let attrs = selector.attrs || []
+
+  for (let item of attrs) {
+    let nodeValue = node.attributes[item.key]
+    let selectorValue = item.value
+
+    switch (item.operator) {
+      case '=':
+        if (nodeValue !== selectorValue) return false
+        break
+      case '^':
+        if (!nodeValue.startsWith(selectorValue)) return false
+        break
+      case '$':
+        if (!nodeValue.endsWith(selectorValue)) return false
+        break
+      case '*':
+        if (!nodeValue.includes(selectorValue)) return false
+        break
+      case '~':
+        var reg = new RegExp('(^|\\b)' + selectorValue + '(\\b|$)');
+        if (!reg.test(nodeValue)) return false
+        break
+      default:
+        if (!Reflect.has(node.attributes, item.key)) return false
+    } 
+  }
+
+
+  return true
 }
 
 

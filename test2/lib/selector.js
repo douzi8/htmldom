@@ -1,6 +1,7 @@
 let assert = require('assert')
 let {
-  parser
+  parser,
+  match
 } = require('../../lib2/selector')
 
 
@@ -97,7 +98,7 @@ describe('selector', function() {
 
 
     it('children', function() {
-      let resullt = parser('.cls a [name][data-id=6]')
+      let resullt = parser('.cls > a [name][data-id=6]')
 
       assert.deepEqual(resullt[0].attrs, [
       {
@@ -112,12 +113,218 @@ describe('selector', function() {
       }])
 
       assert.deepEqual(resullt[1], {
-        name: 'a'
+        name: 'a',
+        operator: ''
       })
 
       assert.deepEqual(resullt[2], {
-        class: ['cls']
+        class: ['cls'],
+        operator: '>'
       })
+    })
+
+
+    it('div > p', function () {
+      let resullt = parser('div > p')
+
+      assert.equal(resullt[1].operator, '>')
+    })
+
+    it('div + p', function () {
+      let resullt = parser('div  + p')
+
+      assert.equal(resullt[1].operator, '+')
+    })
+
+    it('div ~ p', function () {
+      let resullt = parser('div~p')
+
+      assert.equal(resullt[1].operator, '~')
+    })
+
+  })
+
+  describe('match', function () {
+    it('tagname', function() {
+      let node = {
+        name: 'div',
+        attributes: {}
+      }
+
+      let selector = {
+        name: 'div'
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+    it('classname', function() {
+      let node = {
+        name: 'div',
+        attributes: {
+          class: 'title body'
+        }
+      }
+
+      let selector = {
+        class: ['body']
+      }
+
+       let selector2 = {
+        class: ['body', 'footer']
+      }
+
+      assert.equal(match(node, selector), true)
+
+      assert.equal(match(node, selector2), false)
+    })
+
+    it('id', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          id: 'box'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'id',
+          operator: '=',
+          value: 'box'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+    it('[key]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title'
+        }]
+      }
+
+       let selector2 = {
+        attrs: [{
+          key: 'data-id'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+
+      assert.equal(match(node, selector2), false)
+    })
+
+    it('[key=value]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title',
+          operator: '=',
+          value: 'hello'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+
+    it('[key^=value]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title',
+          operator: '^',
+          value: 'he'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+    it('[key$=value]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title',
+          operator: '$',
+          value: 'llo'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+    it('[key*=value]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title',
+          operator: '*',
+          value: 'ell'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+    })
+
+    it('[key~=value]', function () {
+      let node = {
+        name: 'div',
+        attributes: {
+          title: 'hello world'
+        }
+      }
+
+      let node2 = {
+        name: 'div',
+        attributes: {
+          title: 'he llo world'
+        }
+      }
+
+      let selector = {
+        attrs: [{
+          key: 'title',
+          operator: '~',
+          value: 'hello'
+        }]
+      }
+
+      assert.equal(match(node, selector), true)
+      assert.equal(match(node2, selector), false)
     })
 
   })

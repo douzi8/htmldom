@@ -27,13 +27,17 @@ const OPTIONAL_TAGS = {
   th: ['td', 'th', 'tr', 'tbody']
 }
 
+const Tokenize = require('./tokenize')
+
 /**
  * Parser html dom that is created by tokenize
  * @example
  * let { nodes } = new Parser([{ }, {}]) 
  */
-class Parser {
-  constructor(doms) {
+class HtmlParser {
+  constructor(htmlCode) {
+    let { doms } = new Tokenize(htmlCode)
+
     this.doms = doms
     this.nodes = this.traverse(null)
   }
@@ -157,4 +161,4 @@ class Parser {
 }
 
 
-module.exports = Parser
+module.exports = HtmlParser
