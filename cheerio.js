@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const $ = cheerio.load(`<ul>
+const $ =  cheerio.load(`<ul>
         <li name2="demo">
           <div>1</div>
         <li>
