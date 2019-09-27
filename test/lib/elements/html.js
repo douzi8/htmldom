@@ -43,4 +43,15 @@ describe(`html('<div></div>')`, function () {
 
     assert.equal($.html(), '<div><!-- --></div><a><!-- --></a>')
   })
+
+  it(`new node's parent`, function () {
+    let $ = createHtmlDom('<div></div><div></div>')
+
+    $('div').html('<p>1</p><p>2</p>')
+
+
+    assert.equal($('div > p').length, 4)
+
+    assert.equal($('div p').html() === '1', true)
+  })
 })

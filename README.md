@@ -37,7 +37,7 @@ npm run test
 
 ### dom structure
 ```js
-$('div').each((index, item) => {
+$('*').each((index, item) => {
   // Origin dom data 
   console.log(item)
 

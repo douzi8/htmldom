@@ -23,7 +23,6 @@ function createHtmlDom (code) {
     })
   }
 
-
   htmldom.html = function () {
     return getHtml({
       type: 'root',
