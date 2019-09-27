@@ -16,8 +16,8 @@ describe('attr', function () {
 
     $('.title').attr('data-num', 1)
 
-    assert.equal($('.title')[0].attributes['data-num'], 1)
-    assert.equal($('.title')[1].attributes['data-num'], 1)
+    assert.equal($('.title')[0].attributes['data-num'] === '1', true)
+    assert.equal($('.title')[1].attributes['data-num'] === '1', true)
   })
 
   it(`attr('key', null)`, function () {
@@ -71,7 +71,7 @@ describe('attr', function () {
     })
 
     assert.deepEqual($('div')[0].attributes, {
-      num: 2,
+      num: '2',
       k: 'v'
     })
   })

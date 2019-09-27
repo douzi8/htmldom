@@ -29,7 +29,7 @@ npm install htmldom --save
 
 ## test
 ```
-npm test
+npm run test
 ```
 
 

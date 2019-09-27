@@ -2,7 +2,7 @@ let assert = require('assert')
 let createHtmlDom = require('../../../htmldom')
 
 
-describe('html', function() {
+describe('html()', function() {
   it('text', function() {
     let $ = createHtmlDom('<div>1</div>')
 
@@ -19,5 +19,28 @@ describe('html', function() {
     let $ = createHtmlDom('<div>1<div>2</div>3</div>')
 
     assert.equal($('div').html(), '1<div>2</div>3')
+  })
+})
+
+
+describe(`html('<div></div>')`, function () {
+  it(`html('')`, function () {
+    let $ = createHtmlDom('<div>1<!--2--></div>')
+
+    $('div').html('').addClass('title')
+
+    assert.equal($.html(), '<div class="title"></div>')
+  })
+
+  it(`html('<div></div>')`, function() {
+    let $ = createHtmlDom('<div>1</div><a>2</a>')
+
+    $('*').html('<span>1</span>')
+
+    assert.equal($.html(), '<div><span>1</span></div><a><span>1</span></a>')
+
+    $('*').html('<!-- -->')
+
+    assert.equal($.html(), '<div><!-- --></div><a><!-- --></a>')
   })
 })

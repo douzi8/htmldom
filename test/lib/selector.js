@@ -153,6 +153,12 @@ describe('selector', function() {
       assert.equal(resullt2[1].operator, '>')
     })
 
+    it('empty string', function () {
+      let resullt = parser('')
+
+      assert.deepEqual(resullt, null)
+    })
+
   })
 
   describe('match', function () {
