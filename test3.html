@@ -1,7 +1,7 @@
 <script type="text/javascript" src="./zepto.js"></script>
 
 
-  <div class="demo1">
+  <div class="demo1 'de mo2'">
     <div class="2">
       <div class="3"></div>
     </div>
@@ -9,8 +9,41 @@
 
 <script type="text/javascript">
   
-  let d = document.querySelectorAll('body *')
+ class A {
+   constructor () {
+      this[0] =  { id: 0}
+      this[1] = {id: 1}
+      this[2] = {id: 2}
+      this.length = 3
+   }
+
+   [Symbol.iterator]() { 
+    let index = 0
+    let self = this
+
+    return {
+      next () {
+        if (index < self.length) {
+          return {
+            value: self[index++],
+            done: false
+          }
+        }
+
+        return {
+          done: true
+        }
+      }
+    } 
+   }
+ }
 
 
+ let a = new A ()
+
+
+ for (let item of a) {
+   console.log(item)
+ }
 
 </script>

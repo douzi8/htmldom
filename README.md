@@ -5,6 +5,10 @@ const createHtmlDom = require('htmldom')
 
 let $ = createHtmlDom('<div><button>1</button><a href="https">2</a></div>')
 
+$('*').each((index, item) => {
+  let $item = $(item)  
+})
+
 $('div button').addClass('title').attr('k', 'v')
 $('a').attr('href')
 $('div').find('a').attr('data-id', '5')

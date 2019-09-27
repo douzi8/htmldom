@@ -70,6 +70,7 @@ describe('Parser', function () {
     })
   })
 
+
   describe('children', function() {
     it('Void tag', function () {
       let { nodes } = new Parser(`<br><div></div>`)
@@ -138,4 +139,21 @@ describe('Parser', function () {
       assert.deepEqual(nodes[0].value, '<div>1</div><a></a>2')
     })
   })
+
+  describe('classList', function () {
+    it('[]', function () {
+      let { nodes } = new Parser(`<input>`)
+
+      assert.deepEqual([...nodes[0].classList], [])
+    })
+
+    it('[a,b]', function () {
+      let { nodes } = new Parser(`<input class="a b demo">`)
+
+
+      assert.deepEqual([...nodes[0].classList], ['a', 'b', 'demo'])
+    })
+
+  })
+
 })
