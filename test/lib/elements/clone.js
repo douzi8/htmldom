@@ -10,8 +10,6 @@ describe('clone', function () {
     let $title = $('.title')
     let $newEl = $title.clone()
 
-
-
     assert.equal($title[0] === $newEl[0], false)
 
     assert.equal($newEl.outerHTML(), htmlCode)

@@ -51,32 +51,7 @@
  }
 
 
- $('.demo1').attr(
-    'data-id', function (index, oldValue) {
-      return null
-    }
- )
-
-
-
- let obj = {
-  k: 'v'
- }
-
- Object.defineProperty(obj, 'k2', {
-   get () {
-    console.log(this === obj)
-
-     return this.k
-   },
-   enumerable: true
- })
-
-
- let obj2 = {
-  ...obj,
-  k: 'vv'
- }
+ $('.demo1').prepend('<button>点我</button>')
 
 
 </script>
