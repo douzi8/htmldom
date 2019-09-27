@@ -222,82 +222,47 @@ let scriptNode = {
 }
 ```
 
-### html()
+### $.html()
 If you want get html string fast, choose this api, it's only output origin html code
 ```js
-html.html()
-// Is tag closed with '/'
-html.html({ selfClosed: true })
+$.html()
 ```
 
-### stringify()
-* {object} ``options``
-  * {boolean} ``[options.booleanAttributes=false]`` remove boolean attribute   
-  ```html
-  <input disabled="disabled"> => <input disbaled>
-  ```
-  * {boolean} ``[options.removeAttributeQuotes=false]``
-  ```html
-  <div id="test"></div> => <div id=test></div>
-  ```
-  * {boolean} ``[options.selfClosed]`` Is tag closed with '/'
-  * {boolean} ``[options.removeJsType=true]``
-  ```html
-  <script type="text/javascript"></script> => <script></script>
-  ```
-  * {boolean} ``[options.removeCssType=true]``
-  ```html
-  <style type="text/css"></style> => <style></style>
-  ```
-  * {array} ``[options.jsCodeType]`` js code type
-  ```html
-  <script type="text/config">
-    // This also js code
-    // Set options.jsCodeType = ['text/config'] for uglify js code
-    var a = 4;
-  </script>
-  ```
-  * {array} ``[options.templateType]`` html code type
-  ```html
-  <script type="text/template">
-    <!-- This is html code
-     Set options.templateType = ['text/template'] for uglify html code -->
-    <div>
-    </div>
-  </script>
-  ```
-  * {object} ``[options.cssdom]``  
-Use [cssdom](https://github.com/douzi8/cssdom) uglify css code with style tag
-  ```html
-  <style>a { color:red; } </style> => <style>a{color:#f00}</style>
-  ```
-  * {object} ``[options.uglifyJs]``  
-Use [uglify-js](https://www.npmjs.com/package/uglify-js) uglify js code with script tag and inline events
-  ```html
-  <script> var a = 5; </script>         => ...
-  <div onclick="return false"></div>    => <div onclick="return !1"></div>
-  ```
+### $.uglify()
 ```js
-html.stringify({
-  booleanAttributes: true,
-  templateType: ['text/template'],
-  selfClosed: false,
-  uglifyJs: {}
-});
+// Uglify inline script like this
+$('script').each(function(index, item) => {
+  let type = $(item).attr('type')
+
+  if (type && type !== 'text/javascript') return 
+
+  let jsCode = item.value
+
+  // Find a uglify plugin
+  item.value = uglifyJs(jsCode)
+})
+
+// Uglify inline style like this
+$('style').each(function(index, item) => {
+  let type = $(item).attr('type')
+
+  if (type && type !== 'text/css') return 
+
+  let cssCode = item.value
+
+  // Find a uglify plugin
+  item.value = uglifyCss(cssCode)
+})
+
+
+$.uglify()
 ```
 
-### beautify()
+### $.beautify()
 * {object} ``options``
   * {string} ``[options.indent='  ']`` code indent
-  * {boolean} ``[options.selfClosed]`` Is tag closed with '/'
-  * {object} ``[options.cssdom]``  
-Use [cssdom](https://github.com/douzi8/cssdom) beautify css code
-  * {object} ``[options.jsBeautify]``  
-Use [js-beautify](https://www.npmjs.com/package/js-beautify) beautify js code
 ```js
-html.beautify({
-  indent: '  ',
-  selfClosed: false,
-  jsBeautify: {}
+$.beautify({
+  indent: '  '
 });
 ```
