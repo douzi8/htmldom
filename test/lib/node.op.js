@@ -1,6 +1,6 @@
 let assert = require('assert')
 let HtmlParser = require('../../lib/html.parser')
-let { cloneNode } = require('../../lib/node.op')
+let { cloneNode, nodeStyle } = require('../../lib/node.op')
 
 describe('cloneNode', function() {
   it('has children', function() {
@@ -36,5 +36,49 @@ describe('cloneNode', function() {
     assert.equal(newNode.children[0].parent === newNode, true)
 
     assert.equal(newNode.parent, null)
+  })
+})
+
+describe('nodeStyle', function() {
+  it('empty style', function () {
+    let { nodes } = new HtmlParser(`<div></div>`)
+    let node = nodes[0]
+
+
+    assert.deepEqual(node.style, {})
+  })
+
+  it(`get style`, function () {
+    let { nodes } = new HtmlParser(`<div style="color : red; height:200px;"></div>`)
+    let node = nodes[0]
+
+
+    assert.deepEqual(node.style, {
+      height: '200px',
+      color: 'red'
+    })
+  })
+
+  it('clear style', function () {
+    let { nodes } = new HtmlParser(`<div class="demo" style="color : red; height:200px;"></div>`)
+    let node = nodes[0]
+
+    node.style = {}
+
+    assert.deepEqual(node.attributes, {
+      class: 'demo'
+    })
+  })
+
+  it('set style', function () {
+    let { nodes } = new HtmlParser(`<div class="demo" style="color : red; height:200px;"></div>`)
+    let node = nodes[0]
+
+    node.style = {
+      color: '#333',
+      width: '100px'
+    }
+
+    assert.equal(node.attributes.style, 'color:#333;width:100px')
   })
 })

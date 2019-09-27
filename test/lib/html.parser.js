@@ -68,6 +68,14 @@ describe('Parser', function () {
         k2: 'v2'
       })
     })
+
+    it('Same key', function () {
+      let { nodes } = new Parser(`<input id="1" id="2">`)
+
+      assert.deepEqual(nodes[0].attributes, {
+        id: '1'
+      })
+    })
   })
 
 
