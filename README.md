@@ -51,7 +51,14 @@ npm run test
   * [attribute~=value]
   * [attribtue*=value]
 ```js
-var $ = html.$;
+$('*').each((index, item) => {
+  // Origin dom data 
+  console.log(item)
+
+  // Like jQuery object
+  let $el = $(item)
+})
+
 $('div .class a')
 $('.item > *')
 $('div + p')
@@ -155,71 +162,6 @@ $('').eq(-1)    // last element
 $('').each(function(index, item) {
   var $item = $(item);
 });
-```
-
-### dom structure
-```js
-$('*').each((index, item) => {
-  // Origin dom data 
-  console.log(item)
-
-  // Like jQuery object
-  let $el = $(item)
-})
-
-```
-* ``tag``
-```js
-let node ={
-  type: 'tag',
-  name: 'div',
-  attributes: {
-    id: 'test'
-  },
-  /** 
-   * This value is one of ['rawTag', 'voidTag', 'selfClosingTag', null]
-   * @example
-   * <script>, <style>, <textarea> tag is rawTag
-   * <br>, <input> tag is voidTag
-   * <image /> tag is selfClosingTag
-   * <div> tag is null
-   */
-  tagType: null,
-  children: [],
-  // Parent is null or a tag
-  parent: {
-
-  }
-}
-
-let inputNode = {
-  type: 'tag',
-  name: 'input',
-  tagType: 'voidTag'
-}
-
-let scriptNode = {
-  type: 'tag',
-  name: 'script',
-  tagType: 'rawTag',
-  value: 'alert(1)'
-}
-
-```
-* ``text``
-```js
-{
-  type: 'text',
-  value: 'welcome'
-}
-```
-* ``comment``
-```js
-{
-  type: 'comment',
-  value: 'header comment',
-  isIEHack: false
-}
 ```
 
 ### $.html()
