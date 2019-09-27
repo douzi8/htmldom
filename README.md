@@ -153,7 +153,11 @@ $('').removeClass('one two')  // remove multiple
 ```js
 $('').attr('key', 'value')   // assign
 $('').attr('key', function(index,oldValue) {});
-$('').attr({});              // multiple assign
+$('').attr({
+  k: 'v',
+  'data-id': 'v2',
+  k3: null
+});                          // multiple assign
 $('').attr('key', null)      // remove attr
 ```
 * data(name, value)
