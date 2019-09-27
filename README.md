@@ -181,6 +181,14 @@ $('').parent('.cls')
 $('').html()                 // get html
 $('').html('12')             // set html
 ```
+* outerHTML
+```js
+$('div').outerHTML()
+```
+* clone
+```js
+$('#id').clone()
+```
 * append(content)
 * prepend(content)
 * before(content)
