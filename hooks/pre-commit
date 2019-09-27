@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # eslint
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM -- "*.js" "*.wxs")
 if [[ "$STAGED_FILES" != "" ]]; then
@@ -61,3 +63,6 @@ if [[ "$jsfiles" != "" ]]; then
     echo "\033[42mCOMMIT SUCCEEDED\033[0m\n"
   fi
 fi
+
+
+exit $?

@@ -1,46 +1,39 @@
-var Scanner = require('./lib/scanner');
-var Parser = require('./lib/parser');
-var element = require('./lib/elements');
-var $ = require('./selector/index');
+let $Elements = require('./lib/$elements.js')
+let HtmlParser = require('./lib/html.parser')
+const { getHtml } = require('./lib/get.html')
 
-function HtmlDom(str) {
-  str = (str || '') + '';
 
-  // Scanner html code
-  var scanner = new Scanner(str);
-  // Parser html dom
-  var parser = new Parser(scanner.dom);
+/**
+ * @example
+ * let $ = createHtmlDom('<div><a></a></div>')
+ * 
+ * $('div a').addClass('title').html()
+ * $.html()
+ * $.beautify()
+ * $.uglify()
+ *
+ */
+function createHtmlDom (code) {
+  let { nodes } = new HtmlParser(code)
 
-  this.dom = parser.dom;
-  /**
-   * @example
-   * var $ = html.$;
-   * $('div').addClass()
-   * $('#id').attr('key')
-   */
-  this.$ = function(selector) {
-    return $(selector, this.dom.children);
-  }.bind(this);
+  let htmldom = function (selector) {
+    return new $Elements(selector, {
+      type: 'root',
+      children: nodes
+    })
+  }
+
+
+  htmldom.html = function () {
+    return getHtml({
+      type: 'root',
+      children: nodes
+    })
+  }
+
+  return htmldom
 }
 
 
 
-HtmlDom.prototype.html = function(opt = {}) {
-  return $.prototype.getHtml(this.dom, opt);
-};
-
-HtmlDom.prototype.stringify = function(opt) {
-  opt = opt || {};
-  var uglify = require('./uglify/index');
-
-
-  return uglify(this.dom.children, opt);
-};
-
-HtmlDom.prototype.beautify = function(opt) {
-  var beautify = require('./beautify/index');
-   
-  return beautify(this.dom.children, opt || {});
-};
-
-module.exports = HtmlDom;
+module.exports = createHtmlDom

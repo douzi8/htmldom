@@ -1,7 +1,22 @@
 # htmldom — Simplified html or xml handle in nodejs
 [![NPM](https://nodei.co/npm/htmldom.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/htmldom/)
 ```js
-var HtmlDom = require('htmldom');
+const createHtmlDom = require('htmldom')
+
+let $ = createHtmlDom('<div><button>1</button><a href="https">2</a></div>')
+
+$('div button').addClass('title').attr('k', 'v')
+$('a').attr('href')
+$('div').find('a').attr('data-id', '5')
+
+// Get last html code
+$.html()
+
+// Beautify html code
+$.beautify()
+
+// Uglify html code
+$.uglify()
 ```
 ## install
 ```
@@ -13,61 +28,57 @@ npm install htmldom --save
 npm test
 ```
 
-## online demo
-[http://douzi8.github.io/htmldom/](http://douzi8.github.io/htmldom/)
-
-## browserify
-Exports HtmlDom to front, then uglify it
-```
-browserify htmldom.js -s HtmlDom > htmldom.front.js 
-uglifyjs htmldom.front.js -o htmldom.front.js
-```
 
 ## API
-### Constructor(code, options)
-* {string} ``code`` html string
-* [object] ``options``
+
+### dom structure
 ```js
-// html code
-var html = new HtmlDom('<div>1</div>');
-var $ = html.$;
+$('div').each((index, item) => {
+  // Origin dom data 
+  console.log(item)
 
-$('div').addClass('test').attr('k', 'v');
-console.log(html.html());
+  // Like jQuery object
+  let $el = $(item)
+})
 
-
-
-// xml code
-var xml = new HtmlDom('<?xml version="1.0" encoding="utf-8" ?><tag><item></item></tag>')
-```
-
-### dom
-The structure of html dom, it's an array with object item, list item type
-```js
-html.dom
-```
-* ``documentType``
-```js
-{
-  type: 'documentType',
-  value: '<!doctype html>'
-}
 ```
 * ``tag``
 ```js
-{
+let node ={
   type: 'tag',
   name: 'div',
-  isVoid: false,
   attributes: {
     id: 'test'
   },
+  /** 
+   * This value is one of ['rawTag', 'voidTag', 'selfClosingTag', null]
+   * @example
+   * <script>, <style>, <textarea> tag is rawTag
+   * <br>, <input> tag is voidTag
+   * <image /> tag is selfClosingTag
+   * <div> tag is null
+   */
+  tagType: null,
   children: [],
   // Parent is null or a tag
   parent: {
 
   }
 }
+
+let inputNode = {
+  type: 'tag',
+  name: 'input',
+  tagType: 'voidTag'
+}
+
+let scriptNode = {
+  type: 'tag',
+  name: 'script',
+  tagType: 'rawTag',
+  value: 'alert(1)'
+}
+
 ```
 * ``text``
 ```js

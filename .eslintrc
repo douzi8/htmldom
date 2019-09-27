@@ -1,0 +1,36 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+    "no-case-declarations": 0,
+    "no-useless-escape": 0,
+    "no-console": 2,
+    "no-irregular-whitespace": 0,
+    "no-mixed-spaces-and-tabs": 0,
+    "no-constant-condition":0,
+    "require-yield": 0,
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "new-cap": 1,
+    "radix": "error"
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "plugins": [
+    
+  ],
+  "env": {
+    "browser": false
+  },
+  "globals": {
+    "console": true,
+    "require": true,
+    "Set": true,
+    "Promise": true,
+    "Reflect": true,
+    "module": true,
+    "process": true,
+    "describe": true,
+    "it": true,
+    "Symbol": true
+  }
+}

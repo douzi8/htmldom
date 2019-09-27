@@ -1,0 +1,35 @@
+Searching 2622 files for "/lib/" (case sensitive)
+
+/Users/liaowei/Documents/code/git/htmldom/htmldom.js:
+    1: let $Elements = require('./lib/$elements.js')
+    2: let HtmlParser = require('./lib/html.parser')
+    3: const { getHtml } = require('./lib/get.html')
+    4  
+    5  
+
+/Users/liaowei/Documents/code/git/htmldom/test/lib/html.parser.js:
+    1  let assert = require('assert')
+    2: let Parser = require('../../lib/html.parser')
+    3  
+    4  
+
+/Users/liaowei/Documents/code/git/htmldom/test/lib/query.selector.js:
+    1: let HtmlParser = require('../../lib/html.parser')
+    2: let QuerySelector = require('../../lib/query.selector')
+    3  let assert = require('assert')
+    4  
+
+/Users/liaowei/Documents/code/git/htmldom/test/lib/selector.js:
+    3    parser,
+    4    match
+    5: } = require('../../lib/selector')
+    6  
+    7  
+
+/Users/liaowei/Documents/code/git/htmldom/test/lib/tokenize.js:
+    1  let assert = require('assert')
+    2: let Tokenize = require('../../lib/tokenize')
+    3  
+    4  
+
+8 matches across 5 files

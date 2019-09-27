@@ -27,15 +27,5 @@
   "bugs": {
     "url": "https://github.com/douzi8/htmldom/issues"
   },
-  "homepage": "https://github.com/douzi8/htmldom",
-  "dependencies": {
-    "cssdom": "^1.0.17",
-    "js-beautify": "^1.5.5",
-    "uglify-js": "^2.4.20",
-    "utils-extend": "^1.0.8"
-  },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.10.0"
-  }
+  "homepage": "https://github.com/douzi8/htmldom"
 }
