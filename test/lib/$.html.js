@@ -44,4 +44,20 @@ describe('$.html', function () {
 
     assert.equal($.html(), htmlCode)
   })
+
+  it('Multiple $', function () {
+    let $ = createHtmlDom('<a>1</a>')
+    let $2 = createHtmlDom('<a>2</a>')
+
+    $('a').addClass('demo1').attr({
+      k: 'v'
+    }).html('')
+
+    $2('a').addClass('demo2 demo3').attr({
+      k2: 'v2'
+    })
+
+    assert.equal($.html(), `<a class="demo1" k="v"></a>`)
+    assert.equal($2.html(), `<a class="demo2 demo3" k2="v2">2</a>`)
+  })
 })
