@@ -180,7 +180,7 @@ $('script').each(function(index, item) => {
 
   let jsCode = item.value
 
-  // Find a uglify plugin
+  // Find a uglify plugin by yourself
   item.value = uglifyJs(jsCode)
 })
 
@@ -192,7 +192,7 @@ $('style').each(function(index, item) => {
 
   let cssCode = item.value
 
-  // Find a uglify plugin
+  // Find a uglify plugin by yourself
   item.value = uglifyCss(cssCode)
 })
 
