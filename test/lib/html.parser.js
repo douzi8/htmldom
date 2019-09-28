@@ -76,6 +76,16 @@ describe('Parser', function () {
         id: '1'
       })
     })
+
+    it('None whitespace', function () {
+      let { nodes } = new Parser(`<input k="1"k2="2"k3="v3 v3">`)
+
+      assert.deepEqual(nodes[0].attributes, {
+        k: '1',
+        k2: '2',
+        k3: 'v3 v3'
+      })
+    })
   })
 
 

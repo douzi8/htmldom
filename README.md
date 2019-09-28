@@ -171,33 +171,39 @@ $.html()
 ```
 
 ### $.uglify()
+* {object} ``options``
+  * {string} ``[options.removeAttributeQuotes=false]``
+  ```html
+    <div id="test"></div> => <div id=test></div>
+  ```
+
 ```js
 // Uglify inline script like this
-$('script').each(function(index, item) => {
+$('script').each((index, item) => {
   let type = $(item).attr('type')
 
   if (type && type !== 'text/javascript') return 
 
-  let jsCode = item.value
-
   // Find a uglify plugin by yourself
-  item.value = uglifyJs(jsCode)
+  item.value = uglifyJs(item.value)
 })
 
 // Uglify inline style like this
-$('style').each(function(index, item) => {
+$('style').each((index, item) => {
   let type = $(item).attr('type')
 
   if (type && type !== 'text/css') return 
 
-  let cssCode = item.value
-
   // Find a uglify plugin by yourself
-  item.value = uglifyCss(cssCode)
+  item.value = uglifyCss(item.value)
 })
 
 
 $.uglify()
+
+$.uglify({
+  removeAttributeQuotes: true
+})
 ```
 
 ### $.beautify()

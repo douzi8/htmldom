@@ -1,6 +1,7 @@
 let $Elements = require('./lib/$elements.js')
 let HtmlParser = require('./lib/html.parser')
 const { getHtml } = require('./lib/get.html')
+const uglifyOuterHTML = require('./lib/uglify')
 
 
 /**
@@ -28,6 +29,22 @@ function createHtmlDom (code) {
       type: 'root',
       children: nodes
     })
+  }
+
+  htmldom.uglify = function (options) {
+    options = {
+      removeAttributeQuotes: false,
+      ...options
+    }
+
+    let html = ''
+
+
+    for (let i = 0; i < nodes.length; i++) {
+      html += uglifyOuterHTML(nodes[i], options)
+    }
+
+    return html
   }
 
   return htmldom
