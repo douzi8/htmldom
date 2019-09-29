@@ -26,10 +26,10 @@ npm install htmldom --save
 npm run test
 ```
 
-## browserify
+## umd
 Open [test.html](https://github.com/douzi8/htmldom/blob/master/test.html) with browser
 ```
-npm run browserify
+npm run umd
 ```
 
 ## API

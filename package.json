@@ -5,7 +5,7 @@
   "main": "htmldom.js",
   "scripts": {
     "test": "mocha --recursive",
-    "browserify": "browserify -r ./htmldom.js:htmldom > htmldom.browser.js"
+    "umd": "browserify htmldom.js -s createHtmlDom > htmldom.umd.js"
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/douzi8/htmldom/issues"
   },
-  "homepage": "https://github.com/douzi8/htmldom"
+  "homepage": "https://github.com/douzi8/htmldom",
+  "devDependencies": {
+    "libumd": "^0.9.0"
+  }
 }

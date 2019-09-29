@@ -1,4 +1,91 @@
-require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.createHtmlDom = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+let $Elements = require('./lib/$elements.js')
+let HtmlParser = require('./lib/html.parser')
+const { getHtml } = require('./lib/get.html')
+const uglifyOuterHTML = require('./lib/uglify')
+const beautifyOuterHTML = require('./lib/beautify')
+
+
+/**
+ * @example
+ * let $ = createHtmlDom('<div><a></a></div>')
+ * 
+ * $('div a').addClass('title').html()
+ * $.nodes
+ * $.root().prepend('<head></head>')
+ * $.html()
+ * $.beautify()
+ * $.uglify()
+ *
+ */
+function createHtmlDom (code) {
+  let { nodes } = new HtmlParser(code)
+
+  function htmldom (selector) {
+    return new $Elements(selector, {
+      type: 'root',
+      children: nodes
+    })
+  }
+
+  Object.defineProperty(htmldom, 'nodes', {
+    value: nodes
+  })
+
+  htmldom.root = function () {
+    return new $Elements({
+      type: 'root',
+      children: nodes
+    })
+  }
+
+  htmldom.html = function () {
+    return getHtml({
+      type: 'root',
+      children: nodes
+    })
+  }
+
+  htmldom.uglify = function (options) {
+    options = {
+      removeAttributeQuotes: false,
+      ...options
+    }
+
+    let html = ''
+
+
+    for (let i = 0; i < nodes.length; i++) {
+      html += uglifyOuterHTML(nodes[i], options)
+    }
+
+    return html
+  }
+
+  htmldom.beautify = function (options) {
+    options = {
+      indent: '  ',
+      ...options
+    }
+
+    let html = ''
+
+    for (let i = 0; i < nodes.length; i++) {
+      html += beautifyOuterHTML(nodes[i], options.indent, 0)
+    }
+
+    return html.trim()
+  }
+
+
+
+  return htmldom
+}
+
+
+
+module.exports = createHtmlDom
+},{"./lib/$elements.js":2,"./lib/beautify":3,"./lib/get.html":4,"./lib/html.parser":5,"./lib/uglify":10}],2:[function(require,module,exports){
 let QuerySelector = require('./query.selector')
 let HtmlParser = require('./html.parser')
 const { isUndefined, isString, isFunction } = require('./util')
@@ -123,6 +210,8 @@ class $Elements extends QuerySelector {
 
       insertChild(parent, nodes, pos)
     }
+
+    return this
   }
   /**
    * @example
@@ -137,6 +226,8 @@ class $Elements extends QuerySelector {
 
       insertChild(parent, nodes, pos + 1)
     }
+
+    return this
   }
 
   /**
@@ -151,6 +242,8 @@ class $Elements extends QuerySelector {
 
       parent.children.splice(pos, 1)
     }
+
+    return this
   }
 
 
@@ -290,7 +383,7 @@ class $Elements extends QuerySelector {
 
 
 module.exports = $Elements
-},{"./get.html":3,"./html.parser":4,"./node.op":5,"./query.selector":6,"./util":10}],2:[function(require,module,exports){
+},{"./get.html":4,"./html.parser":5,"./node.op":6,"./query.selector":7,"./util":11}],3:[function(require,module,exports){
 const { getAttributesCode } = require('./node.op')
 
 
@@ -409,7 +502,7 @@ function beautifyOuterHTML ({
 
 
 module.exports = beautifyOuterHTML
-},{"./node.op":5}],3:[function(require,module,exports){
+},{"./node.op":6}],4:[function(require,module,exports){
 const { getAttributesCode } = require('./node.op')
 
 /**
@@ -485,7 +578,7 @@ module.exports = {
   getOuterHTML,
   getHtml
 }
-},{"./node.op":5}],4:[function(require,module,exports){
+},{"./node.op":6}],5:[function(require,module,exports){
 const OPTIONAL_TAGS = {
   head: ['body'],
   /**
@@ -677,7 +770,7 @@ class HtmlParser {
 
 
 module.exports = HtmlParser
-},{"./node.op":5,"./tokenize":8}],5:[function(require,module,exports){
+},{"./node.op":6,"./tokenize":9}],6:[function(require,module,exports){
 const { isNull } = require('./util')
 
 
@@ -876,7 +969,7 @@ module.exports = {
   getAttributesCode,
   uglifyAttributesCode
 }
-},{"./util":10}],6:[function(require,module,exports){
+},{"./util":11}],7:[function(require,module,exports){
 let { parser : cssParser, match: cssMatch} = require('./selector')
 const { isString, isFunction } = require('./util')
 
@@ -1166,7 +1259,7 @@ class QuerySelector {
 
 
 module.exports = QuerySelector
-},{"./selector":7,"./util":10}],7:[function(require,module,exports){
+},{"./selector":8,"./util":11}],8:[function(require,module,exports){
 const TAG_NAME = /^[\w-]+/
 const WHITE_SPACE = /^\s*([>+~])?\s*/
 const CLASS_NAME = /^\.([\w-]+)/
@@ -1482,7 +1575,7 @@ module.exports = {
   parser,
   match
 }
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // <style, <script
 const RAW_TAG = /^<(script|style|textarea)/
 const STYLE_RAW = /([\s\S]*?)<\/style\s*>/
@@ -1757,7 +1850,7 @@ class Tokenize {
 }
 
 module.exports = Tokenize
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * options.removeAttributeQuotes
  * value must not contain ['"><\s=`]
@@ -1810,7 +1903,7 @@ function uglifyOuterHTML({
 
 
 module.exports = uglifyOuterHTML
-},{"./node.op":5}],10:[function(require,module,exports){
+},{"./node.op":6}],11:[function(require,module,exports){
 function getTypeof(obj) {
   return Reflect.apply(Object.prototype.toString, obj, []).match(
     /\s+(\w+)\]$/
@@ -1841,80 +1934,5 @@ module.exports = {
   isNull,
   isFunction
 }
-},{}],"htmldom":[function(require,module,exports){
-let $Elements = require('./lib/$elements.js')
-let HtmlParser = require('./lib/html.parser')
-const { getHtml } = require('./lib/get.html')
-const uglifyOuterHTML = require('./lib/uglify')
-const beautifyOuterHTML = require('./lib/beautify')
-
-
-/**
- * @example
- * let $ = createHtmlDom('<div><a></a></div>')
- * 
- * $('div a').addClass('title').html()
- * $.html()
- * $.beautify()
- * $.uglify()
- *
- */
-function createHtmlDom (code) {
-  let { nodes } = new HtmlParser(code)
-
-  let htmldom = function (selector) {
-    return new $Elements(selector, {
-      type: 'root',
-      children: nodes
-    })
-  }
-
-  Object.defineProperty(htmldom, 'nodes', {
-    value: nodes
-  })
-
-  htmldom.html = function () {
-    return getHtml({
-      type: 'root',
-      children: nodes
-    })
-  }
-
-  htmldom.uglify = function (options) {
-    options = {
-      removeAttributeQuotes: false,
-      ...options
-    }
-
-    let html = ''
-
-
-    for (let i = 0; i < nodes.length; i++) {
-      html += uglifyOuterHTML(nodes[i], options)
-    }
-
-    return html
-  }
-
-  htmldom.beautify = function (options) {
-    options = {
-      indent: '  ',
-      ...options
-    }
-
-    let html = ''
-
-    for (let i = 0; i < nodes.length; i++) {
-      html += beautifyOuterHTML(nodes[i], options.indent, 0)
-    }
-
-    return html.trim()
-  }
-
-  return htmldom
-}
-
-
-
-module.exports = createHtmlDom
-},{"./lib/$elements.js":1,"./lib/beautify":2,"./lib/get.html":3,"./lib/html.parser":4,"./lib/uglify":9}]},{},[]);
+},{}]},{},[1])(1)
+});

@@ -1,4 +1,4 @@
 .DS_Store
 node_modules
-demo.html
-zepto.js
+package/demo.html
+package/zepto.js

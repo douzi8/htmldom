@@ -1,4 +1,4 @@
-<script type="text/javascript" src="./htmldom.browser.js"></script>
+<script type="text/javascript" src="./htmldom.umd.js"></script>
 
 
 <script type="text/template" id="temp">
@@ -9,9 +9,10 @@
 
 <script type="text/javascript">
 /**
- * npm run browserify
+ * npm run umd
+ * global var: createHtmlDom
  */
- let createHtmlDom =  require('htmldom')
+ 
  let htmlCode = document.getElementById('temp').innerHTML.trim()
  let $ = createHtmlDom(htmlCode)
 
