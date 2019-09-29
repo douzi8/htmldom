@@ -72,10 +72,10 @@ describe('$.uglify', function () {
 
         if (type && type !== 'text/javascript') return 
 
-        let jsCode = item.value
+        let jsCode = item.textContent
 
         // Find a uglify plugin by yourself
-        item.value = jsCode.replace('window.', '')
+        item.textContent = jsCode.replace('window.', '')
       })
 
 

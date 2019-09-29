@@ -205,7 +205,7 @@ $('script').each((index, item) => {
   if (type && type !== 'text/javascript') return 
 
   // Find a uglify plugin by yourself
-  item.value = uglifyJs(item.value)
+  item.textContent = uglifyJs(item.textContent)
 })
 
 // Uglify inline style like this
@@ -215,7 +215,7 @@ $('style').each((index, item) => {
   if (type && type !== 'text/css') return 
 
   // Find a uglify plugin by yourself
-  item.value = uglifyCss(item.value)
+  item.textContent = uglifyCss(item.textContent)
 })
 
 

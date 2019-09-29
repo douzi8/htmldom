@@ -22,7 +22,7 @@ describe('Optional tags', function () {
      assert.deepEqual(nodes[2], {
        parent: null,
        type: 'text',
-       value: '2'
+       data: '2'
      })
      assert.equal(nodes[3].name, 'p')
   })

@@ -32,7 +32,7 @@ describe('scanner', function () {
 
     assert.deepEqual(doms[0], {
       type: 'text',
-      value: 'text content'
+      data: 'text content'
     })
   })
 
@@ -41,7 +41,7 @@ describe('scanner', function () {
 
     assert.deepEqual(doms[1], {
       type: 'text',
-      value: ' 1 '
+      data: ' 1 '
     })
   })
 
@@ -50,12 +50,12 @@ describe('scanner', function () {
 
     assert.deepEqual(doms[0], {
       type: 'comment',
-      value: ' content '
+      data: ' content '
     })
 
     assert.deepEqual(doms[1], {
       type: 'comment',
-      value: ' content2 '
+      data: ' content2 '
     })
   })
 

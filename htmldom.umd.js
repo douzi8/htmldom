@@ -426,11 +426,11 @@ function beautifyTextChildren(children) {
 
   for (let item of children) {
     if (item.type === 'comment') {
-      result += `<!-- ${item.value} -->`
+      result += `<!-- ${item.data} -->`
       continue
     }
 
-    result += item.value.trim()
+    result += item.data.trim()
   }
 
   return result
@@ -453,7 +453,8 @@ function beautifyOuterHTML ({
   tagType, 
   children,
   attributes,
-  value
+  data,
+  textContent
 }, indent, depth) {
   let code = []
   let newline = getNewLineIndent(indent, depth)
@@ -472,7 +473,7 @@ function beautifyOuterHTML ({
         code.push('>')
 
         if (tagType === 'rawTag') {
-          code.push(beautifyRawTag(name, value, newline))
+          code.push(beautifyRawTag(name, textContent, newline))
         } else {
           let flag = hasElement(children)
 
@@ -490,10 +491,10 @@ function beautifyOuterHTML ({
 
       break
     case 'text':
-      code.push(beautifyText(value, newline))
+      code.push(beautifyText(data, newline))
       break
     case 'comment':
-      code.push(`${newline}<!--${value}-->`)
+      code.push(`${newline}<!--${data}-->`)
       break
   }
 
@@ -522,7 +523,8 @@ function getOuterHTML ({
   tagType, 
   children,
   attributes,
-  value
+  data,
+  textContent
 }) {
   let code = []
 
@@ -541,7 +543,7 @@ function getOuterHTML ({
 
         if (tagType === 'rawTag') {
 
-          code.push(value)
+          code.push(textContent)
         } else {
           for (let item of children) {
             code.push(getOuterHTML(item))
@@ -553,10 +555,10 @@ function getOuterHTML ({
 
       break
     case 'text':
-      code.push(value)
+      code.push(data)
       break
     case 'comment':
-      code.push(`<!--${value}-->`)
+      code.push(`<!--${data}-->`)
       break
   }
 
@@ -1697,7 +1699,7 @@ class Tokenize {
 
     this.doms.push({
       type: 'text',
-      value: match[0]
+      data: match[0]
     })
 
     return true
@@ -1732,7 +1734,7 @@ class Tokenize {
       type: 'rawTag',
       name,
       attributes: attributes[0].slice(0, -1),
-      value: content
+      textContent: content
     }
 
     this.doms.push(item)
@@ -1810,7 +1812,7 @@ class Tokenize {
 
     let item = {
       type: 'comment',
-      value: match[1]
+      data: match[1]
     }  
 
     this.doms.push(item)
@@ -1822,12 +1824,12 @@ class Tokenize {
    */
   text () {
     let match = this.match(TEXT)
-    let value
+    let data
 
     if (match) {
-      value = match[0]
+      data = match[0]
     } else if (this.str[0] === '<') {
-      value = '<'
+      data = '<'
       this.str = this.str.slice(1)
     } else {
       return false
@@ -1838,13 +1840,13 @@ class Tokenize {
     let last = doms[doms.length - 1]
 
     if (last && last.type === 'text') {
-      last.value += value
+      last.data += data
       return
     } 
 
      doms.push({
       type: 'text',
-      value
+      data
     })
   }
 }
@@ -1864,7 +1866,8 @@ function uglifyOuterHTML({
   tagType,
   children,
   attributes,
-  value
+  data,
+  textContent
 }, options) {
   let code = []
 
@@ -1882,7 +1885,7 @@ function uglifyOuterHTML({
         code.push('>')
 
         if (tagType === 'rawTag') {
-          code.push(value.trim())
+          code.push(textContent.trim())
         } else {
           for (let item of children) {
             code.push(uglifyOuterHTML(item, options))
@@ -1894,7 +1897,7 @@ function uglifyOuterHTML({
 
       break
     case 'text':
-      code.push(value.trim())
+      code.push(data.trim())
       break
   }
 

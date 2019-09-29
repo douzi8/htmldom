@@ -3,7 +3,17 @@
 
 <script type="text/template" id="temp">
 <p>1<div></div>2</p>
-
+<textarea id="txt">
+   <!-- 3 -->
+  <div>
+  </div>
+  <div>
+  </div>
+  333
+</textarea>
+<style>
+.cls {}
+</style>
 
 </script>
 
@@ -24,4 +34,8 @@
  console.log($.beautify({
   indent: '  '
  }))
+
+ console.log($.html())
+
+console.log($.uglify())
 </script>
