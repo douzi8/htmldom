@@ -4,7 +4,8 @@
   "description": "Simplified html handle in nodejs",
   "main": "htmldom.js",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "browserify": "browserify -r ./htmldom.js:htmldom > htmldom.browser.js"
   },
   "repository": {
     "type": "git",

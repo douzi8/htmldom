@@ -174,4 +174,18 @@ describe('Parser', function () {
 
   })
 
+
+  describe('comment', function () {
+    let { nodes } = new Parser(`
+      <div class="cls">
+   <!-- 代码注释 -->
+  <div>
+     1 3
+  </div>
+<!-- 代码注释 -->  
+</div>
+    `)
+
+    console.log(nodes[1])
+  })
 })

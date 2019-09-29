@@ -46,14 +46,18 @@ describe('scanner', function () {
   })
 
   it('comment', function () {
-    let { doms } = new Tokenize('<!-- content -->')
+    let { doms } = new Tokenize('<!-- content --><!-- content2 -->')
 
     assert.deepEqual(doms[0], {
       type: 'comment',
       value: ' content '
     })
+
+    assert.deepEqual(doms[1], {
+      type: 'comment',
+      value: ' content2 '
+    })
   })
 
-  
 
 })

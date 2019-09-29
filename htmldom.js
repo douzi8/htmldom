@@ -2,6 +2,7 @@ let $Elements = require('./lib/$elements.js')
 let HtmlParser = require('./lib/html.parser')
 const { getHtml } = require('./lib/get.html')
 const uglifyOuterHTML = require('./lib/uglify')
+const beautifyOuterHTML = require('./lib/beautify')
 
 
 /**
@@ -45,6 +46,21 @@ function createHtmlDom (code) {
     }
 
     return html
+  }
+
+  htmldom.beautify = function (options) {
+    options = {
+      indent: '  ',
+      ...options
+    }
+
+    let html = ''
+
+    for (let i = 0; i < nodes.length; i++) {
+      html += beautifyOuterHTML(nodes[i], options.indent, 0)
+    }
+
+    return html.trim()
   }
 
   return htmldom

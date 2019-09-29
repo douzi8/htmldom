@@ -1,0 +1,27 @@
+<script type="text/javascript" src="./htmldom.browser.js"></script>
+
+
+<script type="text/template" id="temp">
+  <div class="cls">
+   <!-- 代码注释 -->
+  <div>
+     1 3
+  </div>
+<!-- 代码332注释 -->  
+
+<!-- 代码332注释33-->  
+</div>
+
+</script>
+
+<script type="text/javascript">
+/**
+ * npm run browserify
+ */
+ let createHtmlDom =  require('htmldom')
+ let htmlCode = document.getElementById('temp').innerHTML.trim()
+ let $ = createHtmlDom(htmlCode)
+
+
+ console.log($.beautify())
+</script>
