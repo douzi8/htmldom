@@ -27,7 +27,7 @@ npm run test
 ```
 
 ## browserify
-Open [test.html](https://github.com/douzi8/htmldom/blob/dev/test.html) with browser
+Open [test.html](https://github.com/douzi8/htmldom/blob/master/test.html) with browser
 ```
 npm run browserify
 ```
