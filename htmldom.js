@@ -10,6 +10,8 @@ const beautifyOuterHTML = require('./lib/beautify')
  * let $ = createHtmlDom('<div><a></a></div>')
  * 
  * $('div a').addClass('title').html()
+ * $.nodes
+ * $.root().prepend('<head></head>')
  * $.html()
  * $.beautify()
  * $.uglify()
@@ -28,6 +30,13 @@ function createHtmlDom (code) {
   Object.defineProperty(htmldom, 'nodes', {
     value: nodes
   })
+
+  htmldom.root = function () {
+    return new $Elements({
+      type: 'root',
+      children: nodes
+    })
+  }
 
   htmldom.html = function () {
     return getHtml({
@@ -66,6 +75,8 @@ function createHtmlDom (code) {
 
     return html.trim()
   }
+
+
 
   return htmldom
 }

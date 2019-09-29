@@ -166,9 +166,22 @@ $('').each(function(index, item) {
 ```
 
 ### $.nodes
-Get a dom
+Get a dom tree
 ```
 $.nodes
+```
+
+### $.root()
+```js
+let $ = createHtmlDom('<div></div>')
+
+$.root().prepend('<head></head>')
+
+// true
+$.root().find('div')[0] === $('div')[0]
+
+// '<head></head><div></div>'
+$.html()
 ```
 
 ### $.html()
