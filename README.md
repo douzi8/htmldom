@@ -121,11 +121,13 @@ $('div').outerHTML()
 ```js
 $('#id').clone()
 ```
+* replaceWith(content)
 * append(content)
 * prepend(content)
 * before(content)
 * after(content)
 ```js
+$('div').replaceWith('<view></view>')
 $('').append('<h3>title');
 $('').before('<h3>title');
 ```
