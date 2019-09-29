@@ -29,7 +29,5 @@
     "url": "https://github.com/douzi8/htmldom/issues"
   },
   "homepage": "https://github.com/douzi8/htmldom",
-  "devDependencies": {
-    "libumd": "^0.9.0"
-  }
+  "devDependencies": {}
 }
