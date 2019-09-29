@@ -25,6 +25,10 @@ function createHtmlDom (code) {
     })
   }
 
+  Object.defineProperty(htmldom, 'nodes', {
+    value: nodes
+  })
+
   htmldom.html = function () {
     return getHtml({
       type: 'root',

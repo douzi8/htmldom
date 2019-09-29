@@ -15,12 +15,6 @@ $('div').find('a').attr('data-id', '5')
 
 // Get last html code
 $.html()
-
-// Beautify html code
-$.beautify()
-
-// Uglify html code
-$.uglify()
 ```
 ## install
 ```
@@ -32,6 +26,11 @@ npm install htmldom --save
 npm run test
 ```
 
+## browserify
+Open [test.html](https://github.com/douzi8/htmldom/blob/dev/test.html) with browser
+```
+npm run browserify
+```
 
 ## API
 
@@ -51,6 +50,8 @@ npm run test
   * [attribute~=value]
   * [attribtue*=value]
 ```js
+let $ = createHtmlDom('html code')
+
 $('*').each((index, item) => {
   // Origin dom data 
   console.log(item)
@@ -162,6 +163,12 @@ $('').eq(-1)    // last element
 $('').each(function(index, item) {
   var $item = $(item);
 });
+```
+
+### $.nodes
+Get a dom
+```
+$.nodes
 ```
 
 ### $.html()

@@ -2,15 +2,24 @@
 
 
 <script type="text/template" id="temp">
-  <div class="cls">
-   <!-- 代码注释 -->
+<li>
   <div>
-     1 3
+  1
   </div>
-<!-- 代码332注释 -->  
+<li>
+  <div>
+  2
+  </div>
+  </li>
+  3
+  <dd>1
+  <dt>2
 
-<!-- 代码332注释33-->  
-</div>
+  </dt>
+
+  99
+  </dt>
+
 
 </script>
 
@@ -22,6 +31,12 @@
  let htmlCode = document.getElementById('temp').innerHTML.trim()
  let $ = createHtmlDom(htmlCode)
 
+ console.log($.nodes)
+ 
 
- console.log($.beautify())
+ /*$('div > div').addClass('child').attr('id', 'demo').html('<div>p</div><button>按钮</button>')*/
+
+ console.log($.beautify({
+  indent: '  '
+ }))
 </script>

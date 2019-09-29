@@ -529,8 +529,6 @@ class HtmlParser {
   constructor(htmlCode) {
     let { doms } = new Tokenize(htmlCode)
 
-    console.log(doms)
-
     this.doms = doms
     this.nodes = this.traverse(null)
   }
@@ -591,10 +589,7 @@ class HtmlParser {
       // optional tags
       if (optional && optional.includes(node.name)) {
 
-        this.doms.unshift({
-          type: 'closeTag',
-          name: prev.name
-        }, node)
+        this.optionalTagClose(node, prev.name)
 
         return null
       }
@@ -610,10 +605,24 @@ class HtmlParser {
   matchCloseTag(prev, node) {
     let nodeName = node.name
 
-    if (prev && prev.name === nodeName) {
-      return true
-    }
+    if (prev) {
+      if (prev.name === nodeName) return true
 
+      let optional = OPTIONAL_TAGS[prev.name]
+
+      /**
+       * <ul><li></ul>
+       */
+      if (optional) {
+        this.optionalTagClose(node, prev.name)
+      }
+    }
+    
+
+
+    /**
+     * <div></div></p>
+     */
     if (nodeName === 'p') {
       this.doms.unshift({
         type: 'openTag',
@@ -656,6 +665,13 @@ class HtmlParser {
 
   shift() {
     return this.doms.shift()
+  }
+
+  optionalTagClose (node, name) {
+    this.doms.unshift({
+      type: 'closeTag',
+      name
+    }, node)
   }
 }
 
@@ -1852,6 +1868,10 @@ function createHtmlDom (code) {
       children: nodes
     })
   }
+
+  Object.defineProperty(htmldom, 'nodes', {
+    value: nodes
+  })
 
   htmldom.html = function () {
     return getHtml({
