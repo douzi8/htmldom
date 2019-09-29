@@ -2,19 +2,7 @@
 
 
 <script type="text/template" id="temp">
-<p>1<div></div>2</p>
-<textarea id="txt">
-   <!-- 3 -->
-  <div>
-  </div>
-  <div>
-  </div>
-  333
-</textarea>
-<style>
-.cls {}
-</style>
-
+<li>1</li><li>2</li>
 </script>
 
 <script type="text/javascript">
@@ -27,6 +15,14 @@
  let $ = createHtmlDom(htmlCode)
 
  console.log($.nodes)
+
+  $('li').each((index, item) => {
+    let $item = $(item)
+
+    $item.replaceWith(`<view>${$item.html()}</view>`)
+  })
+
+ // $('li')..replaceWith(`<view>1</view>`)
  
 
  /*$('div > div').addClass('child').attr('id', 'demo').html('<div>p</div><button>按钮</button>')*/
@@ -35,7 +31,5 @@
   indent: '  '
  }))
 
- console.log($.html())
-
-console.log($.uglify())
+ 
 </script>

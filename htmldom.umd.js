@@ -229,6 +229,13 @@ class $Elements extends QuerySelector {
 
     return this
   }
+  /**
+   * @example
+   * $('div').replaceWith('<view>1</view>')
+   */
+  replaceWith (content) {
+    return this.before(content).remove()
+  }
 
   /**
    * @example
@@ -1093,6 +1100,8 @@ class QuerySelector {
    * let q = new QuerySelector('div .title', { children: []})
    */
   constructor (selector, rootNode) {
+    this.__root__ = rootNode
+    
     if (isString(selector)) {
       this.selector = selector
 
@@ -1101,8 +1110,6 @@ class QuerySelector {
 
       if (selectorData) {
         let first = selectorData.shift()
-
-        this.__root__ = rootNode
 
         depthFirstSearch(rootNode, function (node) {
           if (cssMatch(node, first)) {
