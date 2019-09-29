@@ -18,7 +18,7 @@ const beautifyOuterHTML = require('./lib/beautify')
 function createHtmlDom (code) {
   let { nodes } = new HtmlParser(code)
 
-  let htmldom = function (selector) {
+  function htmldom (selector) {
     return new $Elements(selector, {
       type: 'root',
       children: nodes
