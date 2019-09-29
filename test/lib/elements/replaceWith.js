@@ -14,13 +14,13 @@ describe('replaceWith', function () {
   })
 
   it(`multiple before`, function () {
-    let $ = createHtmlDom('<ul class="title"><li></li></ul><ul></ul><div></div>')
+    let $ = createHtmlDom('<ul class="title"><li class="replace"></li></ul><ul class="title"><li></li><li class="replace"></li></ul>')
 
-    $('.title > li').replaceWith('<div>1</div>')
+    $('.replace').replaceWith('<div>1</div>')
 
     assert.equal($('div').length, 2)
-    assert.equal($('.title > li').length, 0)
-    assert.equal($('.title div')[0].parent === $('.title')[0], true)
+    assert.equal($('div')[0].parent === $('.title')[0], true)
+    assert.equal($('div')[1].parent === $('.title')[1], true)
   })
 
   it('root before', function () {
