@@ -2,7 +2,9 @@
 
 
 <script type="text/template" id="temp">
-<li>1</li><li>2</li>
+
+
+
 </script>
 
 <script type="text/javascript">
@@ -12,15 +14,18 @@
  */
  
  let htmlCode = document.getElementById('temp').innerHTML.trim()
+
+htmlCode = `<script>alert(1)<\/script>`
+
  let $ = createHtmlDom(htmlCode)
 
- console.log($.nodes)
+ /*console.log($.nodes)
 
   $('li').each((index, item) => {
     let $item = $(item)
 
     $item.replaceWith(`<view>${$item.html()}</view>`)
-  })
+  })*/
 
  // $('li')..replaceWith(`<view>1</view>`)
  

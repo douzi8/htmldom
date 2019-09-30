@@ -169,8 +169,84 @@ $('').each(function(index, item) {
 
 ### $.nodes
 Get a dom tree
+```js
+/**
+ * <div id="test" class="title header" style="color:red;width:200px;"></div>
+ */
+ {
+   type: 'tag',
+   name: 'div',
+   attributes: {
+     class: 'title header',
+     id: 'test',
+     style: 'color:red;width:200px;'
+   },
+   parent: null,
+   children: [],
+   classList: new Set(['title', 'header']),
+   style: {
+     color: 'red',
+     width: '200px'
+   }
+ }
 ```
-$.nodes
+
+```js
+/**
+ * raw tag (script, style, textarea)
+ * <script>alert(1)</script>
+ */
+{
+  type: 'tag',
+  name: 'script',
+  tagType: 'rawTag',
+  textContent: 'alert(1)'
+}
+```
+```js
+/**
+ * selfClosingTag
+ * <image src="" />
+ */
+{ 
+  type: 'tag',
+  name: 'image',
+  attributes: { src: '' },
+  tagType: 'selfClosingTag'
+}
+```
+```js
+/**
+ * voidTag
+ * <input>
+ */
+{ 
+  type: 'tag',
+  name: 'input',
+  tagType: 'voidTag',
+}
+```
+
+```js
+/**
+ *  text tag
+ */
+ {
+  type: 'text',
+  data: 'text tag'
+ }
+
+```
+
+```js
+/**
+ *  <!-- comemnt data -->
+ */
+ {
+  type: 'comment',
+  data: ' comemnt data '
+ }
+
 ```
 
 ### $.root()

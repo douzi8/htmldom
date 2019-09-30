@@ -1,5 +1,5 @@
 let assert = require('assert')
-let createHtmlDom = require('../../htmldom')
+let createHtmlDom = require('../htmldom')
 
 
 let beautifyCode1 =
