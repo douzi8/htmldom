@@ -1586,7 +1586,6 @@ module.exports = {
 }
 },{}],9:[function(require,module,exports){
 // <style, <script
-const RAW_TAG = /^<(script|style|textarea)/
 const STYLE_RAW = /([\s\S]*?)<\/style\s*>/
 const SCRIPT_RAW = /([\s\S]*?)<\/script\s*>/
 const  TEXTARE_RAW = /([\s\S]*?)<\/textarea\s*>/
@@ -1710,10 +1709,8 @@ class Tokenize {
 
     if (!match) return false
 
-    this.doms.push({
-      type: 'text',
-      data: match[0]
-    })
+
+    this.pushText(match[0])
 
     return true
   }
@@ -1841,8 +1838,12 @@ class Tokenize {
       return false
     }
 
-    let doms = this.doms
+    
+    this.pushText(data)
+  }
 
+  pushText (data) {
+    let doms = this.doms
     let last = doms[doms.length - 1]
 
     if (last && last.type === 'text') {
@@ -1850,7 +1851,7 @@ class Tokenize {
       return
     } 
 
-     doms.push({
+    doms.push({
       type: 'text',
       data
     })

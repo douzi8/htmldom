@@ -130,6 +130,12 @@ describe('Parser', function () {
       // [text, div, text]
       assert.equal(nodes[0].children[1].children.length, 3)
     })
+
+    it('text', function () {
+      let { nodes } = new Parser(`<div> < 3 </div>`)
+
+      assert.equal(nodes[0].children[0].data, ' < 3 ')
+    })
   })
 
 
@@ -147,20 +153,5 @@ describe('Parser', function () {
       assert.deepEqual([...nodes[0].classList], ['a', 'b', 'demo'])
     })
 
-  })
-
-
-  describe('comment', function () {
-    let { nodes } = new Parser(`
-      <div class="cls">
-   <!-- 代码注释 -->
-  <div>
-     1 3
-  </div>
-<!-- 代码注释 -->  
-</div>
-    `)
-
-    console.log(nodes[1])
   })
 })
