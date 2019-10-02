@@ -1624,6 +1624,12 @@ const VOID_ELEMENTS = [
   'wbr'
 ]
 
+const RAW_ELEMENTS = [
+  'textarea',
+  'script',
+  'style'
+]
+
 function getRawEndTag (name) {
   if (name === 'style') {
     return STYLE_RAW
@@ -1641,6 +1647,10 @@ function getRawEndTag (name) {
 
 function isVoidElement(name) {
   return VOID_ELEMENTS.includes(name)
+}
+
+function isRawElement (name) {
+  return RAW_ELEMENTS.includes(name)
 }
 
 /**
@@ -1662,10 +1672,6 @@ class Tokenize {
   scan () {
     while (this.str) {
       this.trimLeft()
-
-      if (this.rawTag()) {
-        continue
-      }
 
       if (this.openTag()) {
         continue
@@ -1715,19 +1721,8 @@ class Tokenize {
   /**
    * match like: <script>, <style>, <textarea>
    */
-  rawTag () {
-    let match = this.match(RAW_TAG)
-
-    if (!match) return false
-
-
-    let attributes = this.match(OPEN_TAG_CLOSE)
-
-    if (!attributes) return
-
-    let name =  match[1]  
+  rawTag (name, attributes) {
     let endTag = getRawEndTag(name)
-
     let content = this.match(endTag)
 
     if (content) {
@@ -1740,13 +1735,11 @@ class Tokenize {
     let item = {
       type: 'rawTag',
       name,
-      attributes: attributes[0].slice(0, -1),
+      attributes,
       textContent: content
     }
 
     this.doms.push(item)
-
-    return true    
   }
 
   /**
@@ -1775,6 +1768,12 @@ class Tokenize {
     if (isSelfClosing) {
       type = 'selfClosingTag'
     } else {
+      // script, style, textarea
+      if (isRawElement(name)) {
+        this.rawTag(name, attributes)
+        return true
+      }
+
       type = isVoidElement(name) ? 'voidTag' : 'openTag'
     }
 

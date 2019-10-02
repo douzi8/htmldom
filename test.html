@@ -4,6 +4,9 @@
 <script type="text/template" id="temp">
 
 
+<textarea class="title header" /><view></view>
+
+<textarea id="demo"><div>1</div></textarea>
 
 </script>
 
@@ -15,9 +18,12 @@
  
  let htmlCode = document.getElementById('temp').innerHTML.trim()
 
-htmlCode = `<script>alert(1)<\/script>`
 
  let $ = createHtmlDom(htmlCode)
+
+ $('*').each((index, item) => {
+  console.log(item.name)
+ })
 
  /*console.log($.nodes)
 
@@ -32,9 +38,7 @@ htmlCode = `<script>alert(1)<\/script>`
 
  /*$('div > div').addClass('child').attr('id', 'demo').html('<div>p</div><button>按钮</button>')*/
 
- console.log($.beautify({
-  indent: '  '
- }))
+ console.log($.beautify())
 
  
 </script>

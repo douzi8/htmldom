@@ -19,7 +19,7 @@ describe('scanner', function () {
 
 
   it('Self closing tag', function () {
-    let { doms } = new Tokenize('<br/><img /><input />')
+    let { doms } = new Tokenize('<textarea /><br/><img /><input />')
 
     for (let item of doms) {
       assert.equal(item.type, 'selfClosingTag')
@@ -58,6 +58,4 @@ describe('scanner', function () {
       data: ' content2 '
     })
   })
-
-
 })
