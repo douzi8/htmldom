@@ -86,11 +86,11 @@ describe('$.uglify', function () {
   describe('{removeAttributeQuotes: true}', function () {
 
     it('href', function () {
-      let $ = createHtmlDom(`<link href="//www.baidu.com/img/baidu.svg">`)
+      let $ = createHtmlDom(`<link href="//www.baidu.com/img/baidu.svg" />`)
 
       assert.equal($.uglify({
         removeAttributeQuotes: true
-      }), '<link href=//www.baidu.com/img/baidu.svg>')
+      }), '<link href=//www.baidu.com/img/baidu.svg />')
     })
 
     it('whitespace', function () {
