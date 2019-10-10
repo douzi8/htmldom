@@ -306,6 +306,12 @@ describe('selector', function() {
         }
       }
 
+      let node2 = {
+        name: 'div',
+        attributes: {
+        }
+      }
+
       let selector = {
         attrs: [{
           key: 'title',
@@ -314,7 +320,10 @@ describe('selector', function() {
         }]
       }
 
+
+
       assert.equal(match(node, selector), true)
+      assert.equal(match(node2, selector), false)
     })
 
     it('[key~=value]', function () {

@@ -1550,7 +1550,7 @@ function match (node, selector) {
   let attrs = selector.attrs || []
 
   for (let item of attrs) {
-    let nodeValue = node.attributes[item.key]
+    let nodeValue = node.attributes[item.key] || ''
     let selectorValue = item.value
 
     switch (item.operator) {
@@ -1883,7 +1883,14 @@ function uglifyOuterHTML({
       code.push(`<${name}${uglifyAttributesCode(name, attributes, options.removeAttributeQuotes)}`)
 
       if (tagType === 'selfClosingTag') {
-        // <img src="" />
+        /**
+         * <img src="" />
+         * <link href=https />
+         */
+         if (options.removeAttributeQuotes) {
+          code.push(' ')
+         }
+         
         code.push('/>')
       } else if (tagType === 'voidTag') {
         // <br>
