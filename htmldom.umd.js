@@ -1535,10 +1535,12 @@ function parser (selector) {
  * matchClass(['title', 'header'], ['title'])   => true
  * matchClass(['title', 'header'], ['body'])   => false
  */
-function matchClass(cls1, cls2) {
-  let result = new Set(cls1.concat(cls2))
+function matchClass(set, cls2) {
+  for (let item of cls2) {
+    if (!set.has(item)) return false
+  }
 
-  return cls1.length === [...result].length
+  return true
 }
 
 /**
@@ -1557,9 +1559,9 @@ function match (node, selector) {
   }
 
   let className = selector.class || []
-  let nodeClass = node.attributes.class || ''
 
-  if (!matchClass(nodeClass.split(/\s+/), className)) return false
+  if (!matchClass(node.classList, className)) return false
+
 
   let attrs = selector.attrs || []
 

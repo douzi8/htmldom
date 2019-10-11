@@ -28,6 +28,29 @@ describe('QuerySelector', function () {
     assert.equal(q.length,  2)
   })
 
+  it('.class', function () {
+    let { nodes } = new HtmlParser('<div class="demo demo title"><a></a></div><a></a>')
+
+    let q = new QuerySelector('.demo', {
+      type: 'root',
+      children: nodes
+    })
+
+    let q2 = new QuerySelector('.test', {
+      type: 'root',
+      children: nodes
+    })
+
+    let q3 = new QuerySelector('.demo.title', {
+      type: 'root',
+      children: nodes
+    })
+
+    assert.equal(q.length,  1)
+    assert.equal(q2.length,  0)
+    assert.equal(q3.length,  1)
+  })
+
   it('E F', function () {
     let { nodes } = new HtmlParser(`
       <div>
@@ -149,6 +172,7 @@ describe('QuerySelector', function () {
     assert.equal(q2.length, 2)   
     assert.equal(q3.length, 3) 
   })
+
 })
 
 

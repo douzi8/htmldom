@@ -180,7 +180,8 @@ describe('selector', function() {
         name: 'div',
         attributes: {
           class: 'title body'
-        }
+        },
+        classList: new Set(['title', 'body'])
       }
 
       let selector = {
