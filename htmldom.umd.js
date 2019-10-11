@@ -132,10 +132,19 @@ class $Elements extends QuerySelector {
       return node ? getHtml(node) :  null
     }
 
-
-    let { nodes } = new HtmlParser(content) 
+    let nodes
 
     for (let item of this) {
+      if (item.tagType === 'rawTag') {
+        item.textContent = content
+        continue
+      }
+
+      if (!nodes) {
+        let parser = new HtmlParser(content) 
+        nodes = parser.nodes
+      }
+
       item.children = nodes.map(node => {
         node.parent = item
 
@@ -575,6 +584,11 @@ function getOuterHTML ({
 function getHtml (node) {
   let html = '';
   let children = node.children;
+
+  // script, style, textarea
+  if (node.tagType === 'rawTag') {
+    return node.textContent
+  }
 
   for (let i = 0; i < children.length; i++) {
     html += getOuterHTML(children[i])

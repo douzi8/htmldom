@@ -20,6 +20,18 @@ describe('html()', function() {
 
     assert.equal($('div').html(), '1<div>2</div>3')
   })
+
+  it('script', function() {
+    let $ = createHtmlDom(`<script> console.log('') </script>`)
+
+    assert.equal($('script').html(), ` console.log('') `)
+  })
+
+  it('style', function() {
+    let $ = createHtmlDom(`<style>.titletl{}</style>`)
+
+    assert.equal($('style').html(), `.titletl{}`)
+  })
 })
 
 
@@ -53,5 +65,17 @@ describe(`html('<div></div>')`, function () {
     assert.equal($('div > p').length, 4)
 
     assert.equal($('div p').html() === '1', true)
+  })
+
+  it('script', function() {
+    let $ = createHtmlDom('<script></script><script></script>')
+
+    $('script').html('alert(1)')
+
+    assert.equal($.nodes[0].textContent, 'alert(1)')
+
+    assert.deepEqual($.nodes[0].children, [])
+
+    assert.equal($.html(), `<script>alert(1)</script><script>alert(1)</script>`)
   })
 })

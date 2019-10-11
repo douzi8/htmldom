@@ -278,9 +278,11 @@ $.html()
 ```js
 // Uglify inline script like this
 $('script').each((index, item) => {
-  let type = $(item).attr('type')
-
-  if (type && type !== 'text/javascript') return 
+  let $item = $(item)
+  let type = $item.attr('type')
+  let src = $item.attr('src')
+ 
+  if ((type && type !== 'text/javascript') || src) return 
 
   // Find a uglify plugin by yourself
   item.textContent = uglifyJs(item.textContent)
