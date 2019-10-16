@@ -269,6 +269,8 @@ $.html()
 ```
 
 ### $.uglify()
+It will return compressed html code
+
 * {object} ``options``
   * {string} ``[options.removeAttributeQuotes=false]``
   ```html
@@ -307,6 +309,8 @@ $.uglify({
 ```
 
 ### $.beautify()
+It will return beauty html code
+
 * {object} ``options``
   * {string} ``[options.indent='  ']`` code indent
 ```js

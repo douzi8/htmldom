@@ -41,5 +41,15 @@ describe('each', function () {
     assert.equal($('view')[0].parent, null)
     assert.equal($('view')[1].parent, null)
   })
+
+
+  it('each callback this', function () {
+    let $ = createHtmlDom('<ul class="title"><li>1</li><li>2</li></ul>')
+
+
+    $('li').each(function (index, item) {
+      assert.equal(item === this, true)
+    })
+  })
   
 })
