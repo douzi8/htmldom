@@ -131,9 +131,9 @@ $('div').replaceWith('<view></view>')
 $('').append('<h3>title');
 $('').before('<h3>title');
 ```
-* prev(selector)
+* prev(selector)  
 Get the immediately preceding sibling element
-* next(selector)
+* next(selector)  
 Get the immediately following sibling element
 ```
 $('#title').prev()
