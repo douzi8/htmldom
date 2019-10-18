@@ -85,12 +85,13 @@ function createHtmlDom (code) {
 
 
 module.exports = createHtmlDom
-},{"./lib/$elements.js":2,"./lib/beautify":3,"./lib/get.html":4,"./lib/html.parser":5,"./lib/uglify":10}],2:[function(require,module,exports){
+},{"./lib/$elements.js":2,"./lib/beautify":3,"./lib/get.html":4,"./lib/html.parser":5,"./lib/uglify":11}],2:[function(require,module,exports){
 let QuerySelector = require('./query.selector')
 let HtmlParser = require('./html.parser')
 const { isUndefined, isString, isFunction } = require('./util')
 const { getHtml, getOuterHTML } = require('./get.html')
 const { updateAttrValue, cloneNode } = require('./node.op')
+const { GET_NODE_PARENT } = require('./private.key')
 
 
 function insertChild (parent, children, pos) {
@@ -115,7 +116,9 @@ class $Elements extends QuerySelector {
    */
   each (callback) {
     for (let i = 0; i < this.length; i++) {
-      callback.call(this, i, this[i])
+      let item = this[i]
+
+      callback.call(item, i, item)
     }
 
     return this
@@ -214,7 +217,7 @@ class $Elements extends QuerySelector {
     let { nodes } = new HtmlParser(content)
 
     for (let item of this) {
-      let parent = item.parent || this.__root__
+      let parent = this[GET_NODE_PARENT](item) 
       let pos = parent.children.indexOf(item)
 
       insertChild(parent, nodes, pos)
@@ -230,7 +233,7 @@ class $Elements extends QuerySelector {
     let { nodes } = new HtmlParser(content)
 
     for (let item of this) {
-      let parent = item.parent || this.__root__
+      let parent = this[GET_NODE_PARENT](item)
       let pos = parent.children.indexOf(item)
 
       insertChild(parent, nodes, pos + 1)
@@ -252,7 +255,7 @@ class $Elements extends QuerySelector {
    */
   remove () {
     for (let item of this) {
-      let parent = item.parent || this.__root__
+      let parent = this[GET_NODE_PARENT](item)
 
       let pos = parent.children.indexOf(item)
 
@@ -399,7 +402,7 @@ class $Elements extends QuerySelector {
 
 
 module.exports = $Elements
-},{"./get.html":4,"./html.parser":5,"./node.op":6,"./query.selector":7,"./util":11}],3:[function(require,module,exports){
+},{"./get.html":4,"./html.parser":5,"./node.op":6,"./private.key":7,"./query.selector":8,"./util":12}],3:[function(require,module,exports){
 const { getAttributesCode } = require('./node.op')
 
 
@@ -793,7 +796,7 @@ class HtmlParser {
 
 
 module.exports = HtmlParser
-},{"./node.op":6,"./tokenize":9}],6:[function(require,module,exports){
+},{"./node.op":6,"./tokenize":10}],6:[function(require,module,exports){
 const { isNull } = require('./util')
 
 
@@ -992,10 +995,22 @@ module.exports = {
   getAttributesCode,
   uglifyAttributesCode
 }
-},{"./util":11}],7:[function(require,module,exports){
+},{"./util":12}],7:[function(require,module,exports){
+let FILTER_CHILDREN = Symbol('filter')
+let SET_LIST = Symbol('list')
+let GET_NODE_PARENT = Symbol('parent')
+
+
+
+module.exports = {
+  FILTER_CHILDREN,
+  SET_LIST,
+  GET_NODE_PARENT
+}
+},{}],8:[function(require,module,exports){
 let { parser : cssParser, match: cssMatch} = require('./selector')
 const { isString, isFunction } = require('./util')
-
+const { FILTER_CHILDREN, SET_LIST, GET_NODE_PARENT } = require('./private.key')
 
 /**
  * DFS
@@ -1017,36 +1032,36 @@ function depthFirstSearch (node, callback) {
 }
 
 
-let FILTER_CHILDREN = Symbol('filter')
-let SET_LIST = Symbol('list')
 
-function getPrevNodeSibling (node) {
-  let parent = node.parent
+function getSibling(type) {
+  return function(parent, node) {
+    let children = parent.children.filter(node => node.type === 'tag')
+    let pos = children.indexOf(node)
+    let result
 
-  if (!parent) return null
+    if (type === 'prev') {
+      result = children[pos - 1]
+    } else if (type === 'next') {
+      result = children[pos + 1]
+    }
 
-  let children = parent.children.filter(node => node.type === 'tag')
-
-  let pos = children.indexOf(node)
-
-  let prev = children[pos - 1]
-
-  return prev ? prev : null
+    return result ? result : null
+  }
 }
 
-function getPrevNodeSiblings (node) {
-  let parent = node.parent
 
-  if (!parent) return null
+let getPrevNodeSibling = getSibling('prev')
+let getNextNodeSibling = getSibling('next')
 
+
+function getPrevNodeSiblings (parent, node) {
   let children = parent.children.filter(node => node.type === 'tag')
-
   let pos = children.indexOf(node)
 
   return pos === 0 ? null : children.slice(0, pos)
 }
 
-function filterNode (node, selectorData) {
+function filterNode (parent, node, selectorData) {
   let length = selectorData.length
   let j = 0
 
@@ -1060,14 +1075,14 @@ function filterNode (node, selectorData) {
         node = node.parent
         break
       case '+':
-        let prev = getPrevNodeSibling(node)
+        let prev = getPrevNodeSibling(parent, node)
 
         if (!prev || !cssMatch(prev, selector)) return false
 
         node = prev
         break
       case '~':
-        let prevs = getPrevNodeSiblings(node)
+        let prevs = getPrevNodeSiblings(parent, node)
         let hasMatch = false
 
         if (!prevs) return false
@@ -1154,8 +1169,8 @@ class QuerySelector {
    * E ~ F:  an F element preceded by an E element
    */
   [FILTER_CHILDREN] (list, selectorData) {
-    list = list.filter(function(node) {
-      return filterNode(node, selectorData)
+    list = list.filter((node) => {
+      return filterNode(this[GET_NODE_PARENT](node), node, selectorData)
     })
 
     this[SET_LIST](list)
@@ -1167,6 +1182,10 @@ class QuerySelector {
     })
 
     this.__length__ = list.length
+  }
+
+  [GET_NODE_PARENT] (node) {
+    return node.parent || this.__root__
   }
 
   [Symbol.iterator]() { 
@@ -1192,6 +1211,7 @@ class QuerySelector {
   get length () {
     return this.__length__
   }
+
 
   /**
    * @example
@@ -1239,6 +1259,45 @@ class QuerySelector {
 
     return $elements
   }
+
+  /**
+   * Get the immediately preceding sibling element
+   */
+  prev (selector = '*') {
+    let result = new Set()
+
+    for (let item of this) {
+      let preNode = getPrevNodeSibling(this[GET_NODE_PARENT](item), item)
+
+      if (preNode) {
+        result.add(preNode)
+      }
+    }
+
+    let $elements = new this.constructor([...result])
+
+    return $elements.filter(selector)
+  }
+
+  /**
+   * Get the immediately following sibling element
+   */
+  next (selector = '*') {
+    let result = new Set()
+
+    for (let item of this) {
+      let nextNode = getNextNodeSibling(this[GET_NODE_PARENT](item), item)
+
+      if (nextNode) {
+        result.add(nextNode)
+      }
+    }
+
+    let $elements = new this.constructor([...result])
+
+    return $elements.filter(selector)
+  }
+
   /**
    * @example
    * $('').eq(0)     // first element
@@ -1282,7 +1341,7 @@ class QuerySelector {
 
 
 module.exports = QuerySelector
-},{"./selector":8,"./util":11}],8:[function(require,module,exports){
+},{"./private.key":7,"./selector":9,"./util":12}],9:[function(require,module,exports){
 const TAG_NAME = /^[\w-]+/
 const WHITE_SPACE = /^\s*([>+~])?\s*/
 const CLASS_NAME = /^\.([\w-]+)/
@@ -1600,7 +1659,7 @@ module.exports = {
   parser,
   match
 }
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // <style, <script
 const STYLE_RAW = /([\s\S]*?)<\/style\s*>/
 const SCRIPT_RAW = /([\s\S]*?)<\/script\s*>/
@@ -1875,7 +1934,7 @@ class Tokenize {
 }
 
 module.exports = Tokenize
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * options.removeAttributeQuotes
  * value must not contain ['"><\s=`]
@@ -1936,7 +1995,7 @@ function uglifyOuterHTML({
 
 
 module.exports = uglifyOuterHTML
-},{"./node.op":6}],11:[function(require,module,exports){
+},{"./node.op":6}],12:[function(require,module,exports){
 function getTypeof(obj) {
   return Reflect.apply(Object.prototype.toString, obj, []).match(
     /\s+(\w+)\]$/
