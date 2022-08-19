@@ -327,3 +327,7 @@ $.beautify({
   indent: '  '
 });
 ```
+**Reference** - 
+
+- [Learn HTML](https://www.scaler.com/topics/html/)
+- [Introduction to DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction)
